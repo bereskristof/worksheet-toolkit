@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 using Storage.Sheet;
 using Storage.Task;
 
@@ -13,17 +12,11 @@ public partial class TaskElement : ICanRequestDeletion
     
     public event EventHandler? RequestsTaskSelection;
     
-    private readonly Tuple<byte, byte, byte>[] _indentColors =
-    [
-        new(236, 236, 236),
-        new(244, 244, 244),
-    ];
-    
     public TaskNode Node { get; set; }
 
     public TaskElement() : this(new TaskNode { Question = null }) { }
 
-    internal TaskElement(TaskNode node, uint depth = 0)
+    internal TaskElement(TaskNode node, int depth = 0)
     {
         Node = node;
         InitializeComponent();
@@ -36,11 +29,9 @@ public partial class TaskElement : ICanRequestDeletion
     private void ButtonDelete_OnClick(object sender, RoutedEventArgs e) 
         => Delete(true);
 
-    private void FormatDesignByIndent(uint indentLevel)
+    private void FormatDesignByIndent(int indentLevel)
     {
-        Tuple<byte, byte, byte> indCol = _indentColors.ElementAt((int)(indentLevel % 2));
-        var color = new SolidColorBrush(Color.FromRgb(indCol.Item1, indCol.Item2, indCol.Item3));
-        MainBorder.Background = color;
+        MainBorder.Background = DepthFormatting.GetBrushFromIndent(indentLevel);
     }
     
     private void SelectQuestion() 

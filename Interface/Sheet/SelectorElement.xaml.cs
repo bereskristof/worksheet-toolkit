@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Storage.Sheet;
 
@@ -13,17 +14,11 @@ public partial class SelectorElement : ICanRequestDeletion
     
     public SelectorNode Node { get; set; }
     
-    private readonly Tuple<byte, byte, byte>[] _indentColors =
-    [
-        new(236, 236, 236),
-        new(244, 244, 244),
-    ];
-    
-    private readonly uint _depth;
+    private readonly int _depth;
     
     public SelectorElement() : this(Bindings.Instance.SheetRoot) { } // Not exactly a good idea
 
-    private SelectorElement(SelectorNode node, uint depth = 0)
+    private SelectorElement(SelectorNode node, int depth = 0)
     {
         _depth = depth;
         Node = node;
@@ -52,11 +47,9 @@ public partial class SelectorElement : ICanRequestDeletion
     private void ButtonDelete_OnClick(object sender, RoutedEventArgs e)
         => Delete(true);
     
-    private void FormatDesignByIndent(uint indentLevel)
+    private void FormatDesignByIndent(int indentLevel)
     {
-        Tuple<byte, byte, byte> indCol = _indentColors.ElementAt((int)(indentLevel % 2));
-        var color = new SolidColorBrush(Color.FromRgb(indCol.Item1, indCol.Item2, indCol.Item3));
-        MainBorder.Background = color;
+        MainBorder.Background = DepthFormatting.GetBrushFromIndent(indentLevel);
         if (indentLevel == 0) 
             FormatRoot();
     }
