@@ -264,7 +264,7 @@
         <value>A megadott dolgozat kód hibás!</value>
     </data>
     <data name="Missing_Neptun" xml:space="preserve">
-        <value>A megadott Neptun kód hibás!ű</value>
+        <value>A megadott Neptun kód hibás!</value>
     </data>
     <data name="Missing_ResultInvalid" xml:space="preserve">
         <value>Skennelési eredmény hibás!</value>
