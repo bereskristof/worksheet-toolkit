@@ -269,11 +269,8 @@
     <data name="Missing_ResultInvalid" xml:space="preserve">
         <value>Skennelési eredmény hibás!</value>
     </data>
-    <data name="Export_ExportFailed" xml:space="preserve">
-        <value>Exportálás sikeres</value>
-    </data>
     <data name="Export_ExportSaved" xml:space="preserve">
-        <value>Sikertelen exportálás:</value>
+        <value>Exportálás sikeres</value>
     </data>
     <data name="Missing_Title" xml:space="preserve">
         <value>Ez az oldal nem tudott feldolgozni néhány adatot, ezért azokat manuálisan kell kitölteni!</value>
@@ -364,5 +361,8 @@ Folytatja ennek ellenére?</value>
     </data>
     <data name="Browse_SolveExportTitle" xml:space="preserve">
         <value>Eredmények lementése</value>
+    </data>
+    <data name="Export_ExportFailed" xml:space="preserve">
+        <value>Sikertelen exportálás:</value>
     </data>
 </root>
