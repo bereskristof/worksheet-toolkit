@@ -78,6 +78,51 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select an export location.
+        /// </summary>
+        public static string Browse_ExportTitle {
+            get {
+                return ResourceManager.GetString("Browse_ExportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attach image to question.
+        /// </summary>
+        public static string Browse_ImageImportTitle {
+            get {
+                return ResourceManager.GetString("Browse_ImageImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a file to Import.
+        /// </summary>
+        public static string Browse_ImportTitle {
+            get {
+                return ResourceManager.GetString("Browse_ImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save results.
+        /// </summary>
+        public static string Browse_SolveExportTitle {
+            get {
+                return ResourceManager.GetString("Browse_SolveExportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a scan to Import.
+        /// </summary>
+        public static string Browse_SolveImportTitle {
+            get {
+                return ResourceManager.GetString("Browse_SolveImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Common_Error {

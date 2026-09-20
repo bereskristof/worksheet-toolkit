@@ -357,4 +357,19 @@ Continue anyway?</value>
     <data name="Export_Resolution" xml:space="preserve">
         <value>Resolution:</value>
     </data>
+    <data name="Browse_ExportTitle" xml:space="preserve">
+        <value>Select an export location</value>
+    </data>
+    <data name="Browse_ImportTitle" xml:space="preserve">
+        <value>Select a file to Import</value>
+    </data>
+    <data name="Browse_ImageImportTitle" xml:space="preserve">
+        <value>Attach image to question</value>
+    </data>
+    <data name="Browse_SolveExportTitle" xml:space="preserve">
+        <value>Save results</value>
+    </data>
+    <data name="Browse_SolveImportTitle" xml:space="preserve">
+        <value>Select a scan to Import</value>
+    </data>
 </root>

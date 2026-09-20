@@ -281,7 +281,7 @@ public partial class ExportPage : INotifyPropertyChanged
 
     private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var path = GetSavePath(Interface.Resources.Lang.Export_Title);
+        var path = GetSavePath(Interface.Resources.Lang.Browse_ExportTitle);
         if (!string.IsNullOrEmpty(path))
             ExportPath = path;
     }

@@ -138,7 +138,7 @@ public partial class TaskPage
 
     private void ImageButton_OnClick(object sender, RoutedEventArgs e)
     {
-        string path = GetLoadPath("Open");
+        string path = GetLoadPath(Interface.Resources.Lang.Browse_ImageImportTitle);
         _currentQuestion?.StoreImageFromPath(path);
         UpdateImagePreview();
     }

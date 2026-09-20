@@ -350,4 +350,19 @@ Folytatja ennek ellenére?</value>
     <data name="Export_Resolution" xml:space="preserve">
         <value>Felbontás:</value>
     </data>
+    <data name="Browse_ExportTitle" xml:space="preserve">
+        <value>Exportálási útvonal kiválasztása</value>
+    </data>
+    <data name="Browse_ImportTitle" xml:space="preserve">
+        <value>Importált fájl kiválasztása</value>
+    </data>
+    <data name="Browse_ImageImportTitle" xml:space="preserve">
+        <value>Kép hozzáadása kérdéshez</value>
+    </data>
+    <data name="Browse_SolveImportTitle" xml:space="preserve">
+        <value>Szkennelt lapok importálása</value>
+    </data>
+    <data name="Browse_SolveExportTitle" xml:space="preserve">
+        <value>Eredmények lementése</value>
+    </data>
 </root>

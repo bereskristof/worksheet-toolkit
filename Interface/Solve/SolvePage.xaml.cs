@@ -33,7 +33,7 @@ public partial class SolvePage
 
     private void ImportPdf_OnClick(object sender, RoutedEventArgs e)
     {
-        string path = GetLoadPath(Interface.Resources.Lang.Import_Title);
+        string path = GetLoadPath(Interface.Resources.Lang.Browse_SolveImportTitle);
         if (string.IsNullOrEmpty(path)) 
             return;
         
@@ -48,7 +48,7 @@ public partial class SolvePage
 
     private void ExportResults_OnClick(object sender, RoutedEventArgs e)
     {
-        var exportPath = GetSavePath(Interface.Resources.Lang.Export_Title);
+        var exportPath = GetSavePath(Interface.Resources.Lang.Browse_SolveExportTitle);
         if (string.IsNullOrEmpty(exportPath)) 
             return;
         try
@@ -67,7 +67,7 @@ public partial class SolvePage
 
     private void ExportStats_OnClick(object sender, RoutedEventArgs e)
     {
-        var exportPath = GetSavePath(Interface.Resources.Lang.Export_Title);
+        var exportPath = GetSavePath(Interface.Resources.Lang.Browse_SolveExportTitle);
         if (string.IsNullOrEmpty(exportPath)) 
             return;
         try
