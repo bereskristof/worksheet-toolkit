@@ -81,7 +81,6 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="30" />
                     <DataGridTextColumn Header="{x:Static res:Lang.Task_Question}" Binding="{Binding Text}" Width="*" />
-                    <DataGridTextColumn Header="{x:Static res:Lang.Task_Points}" Binding="{Binding Points}" Width="55"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
