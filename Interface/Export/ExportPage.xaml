@@ -77,11 +77,13 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Name="CreateButton" Content="{x:Static res:Lang.Export_Preview}" Click="ButtonBase_OnClick" Margin="0, 3, 3, 0" Padding="3, 0"/>
                 <Button Grid.Column="1" Content="{x:Static res:Lang.Export_ZoomOut}" Click="ZoomOut_OnClick" Margin="0, 3, 3, 0" Padding="3, 0"/>
                 <Button Grid.Column="2" Content="{x:Static res:Lang.Export_ZoomIn}" Click="ZoomIn_OnClick" Margin="0, 3, 3, 0" Padding="3, 0"/>
-                <ComboBox Grid.Column="3" HorizontalAlignment="Right"  Margin="3, 3, 0, 0" Padding="3, 0">
+                <Label Grid.Column="3" HorizontalAlignment="Right" Margin="3, 3, 0, 0" Padding="3, 0" Content="{x:Static res:Lang.Export_Resolution}"/>
+                <ComboBox Grid.Column="4" Margin="3, 3, 0, 0" Padding="3, 0">
                     <ComboBoxItem Content="{x:Static res:Lang.Export_High}" Selected="ScaleLarge_OnSelect"/>
                     <ComboBoxItem Content="{x:Static res:Lang.Export_Med}" IsSelected="True" Selected="ScaleMedium_OnSelect"/>
                     <ComboBoxItem Content="{x:Static res:Lang.Export_Low}" Selected="ScaleSmall_OnSelect"/>

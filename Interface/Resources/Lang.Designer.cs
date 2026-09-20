@@ -249,6 +249,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolution:.
+        /// </summary>
+        public static string Export_Resolution {
+            get {
+                return ResourceManager.GetString("Export_Resolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shuffle answer order.
         /// </summary>
         public static string Export_Shuffle {

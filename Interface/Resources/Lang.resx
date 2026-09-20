@@ -354,4 +354,7 @@ Continue anyway?</value>
 
 Continue anyway?</value>
     </data>
+    <data name="Export_Resolution" xml:space="preserve">
+        <value>Resolution:</value>
+    </data>
 </root>

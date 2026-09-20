@@ -347,4 +347,7 @@ Folytatja ennek ellenére?</value>
             
 Folytatja ennek ellenére?</value>
     </data>
+    <data name="Export_Resolution" xml:space="preserve">
+        <value>Felbontás:</value>
+    </data>
 </root>
