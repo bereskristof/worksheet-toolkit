@@ -101,6 +101,8 @@ public partial class SelectorElement : ICanRequestDeletion
     {
         if (sender is TaskElement task)
             Node.Children.Remove(task.Node);
+        else if (sender is SelectorElement selector)
+            Node.Children.Remove(selector.Node);
         ContentList.Children.Remove(sender! as Control);
     }
 
@@ -112,6 +114,7 @@ public partial class SelectorElement : ICanRequestDeletion
             {
                 case SelectorElement selectorElement:
                     selectorElement.Delete();
+                    Node.Children.Remove(selectorElement.Node);
                     break;
                 case TaskElement taskElement:
                     taskElement.Delete();
