@@ -25,8 +25,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" Name="BehaviourBox" Padding="4, 0">
-                        <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionListOrdered}" IsSelected="True" Selected="OptionListOrdered_OnSelected"/>
-                        <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionListShuffled}" Selected="OptionListShuffled_OnSelected"/>
+                        <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionListShuffled}" IsSelected="True" Selected="OptionListShuffled_OnSelected"/>
+                        <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionListOrdered}" Selected="OptionListOrdered_OnSelected"/>
                         <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionPickRandom}" Selected="OptionPickShuffled_OnSelected"/>
                     </ComboBox>
                     <Button Grid.Column="1" Content="{x:Static res:Lang.Sheet_Hide}" Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonHide_OnClick" Name="HideButton"/>

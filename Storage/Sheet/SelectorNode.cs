@@ -14,7 +14,7 @@ public class SelectorNode : ISheetNode
     
     public List<ISheetNode> Children { get; set; } = [];
 
-    public SelectorType Type { get; set; } = SelectorType.Sequential;
+    public SelectorType Type { get; set; } = SelectorType.Shuffled;
     
     public Question[] GetQuestions()
     {

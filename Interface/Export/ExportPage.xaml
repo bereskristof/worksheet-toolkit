@@ -34,8 +34,8 @@
             <!-- <Label Grid.Column="0" Grid.Row="1" Content="{x:Static res:Lang.Export_AnswerCount}" Padding="0" Margin="0, 3, 3, 0"/> -->
             <!-- <TextBox Grid.Column="1" Grid.Row="1" Name="AnswerCountBox"  Margin="0, 3, 0, 0"/> -->
             <ComboBox Grid.Column="1" Grid.Row="2" Padding="3, 0" Margin="0, 3, 0, 0">
-                <ComboBoxItem Content="{x:Static res:Lang.Export_ShuffleSmart}" Selected="SmartShuffle_OnSelected"/>
-                <ComboBoxItem Content="{x:Static res:Lang.Export_Shuffle}" Selected="ShuffleOrder_OnSelected" IsSelected="True"/>
+                <ComboBoxItem Content="{x:Static res:Lang.Export_ShuffleSmart}" Selected="SmartShuffle_OnSelected" IsSelected="True"/>
+                <ComboBoxItem Content="{x:Static res:Lang.Export_Shuffle}" Selected="ShuffleOrder_OnSelected"/>
                 <ComboBoxItem Content="{x:Static res:Lang.Export_Ordered}" Selected="KeepOrder_OnSelected"/>
             </ComboBox>
             <Label Grid.Column="0" Grid.Row="3" Content="{x:Static res:Lang.Export_Title}" Padding="0" Margin="0, 3, 3, 0"/>

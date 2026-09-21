@@ -27,7 +27,7 @@ public partial class ExportPage : INotifyPropertyChanged
         Smart,
     }
     
-    private ShuffleMode _shuffleMode = ShuffleMode.Yes;
+    private ShuffleMode _shuffleMode = ShuffleMode.Smart;
     
     private string[] _smartExclusions = [];
     
