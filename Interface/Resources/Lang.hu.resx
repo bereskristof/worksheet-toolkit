@@ -219,7 +219,7 @@
         <value>Válaszmennyiség:</value>
     </data>
     <data name="Export_Path" xml:space="preserve">
-        <value>Kiadási útvonal</value>
+        <value>Kiadási útvonal:</value>
     </data>
     <data name="Export_Browse" xml:space="preserve">
         <value>Tallózás</value>
