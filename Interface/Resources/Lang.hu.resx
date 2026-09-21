@@ -365,4 +365,10 @@ Folytatja ennek ellenére?</value>
     <data name="Export_ExportFailed" xml:space="preserve">
         <value>Sikertelen exportálás:</value>
     </data>
+    <data name="Tex_MissingPackages" xml:space="preserve">
+        <value>(Néhány s|S)zükséges LaTeX csomag hiányzik: '#PACKAGES#'. Telepítsd a csomago(ka)t mielőtt exportálsz egy fájlt.</value>
+    </data>
+    <data name="Tex_NoInstall" xml:space="preserve">
+        <value>A Pdflatex nem érhető el. készítsen egy pdflatex-path.txt fájlt, hogy beállítsa!</value>
+    </data>
 </root>

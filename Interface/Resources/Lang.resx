@@ -372,4 +372,10 @@ Continue anyway?</value>
     <data name="Browse_SolveImportTitle" xml:space="preserve">
         <value>Select a scan to Import</value>
     </data>
+    <data name="Tex_MissingPackages" xml:space="preserve">
+        <value>Missing LaTeX package(s) found: '#PACKAGES#'. Please install (them|it) before exporting a file.</value>
+    </data>
+    <data name="Tex_NoInstall" xml:space="preserve">
+        <value>Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!</value>
+    </data>
 </root>

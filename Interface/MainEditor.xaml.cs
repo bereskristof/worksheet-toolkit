@@ -36,7 +36,9 @@ public partial class MainEditor
             case TexDoctor.TexStatus.MissingPackages:
                 WarningBox.Visibility = Visibility.Visible;
                 var missingPackagesString = string.Join(", ", _missingPackages);
-                WarningLabel.Content = $"Missing LaTeX packages found: '{missingPackagesString}'. Please install them before exporting a file.";
+                var missingPackagesWarning = Interface.Resources.Lang.Tex_MissingPackages
+                    .Replace("#PACKAGES#", missingPackagesString);
+                WarningLabel.Content = Formatting.FormatPlurality(missingPackagesWarning, _missingPackages);
                 break;
             case TexDoctor.TexStatus.NotFound:
                 ErrorBox.Visibility = Visibility.Visible;

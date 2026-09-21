@@ -1096,5 +1096,23 @@ namespace Interface.Resources {
                 return ResourceManager.GetString("Task_Select", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing LaTeX package(s) found: &apos;#PACKAGES#&apos;. Please install (them|it) before exporting a file..
+        /// </summary>
+        public static string Tex_MissingPackages {
+            get {
+                return ResourceManager.GetString("Tex_MissingPackages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!.
+        /// </summary>
+        public static string Tex_NoInstall {
+            get {
+                return ResourceManager.GetString("Tex_NoInstall", resourceCulture);
+            }
+        }
     }
 }

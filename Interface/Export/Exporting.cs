@@ -1,14 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Windows;
 using Storage.Sheet;
 using Storage.Task;
+using static Interface.Formatting.Subject;
 using static Storage.Sheet.SheetTreeInfo;
 
 namespace Interface.Export;
 
-internal static partial class Exporting
+internal static class Exporting
 {
     internal enum TreeSafetyResult
     {
@@ -46,7 +46,7 @@ internal static partial class Exporting
                 => Resources.Lang.ExportError_NonConst,
             _ => throw new UnreachableException("IsTreeSafe"),
         };
-        messageBoxErrorMessage = FormatString(messageBoxErrorMessage);
+        messageBoxErrorMessage = FormatString(messageBoxErrorMessage, Singular);
 
         var messageBoxImage = diag switch
         {
@@ -84,7 +84,7 @@ internal static partial class Exporting
         foreach (var (issue, offender) in issues.OrderBy(kv => (int)kv.Key))
         {
             var (message, image) = issueMessages[issue];
-            var subject = (offender.Count == 1) ? Subject.Singular : Subject.Plural;
+            var subject = Formatting.CountableToSubject(offender);
             message = FormatString(message, subject, GetOffendersAsString(offender));
             var buttons = (image == MessageBoxImage.Error) ? MessageBoxButton.OK : MessageBoxButton.YesNo;
             var buttonPressed = MessageBox.Show(message, Resources.Lang.Common_Error, buttons, image);
@@ -94,28 +94,12 @@ internal static partial class Exporting
         return TreeSafetyResult.Allowed;
     }
 
-    enum Subject
-    {
-        Singular,
-        Plural,
-    }
-    
-    [GeneratedRegex(@"\((.*?)(?:\|(.*?))?\)", RegexOptions.Compiled)]
-    private static partial Regex SubjectRegex();
-
     /// Does string formatting for message boxes.
-    /// Replaces combined forms: 'ha(ve|s)' with proper forms: 'has or have'.
-    /// Also replaces specific strings like '#ERR#' and '#MAX#'
-    private static string FormatString(string src, Subject subject = Subject.Singular, string err = "")
+    /// Replaces combined forms and also replaces specific placeholders like '#ERR#' and '#MAX#'
+    private static string FormatString(string src, Formatting.Subject subject, string err = "")
     {
         src = src.Replace("#MAX#", MaximumNumberOfQuestions.ToString()).Replace("#ERR#", err);
-        var regex = SubjectRegex();
-        foreach (Match match in regex.Matches(src))
-        {
-            var plural = match.Groups[1].Value;
-            var singular = (match.Groups.Count > 1) ? match.Groups[2].Value : "";
-            src = src.Replace(match.Value, (subject == Subject.Plural) ? plural : singular);
-        }
+        src = Formatting.FormatPlurality(src, subject);
         return src;
     }
 

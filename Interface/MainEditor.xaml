@@ -37,11 +37,11 @@
                      Name="TexStatusProgressBar"/>
         <Border Grid.Row="1" Margin="2, 0, 2, 2" Background="#FFD" BorderBrush="#CC0"
                 BorderThickness="1,1,1,1" Name="WarningBox" Visibility="Collapsed">
-            <Label Content="Missing LaTeX packages found: ''. Please install them before exporting a file." Name="WarningLabel"/>
+            <Label Content="Missing Packages Text Placeholder. If you can see this, an issue occured." Name="WarningLabel"/>
         </Border>
         <Border Grid.Row="1" Margin="2, 0, 2, 2" Background="#FDD" BorderBrush="#C00"
                 BorderThickness="1,1,1,1" Name="ErrorBox" Visibility="Collapsed">
-            <Label Content="Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!" Name="ErrorLabel"/>
+            <Label Content="{x:Static res:Lang.Tex_NoInstall}"/>
         </Border>
     </Grid>
 </UserControl>
