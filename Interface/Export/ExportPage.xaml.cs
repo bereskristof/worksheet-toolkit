@@ -300,13 +300,27 @@ public partial class ExportPage : INotifyPropertyChanged
     }
 
     private void ShuffleOrder_OnSelected(object sender, RoutedEventArgs e)
-        => _shuffleMode = ShuffleMode.Yes;
+        => SetShuffleMode(ShuffleMode.Yes);
 
     private void KeepOrder_OnSelected(object sender, RoutedEventArgs e)
-        => _shuffleMode = ShuffleMode.No;
+        => SetShuffleMode(ShuffleMode.No);
     
     private void SmartShuffle_OnSelected(object sender, RoutedEventArgs e)
-        => _shuffleMode = ShuffleMode.Smart;
+        => SetShuffleMode(ShuffleMode.Smart);
+
+    private void SetShuffleMode(ShuffleMode mode)
+    {
+        _shuffleMode = mode;
+        if (ExceptionList == null)
+            return;
+        var visibility = mode switch
+        {
+            ShuffleMode.Smart => Visibility.Visible,
+            _ => Visibility.Collapsed,
+        };
+        ExceptionLabel.Visibility = visibility;
+        ExceptionList.Visibility = visibility;
+    }
     
     private void GetShuffleVars(out bool shuffle, out string[] shuffleExclusions)
     {

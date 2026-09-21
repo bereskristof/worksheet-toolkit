@@ -51,11 +51,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Margin="0, 3, 0, 0" Name="ExportBox"/>
-                <Button Grid.Column="1" Margin="3, 3, 0, 0" Content="{x:Static res:Lang.Export_Browse}" Padding="3, 0" Click="BrowseButton_OnClick"/> <!-- Localize -->
+                <Button Grid.Column="1" Margin="3, 3, 0, 0" Content="{x:Static res:Lang.Export_Browse}" Padding="3, 0" Click="BrowseButton_OnClick"/>
             </Grid>
             <Button Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Content="{x:Static res:Lang.Export_Export}" Margin="0, 3, 0, 0" Click="ExportButton_OnClick"/>
-            <Label Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Content="{x:Static res:Lang.Export_Exceptions}" Padding="0" Margin="0, 3, 3, 0"/>
-            <TextBox Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" Margin="0, 3, 0, 0" AcceptsReturn="True" Name="ExceptionList" TextChanged="ExceptionList_OnTextChanged"/>
+            <Label Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Content="{x:Static res:Lang.Export_Exceptions}" Name="ExceptionLabel" Padding="0" Margin="0, 3, 3, 0"/>
+            <TextBox Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" Margin="0, 3, 0, 0" AcceptsReturn="True" Name="ExceptionList" TextChanged="ExceptionList_OnTextChanged" IsEnabled="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Margin="3,0,3,0" />
         <Grid Grid.Column="2">
