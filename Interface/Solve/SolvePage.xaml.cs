@@ -55,7 +55,8 @@ public partial class SolvePage
         {
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToSheetCsv(i, locale));
-            var sb = GetStringFromDualStringBuilders(stringLines);
+            var maxTaskCount = _csvBuffer.Select((v, _) => v.Results.Length).Max();
+            var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskCount));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -67,6 +68,7 @@ public partial class SolvePage
 
     private void ExportStats_OnClick(object sender, RoutedEventArgs e)
     {
+        // TODO: This only works in cases where every test has the exact same tasks, just shuffled.
         var exportPath = GetSavePath(Interface.Resources.Lang.Browse_SolveExportTitle);
         if (string.IsNullOrEmpty(exportPath)) 
             return;
@@ -74,7 +76,9 @@ public partial class SolvePage
         {
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToTaskCsv(i, locale));
-            var sb = GetStringFromDualStringBuilders(stringLines);
+            var maxTaskIndex = _csvBuffer.Select((v, _) =>
+                v.Results.Select(q => q.TaskIndex).Where(i => i is not null).Select(i => (int)i!).Max()).Max();
+            var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskIndex));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -84,9 +88,9 @@ public partial class SolvePage
         }
     }
     
-    private StringBuilder GetStringFromDualStringBuilders(IEnumerable<DualAutoSeparatedStringBuilder> stringLines)
+    private StringBuilder GetStringFromDualStringBuilders(IEnumerable<DualAutoSeparatedStringBuilder> stringLines, string header)
     {
-        var text = new StringBuilder();
+        var text = new StringBuilder().Append(header);
         foreach (var line in stringLines)
         {
             text.Append(line);
@@ -96,6 +100,23 @@ public partial class SolvePage
             }
         }
         return text;
+    }
+
+    /// Return the header for the specified number of tasks.
+    private static string GetCsvHeader(LocaleSpecifics locale, int taskCount)
+    {
+        var sb = new StringBuilder();
+        var sep = locale.ListSeparator;
+        sb.Append(Interface.Resources.Lang.Export_HeaderPage).Append(sep)
+            .Append(Interface.Resources.Lang.Export_HeaderNeptun).Append(sep)
+            .Append(Interface.Resources.Lang.Export_HeaderTotal).Append(sep)
+            .Append(Interface.Resources.Lang.Export_HeaderSuccess);
+        var taskTemplate = Interface.Resources.Lang.Export_HeaderTask;
+        foreach (var taskNum in Enumerable.Range(0, taskCount))
+        {
+            sb.Append(sep).Append(taskTemplate.Replace("#NUM#", (taskNum + 1).ToString()));
+        }
+        return sb.Append('\n').ToString();
     }
     
     private static string GetLoadPath(string title)

@@ -231,6 +231,51 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Neptun.
+        /// </summary>
+        public static string Export_HeaderNeptun {
+            get {
+                return ResourceManager.GetString("Export_HeaderNeptun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page.
+        /// </summary>
+        public static string Export_HeaderPage {
+            get {
+                return ResourceManager.GetString("Export_HeaderPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Result.
+        /// </summary>
+        public static string Export_HeaderSuccess {
+            get {
+                return ResourceManager.GetString("Export_HeaderSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task #NUM#.
+        /// </summary>
+        public static string Export_HeaderTask {
+            get {
+                return ResourceManager.GetString("Export_HeaderTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Points.
+        /// </summary>
+        public static string Export_HeaderTotal {
+            get {
+                return ResourceManager.GetString("Export_HeaderTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High.
         /// </summary>
         public static string Export_High {

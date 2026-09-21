@@ -378,4 +378,19 @@ Continue anyway?</value>
     <data name="Tex_NoInstall" xml:space="preserve">
         <value>Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!</value>
     </data>
+    <data name="Export_HeaderPage" xml:space="preserve">
+        <value>Page</value>
+    </data>
+    <data name="Export_HeaderNeptun" xml:space="preserve">
+        <value>Neptun</value>
+    </data>
+    <data name="Export_HeaderTotal" xml:space="preserve">
+        <value>Total Points</value>
+    </data>
+    <data name="Export_HeaderSuccess" xml:space="preserve">
+        <value>Result</value>
+    </data>
+    <data name="Export_HeaderTask" xml:space="preserve">
+        <value>Task #NUM#</value>
+    </data>
 </root>
