@@ -594,6 +594,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string MenuTabs_Settings {
+            get {
+                return ResourceManager.GetString("MenuTabs_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sheets.
         /// </summary>
         public static string MenuTabs_Sheets {
@@ -738,6 +747,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string Password_SettingsButton {
+            get {
+                return ResourceManager.GetString("Password_SettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New database created successfully..
         /// </summary>
         public static string PasswordResult_CreatedSuccess {
@@ -779,6 +797,78 @@ namespace Interface.Resources {
         public static string PasswordResult_InvalidPath {
             get {
                 return ResourceManager.GetString("PasswordResult_InvalidPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable CSV headers.
+        /// </summary>
+        public static string Settings_CsvHeaders {
+            get {
+                return ResourceManager.GetString("Settings_CsvHeaders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CSV locale:.
+        /// </summary>
+        public static string Settings_CsvLocale {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string Settings_CsvLocaleEng {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleEng", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hungarian.
+        /// </summary>
+        public static string Settings_CsvLocaleHun {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleHun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language based.
+        /// </summary>
+        public static string Settings_CsvLocaleLang {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleLang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Locale based.
+        /// </summary>
+        public static string Settings_CsvLocaleLoc {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleLoc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language:.
+        /// </summary>
+        public static string Settings_Language {
+            get {
+                return ResourceManager.GetString("Settings_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PdfLaTeX path:.
+        /// </summary>
+        public static string Settings_TexPath {
+            get {
+                return ResourceManager.GetString("Settings_TexPath", resourceCulture);
             }
         }
         

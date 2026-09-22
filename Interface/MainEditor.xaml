@@ -30,7 +30,7 @@
             <TabItem Header="{x:Static res:Lang.MenuTabs_Correct}">
                 <solve:SolvePage/>
             </TabItem>
-            <TabItem Header="::Settings::">
+            <TabItem Header="{x:Static res:Lang.MenuTabs_Settings}">
                 <settings:SettingsPage/>
             </TabItem>
             <TabItem Header="{x:Static res:Lang.MenuTabs_About}">

@@ -386,4 +386,34 @@ Folytatja ennek ellenére?</value>
     <data name="Export_HeaderTask" xml:space="preserve">
         <value>#NUM#. Feladat</value>
     </data>
+    <data name="Settings_Language" xml:space="preserve">
+        <value>Nyelv:</value>
+    </data>
+    <data name="Settings_TexPath" xml:space="preserve">
+        <value>PdfLaTeX útvonal:</value>
+    </data>
+    <data name="Settings_CsvLocale" xml:space="preserve">
+        <value>CSV formázás:</value>
+    </data>
+    <data name="Password_SettingsButton" xml:space="preserve">
+        <value>Beállítások</value>
+    </data>
+    <data name="Settings_CsvHeaders" xml:space="preserve">
+        <value>CSV fejlécek bekapcsolása</value>
+    </data>
+    <data name="Settings_CsvLocaleLang" xml:space="preserve">
+        <value>Program nyelve alapján</value>
+    </data>
+    <data name="Settings_CsvLocaleLoc" xml:space="preserve">
+        <value>Rendszer nyelve alapján</value>
+    </data>
+    <data name="Settings_CsvLocaleEng" xml:space="preserve">
+        <value>Angol</value>
+    </data>
+    <data name="Settings_CsvLocaleHun" xml:space="preserve">
+        <value>Magyar</value>
+    </data>
+    <data name="MenuTabs_Settings" xml:space="preserve">
+        <value>Beállítások</value>
+    </data>
 </root>
