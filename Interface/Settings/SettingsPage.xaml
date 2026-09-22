@@ -19,19 +19,19 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Padding="0" Content="{x:Static res:Lang.Settings_Language}"/>
-        <ComboBox Grid.Column="1" Grid.Row="0" Padding="3, 0">
-            <ComboBoxItem Content="English" IsSelected="True"/>
-            <ComboBoxItem Content="Magyar"/>
+        <ComboBox Grid.Column="1" Grid.Row="0" Padding="3, 0" Name="LanguageDropdown">
+            <ComboBoxItem Content="English" Name="LanguageDropdownEn" IsSelected="True"/>
+            <ComboBoxItem Content="Magyar" Name="LanguageDropdownHu"/>
         </ComboBox>
         <Label Grid.Column="0" Grid.Row="1" Padding="0" Margin="0, 3, 3, 0" Content="{x:Static res:Lang.Settings_TexPath}"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Margin="0, 3, 0, 0"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="0, 3, 0, 0" IsEnabled="False"/>
         <Label Grid.Column="0" Grid.Row="2" Padding="0" Margin="0, 3, 3, 0" Content="{x:Static res:Lang.Settings_CsvLocale}"/>
-        <ComboBox Grid.Column="1" Grid.Row="2" Padding="3, 0" Margin="0, 3, 0, 0">
+        <ComboBox Grid.Column="1" Grid.Row="2" Padding="3, 0" Margin="0, 3, 0, 0"  IsEnabled="False">
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLang}" IsSelected="True"/>
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLoc}"/>
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleEng}"/>
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleHun}"/>
         </ComboBox>
-        <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 3, 0, 0" Content="{x:Static res:Lang.Settings_CsvHeaders}" IsChecked="True"/>
+        <CheckBox IsEnabled="False" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 3, 0, 0" Content="{x:Static res:Lang.Settings_CsvHeaders}" IsChecked="True"/>
     </Grid>
 </UserControl>

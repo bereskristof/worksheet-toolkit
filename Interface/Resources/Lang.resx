@@ -423,4 +423,11 @@ Continue anyway?</value>
     <data name="MenuTabs_Settings" xml:space="preserve">
         <value>Settings</value>
     </data>
+    <data name="Settings_LanguageChangeRestart" xml:space="preserve">
+        <value>Changing the language requires the program to restart.
+Would you like to restart the program now?</value>
+    </data>
+    <data name="Settings_RestartRequired" xml:space="preserve">
+        <value>Restart Required</value>
+    </data>
 </root>

@@ -864,6 +864,25 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing the language requires the program to restart.
+        ///Would you like to restart the program now?.
+        /// </summary>
+        public static string Settings_LanguageChangeRestart {
+            get {
+                return ResourceManager.GetString("Settings_LanguageChangeRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart Required.
+        /// </summary>
+        public static string Settings_RestartRequired {
+            get {
+                return ResourceManager.GetString("Settings_RestartRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PdfLaTeX path:.
         /// </summary>
         public static string Settings_TexPath {

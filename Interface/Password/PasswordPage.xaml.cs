@@ -192,21 +192,6 @@ public partial class PasswordPage
         return defaultPath;
     }
 
-    private void LanguageEnglish_Selected(object sender, RoutedEventArgs e) 
-        => ChangeLanguage("en-US");
-
-    private void LanguageHungarian_Selected(object sender, RoutedEventArgs e) 
-        => ChangeLanguage("hu-HU");
-
-    private static void ChangeLanguage(string newCulture)
-    {
-        var key = Registry.CurrentUser.CreateSubKey(Interface.Resources.RegistryNames.KeyPath, RegistryKeyPermissionCheck.ReadWriteSubTree);
-        key.SetValue(Interface.Resources.RegistryNames.ValueLocale, newCulture);
-        
-        System.Diagnostics.Process.Start(Environment.ProcessPath ?? throw new InvalidOperationException());
-        Application.Current.Shutdown();
-    }
-
     /// Toggle settings sidebar visibility
     private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
     {
