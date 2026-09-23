@@ -5,6 +5,8 @@ namespace Storage;
 
 public static class TexDoctor
 {
+    public static string TexDirectory = string.Empty;
+    
     private const string RequiredClass = "exam";
     private static readonly ImmutableArray<string> RequiredPackages =
     [
@@ -29,25 +31,26 @@ public static class TexDoctor
         NotFound,
     }
 
-    public static TexStatus VerifyTexInstallation(out string[] missingPackages)
+    public static TexStatus VerifyTexInstallation(out string[] missingPackages, string backupPath)
     {
         missingPackages = [];
-        var path = FindValidPdfLatexPath();
+        var path = FindValidPdfLatexPath(backupPath);
         if (path == null) return TexStatus.NotFound;
+        TexDirectory = Path.GetDirectoryName(path) ?? string.Empty;
+        Console.WriteLine(TexDirectory);
         missingPackages = GetMissingPackages();
         if (missingPackages.Length == 0) return TexStatus.Operational;
         _missingPackageCache = missingPackages;
         return TexStatus.MissingPackages;
     }
     
-    private static string? FindValidPdfLatexPath()
+    private static string? FindValidPdfLatexPath(string backupPath)
     {
         var isPdfLatexInPath = CallPdfLatex("pdflatex");
         if (isPdfLatexInPath) return "pdflatex";
-        var manualPath = GetPdfLatexFromFile();
-        if (manualPath == "") return null;
-        var isPdfLatexInCustomPath = CallPdfLatex(manualPath);
-        return !isPdfLatexInCustomPath ? null : manualPath;
+        if (backupPath == "") return null;
+        var isPdfLatexInCustomPath = CallPdfLatex(backupPath);
+        return !isPdfLatexInCustomPath ? null : backupPath;
     }
 
     private static string[] GetMissingPackages()
@@ -88,7 +91,7 @@ public static class TexDoctor
     private static bool CallKpsewhich(string packageName)
     {
         var process = new Process();
-        process.StartInfo = new ProcessStartInfo("kpsewhich", packageName)
+        process.StartInfo = new ProcessStartInfo(GetTexPath("kpsewhich"), packageName)
             { CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
         process.Start();
         var output = process.StandardOutput.ReadToEnd();
@@ -96,19 +99,6 @@ public static class TexDoctor
         return finished && process.ExitCode == 0 && !string.IsNullOrEmpty(output);
     }
 
-    private static string GetPdfLatexFromFile()
-    {
-        string exePath = AppDomain.CurrentDomain.BaseDirectory;
-        string filePath = Path.Combine(exePath, "pdflatex-path.txt");
-        string content;
-        try
-        {
-            content = File.ReadAllText(filePath);
-        }
-        catch (Exception)
-        {
-            content = string.Empty;
-        }
-        return content.Trim();
-    }
+    public static string GetTexPath(string toolName)
+        => Path.Join(TexDirectory, toolName);
 }

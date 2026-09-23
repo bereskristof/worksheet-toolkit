@@ -80,9 +80,6 @@
     <data name="Setup_Title" xml:space="preserve">
         <value>Új adatbázis létrehozása</value>
     </data>
-    <data name="Setup_Browse" xml:space="preserve">
-        <value>Tallózás</value>
-    </data>
     <data name="Import_File" xml:space="preserve">
         <value>Útvonal:</value>
     </data>
@@ -91,9 +88,6 @@
     </data>
     <data name="Import_Title" xml:space="preserve">
         <value>Meglévő adatbázis importálása</value>
-    </data>
-    <data name="Import_Browse" xml:space="preserve">
-        <value>Tallózás</value>
     </data>
     <data name="PasswordResult_InvalidPath" xml:space="preserve">
         <value>Az útvonal nem lehet üres.</value>
@@ -220,9 +214,6 @@
     </data>
     <data name="Export_Path" xml:space="preserve">
         <value>Kiadási útvonal:</value>
-    </data>
-    <data name="Export_Browse" xml:space="preserve">
-        <value>Tallózás</value>
     </data>
     <data name="Common_Error" xml:space="preserve">
         <value>Hiba</value>
@@ -369,7 +360,7 @@ Folytatja ennek ellenére?</value>
         <value>(Néhány s|S)zükséges LaTeX csomag hiányzik: '#PACKAGES#'. Telepítsd a csomago(ka)t mielőtt exportálsz egy fájlt.</value>
     </data>
     <data name="Tex_NoInstall" xml:space="preserve">
-        <value>A Pdflatex nem érhető el. készítsen egy pdflatex-path.txt fájlt, hogy beállítsa!</value>
+        <value>A Pdflatex nem érhető el. Használja a beállításokat, hogy megadja!</value>
     </data>
     <data name="Export_HeaderNeptun" xml:space="preserve">
         <value>Neptun</value>
@@ -422,5 +413,14 @@ Szeretné a programot most újraindítani?</value>
     </data>
     <data name="Settings_RestartRequired" xml:space="preserve">
         <value>Újraindítás szükséges</value>
+    </data>
+    <data name="Common_Browse" xml:space="preserve">
+        <value>Tallózás</value>
+    </data>
+    <data name="Browse_FindTexTitle" xml:space="preserve">
+        <value>PdfLaTeX útvonalának kiválasztása</value>
+    </data>
+    <data name="Export_TexInaccessible" xml:space="preserve">
+        <value>PdfLaTeX nem érhető el.</value>
     </data>
 </root>

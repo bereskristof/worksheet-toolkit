@@ -1,10 +1,8 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Storage;
 using Storage.Sheet;
-using static Storage.Sheet.SheetTreeInfo;
 using WorkArgsInner = System.Tuple<string, bool, string[]>;
 using WorkArgs = System.Tuple<string, Storage.Sheet.SelectorNode, byte, uint, string, string, System.Tuple<string, bool, string[]>>;
 
@@ -106,13 +104,21 @@ public partial class ExportingWindow
         _backgroundWorker.ReportProgress((int)examCount);
         MultiExamBuilder.EndManualAdding(latexBuilder);
         
-        var exportPath = MultiExamBuilder.TryExportPdf(latexBuilder, out var success, out var errorMessage);
+        var result = MultiExamBuilder.TryExportPdf(latexBuilder);
+        var success = result.Result == PdfExportResult.Results.Success;
         if (success)
         {
+            var exportPath = result.Message;
             File.Move(exportPath, target, true);
+            MultiExamBuilder.CleanUp(exportPath);
         }
-        MultiExamBuilder.CleanUp(exportPath);
-        e.Result = success ? null : errorMessage;
+        e.Result = result.Result switch
+        {
+            PdfExportResult.Results.Success => null,
+            PdfExportResult.Results.ExecutableInaccessible => Interface.Resources.Lang.Export_TexInaccessible,
+            PdfExportResult.Results.ErrorWithMessage => result.Message,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
     }
 
     private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)

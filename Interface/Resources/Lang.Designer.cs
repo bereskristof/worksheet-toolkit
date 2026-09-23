@@ -87,6 +87,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the path for PdfLaTeX.
+        /// </summary>
+        public static string Browse_FindTexTitle {
+            get {
+                return ResourceManager.GetString("Browse_FindTexTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attach image to question.
         /// </summary>
         public static string Browse_ImageImportTitle {
@@ -119,6 +128,15 @@ namespace Interface.Resources {
         public static string Browse_SolveImportTitle {
             get {
                 return ResourceManager.GetString("Browse_SolveImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        public static string Common_Browse {
+            get {
+                return ResourceManager.GetString("Common_Browse", resourceCulture);
             }
         }
         
@@ -173,15 +191,6 @@ namespace Interface.Resources {
         public static string Export_Author {
             get {
                 return ResourceManager.GetString("Export_Author", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Export_Browse {
-            get {
-                return ResourceManager.GetString("Export_Browse", resourceCulture);
             }
         }
         
@@ -375,6 +384,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PdfLaTeX is inaccessible..
+        /// </summary>
+        public static string Export_TexInaccessible {
+            get {
+                return ResourceManager.GetString("Export_TexInaccessible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title:.
         /// </summary>
         public static string Export_Title {
@@ -527,15 +545,6 @@ namespace Interface.Resources {
         public static string ExportPopup_Exporting {
             get {
                 return ResourceManager.GetString("ExportPopup_Exporting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Import_Browse {
-            get {
-                return ResourceManager.GetString("Import_Browse", resourceCulture);
             }
         }
         
@@ -901,15 +910,6 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Setup_Browse {
-            get {
-                return ResourceManager.GetString("Setup_Browse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string Setup_Confirm {
@@ -1261,7 +1261,7 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!.
+        ///   Looks up a localized string similar to Pdflatex is unreachable, use settings to set the path manually!.
         /// </summary>
         public static string Tex_NoInstall {
             get {

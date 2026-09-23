@@ -29,6 +29,10 @@ public static class SettingsManager
     
     private const string KeyPath = @"SOFTWARE\WorksheetToolkit";
     private const string ProgramLocaleKey = "ProgramLocale";
+    private const string TexPathKey = "TexPath";
+
+    /// Used to avoid needlessly updating the registry multiple times.
+    private static string TexPathUpdateCache = string.Empty;
 
     private static readonly RegistryKey Key =
         Registry.CurrentUser.OpenSubKey(KeyPath, RegistryKeyPermissionCheck.ReadWriteSubTree) ??
@@ -55,11 +59,28 @@ public static class SettingsManager
     }
     
     /// Set the programs' language.
-    /// This is saved in the registry.
     internal static void SetLanguage(Language newLanguage)
     {
         var newLanguageName = newLanguage.ToCultureName();
         Key.SetValue(ProgramLocaleKey, newLanguageName);
         Log.Write($"Culture set in registry: {newLanguageName}");
+    }
+
+    /// Get the currently set path for LaTeX binaries.
+    internal static string? GetTexPath()
+    {
+        var texPath = Key.GetValue(TexPathKey) as string;
+        TexPathUpdateCache = texPath ?? string.Empty;
+        Log.Write($"Tex path obtained: {texPath}");
+        return texPath;
+    }
+
+    /// Set the LaTeX path to search if PATH fails.
+    internal static void SetTexPath(string texPath)
+    {
+        if (TexPathUpdateCache == texPath)
+            return;
+        Key.SetValue(TexPathKey, texPath);
+        Log.Write($"Tex path set in registry: {texPath}");
     }
 }

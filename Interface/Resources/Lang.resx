@@ -87,9 +87,6 @@
     <data name="Setup_Title" xml:space="preserve">
         <value>Create a new Database</value>
     </data>
-    <data name="Setup_Browse" xml:space="preserve">
-        <value>Browse</value>
-    </data>
     <data name="Import_Title" xml:space="preserve">
         <value>Import an existing Database</value>
     </data>
@@ -98,9 +95,6 @@
     </data>
     <data name="Import_File" xml:space="preserve">
         <value>Path:</value>
-    </data>
-    <data name="Import_Browse" xml:space="preserve">
-        <value>Browse</value>
     </data>
     <data name="PasswordResult_InvalidPath" xml:space="preserve">
         <value>The path may not be empty.</value>
@@ -227,9 +221,6 @@
     </data>
     <data name="Export_Path" xml:space="preserve">
         <value>Export path:</value>
-    </data>
-    <data name="Export_Browse" xml:space="preserve">
-        <value>Browse</value>
     </data>
     <data name="Common_Error" xml:space="preserve">
         <value>Error</value>
@@ -376,7 +367,7 @@ Continue anyway?</value>
         <value>Missing LaTeX package(s) found: '#PACKAGES#'. Please install (them|it) before exporting a file.</value>
     </data>
     <data name="Tex_NoInstall" xml:space="preserve">
-        <value>Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!</value>
+        <value>Pdflatex is unreachable, use settings to set the path manually!</value>
     </data>
     <data name="Export_HeaderPage" xml:space="preserve">
         <value>Page</value>
@@ -429,5 +420,14 @@ Would you like to restart the program now?</value>
     </data>
     <data name="Settings_RestartRequired" xml:space="preserve">
         <value>Restart Required</value>
+    </data>
+    <data name="Common_Browse" xml:space="preserve">
+        <value>Browse</value>
+    </data>
+    <data name="Browse_FindTexTitle" xml:space="preserve">
+        <value>Select the path for PdfLaTeX</value>
+    </data>
+    <data name="Export_TexInaccessible" xml:space="preserve">
+        <value>PdfLaTeX is inaccessible.</value>
     </data>
 </root>

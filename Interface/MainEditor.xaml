@@ -31,7 +31,7 @@
                 <solve:SolvePage/>
             </TabItem>
             <TabItem Header="{x:Static res:Lang.MenuTabs_Settings}">
-                <settings:SettingsPage/>
+                <settings:SettingsPage TexPathWasUpdated="SettingsPage_OnTexPathWasUpdated"/>
             </TabItem>
             <TabItem Header="{x:Static res:Lang.MenuTabs_About}">
                 <about:About/>
