@@ -28,7 +28,8 @@
                       AutoGenerateColumns="False" IsReadOnly="True"
                       SelectionChanged="TaskList_OnSelectionChanged" GridLinesVisibility="None" SelectionMode="Single"
                       HorizontalScrollBarVisibility="Disabled"
-                      BorderThickness="0" Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0">
+                      BorderThickness="0" Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0"
+                      KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
                 <!-- Styling -->
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />

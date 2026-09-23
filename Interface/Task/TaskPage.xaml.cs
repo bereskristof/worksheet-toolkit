@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Storage.Task;
@@ -154,5 +155,10 @@ public partial class TaskPage
         };
         
         return openDialog.ShowDialog() == true ? Path.GetFullPath(openDialog.FileName) : string.Empty;
+    }
+
+    private void TaskList_OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        TaskList.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
     }
 }
