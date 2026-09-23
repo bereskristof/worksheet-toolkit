@@ -9,7 +9,8 @@ namespace Interface.Settings;
 
 public partial class SettingsPage
 {
-    /// Sent when a new 
+    /// Sent when a new PdfLaTeX path is set.
+    /// Used to recheck if it is accessible on text change.
     public event EventHandler? TexPathWasUpdated;
     
     public SettingsPage()
@@ -17,6 +18,7 @@ public partial class SettingsPage
         InitializeComponent();
         InitializeLanguageDropdown();
         InitializeTexPathBox();
+        InitializeCsvFields();
     }
 
     /// Initialize the language dropdown, setting its value to the programs current language,
@@ -31,6 +33,11 @@ public partial class SettingsPage
     private void InitializeTexPathBox()
     {
         TexPath.Text = SettingsManager.GetTexPath() ?? string.Empty;
+    }
+
+    private void InitializeCsvFields()
+    {
+        CsvHeaderCheck.IsChecked = SettingsManager.GetCsvHeaders();
     }
     
     private static void SetLanguageToEnglish(object sender, RoutedEventArgs e) 
@@ -87,5 +94,12 @@ public partial class SettingsPage
         var newPath = TexPath.Text;
         SettingsManager.SetTexPath(newPath);
         TexPathWasUpdated?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// Csv header checkbox was changed.
+    private void CsvHeaderCheck_OnClick(object sender, RoutedEventArgs e)
+    {
+        var isEnabled = CsvHeaderCheck.IsChecked ?? false;
+        SettingsManager.SetCsvHeaders(isEnabled);
     }
 }

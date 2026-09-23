@@ -30,9 +30,10 @@ public static class SettingsManager
     private const string KeyPath = @"SOFTWARE\WorksheetToolkit";
     private const string ProgramLocaleKey = "ProgramLocale";
     private const string TexPathKey = "TexPath";
+    private const string CsvHeadersKey = "CsvHeaders";
 
     /// Used to avoid needlessly updating the registry multiple times.
-    private static string TexPathUpdateCache = string.Empty;
+    private static string _texPathUpdateCache = string.Empty;
 
     private static readonly RegistryKey Key =
         Registry.CurrentUser.OpenSubKey(KeyPath, RegistryKeyPermissionCheck.ReadWriteSubTree) ??
@@ -70,7 +71,7 @@ public static class SettingsManager
     internal static string? GetTexPath()
     {
         var texPath = Key.GetValue(TexPathKey) as string;
-        TexPathUpdateCache = texPath ?? string.Empty;
+        _texPathUpdateCache = texPath ?? string.Empty;
         Log.Write($"Tex path obtained: {texPath}");
         return texPath;
     }
@@ -78,9 +79,25 @@ public static class SettingsManager
     /// Set the LaTeX path to search if PATH fails.
     internal static void SetTexPath(string texPath)
     {
-        if (TexPathUpdateCache == texPath)
+        if (_texPathUpdateCache == texPath)
             return;
         Key.SetValue(TexPathKey, texPath);
         Log.Write($"Tex path set in registry: {texPath}");
+    }
+
+    /// Get whether headers are enabled for CSV exports.
+    internal static bool GetCsvHeaders()
+    {
+        var def = Convert.ToInt32(true);
+        var isEnabled = Convert.ToBoolean(Key.GetValue(CsvHeadersKey) as int? ?? def);
+        Log.Write($"Csv header settings obtained: {isEnabled}");
+        return isEnabled;
+    }
+
+    /// Set whether headers are enabled for CSV exports.
+    internal static void SetCsvHeaders(bool isEnabled)
+    {
+        Key.SetValue(CsvHeadersKey, Convert.ToInt32(isEnabled));
+        Log.Write($"Csv headers set in registry: {isEnabled}");
     }
 }

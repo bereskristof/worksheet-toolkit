@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Docnet.Core.Models;
 using Docnet.Core.Readers;
+using Interface.Settings;
 using Microsoft.Win32;
 using OpenCvSharp;
 using Scanner;
@@ -105,6 +106,9 @@ public partial class SolvePage
     /// Return the header for the specified number of tasks.
     private static string GetCsvHeader(LocaleSpecifics locale, int taskCount)
     {
+        if (!SettingsManager.GetCsvHeaders())
+            return string.Empty;
+        
         var sb = new StringBuilder();
         var sep = locale.ListSeparator;
         sb.Append(Interface.Resources.Lang.Export_HeaderPage).Append(sep)

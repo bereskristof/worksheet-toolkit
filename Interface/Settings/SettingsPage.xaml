@@ -39,6 +39,6 @@
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleEng}"/>
             <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleHun}"/>
         </ComboBox>
-        <CheckBox IsEnabled="False" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 4, 0, 0" Content="{x:Static res:Lang.Settings_CsvHeaders}" IsChecked="True"/>
+        <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Name="CsvHeaderCheck" Margin="0, 4, 0, 0" Content="{x:Static res:Lang.Settings_CsvHeaders}" IsChecked="True" Click="CsvHeaderCheck_OnClick"/>
     </Grid>
 </UserControl>
