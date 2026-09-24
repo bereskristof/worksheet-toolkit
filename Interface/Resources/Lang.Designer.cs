@@ -87,6 +87,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the path for PdfLaTeX.
+        /// </summary>
+        public static string Browse_FindTexTitle {
+            get {
+                return ResourceManager.GetString("Browse_FindTexTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attach image to question.
         /// </summary>
         public static string Browse_ImageImportTitle {
@@ -119,6 +128,15 @@ namespace Interface.Resources {
         public static string Browse_SolveImportTitle {
             get {
                 return ResourceManager.GetString("Browse_SolveImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        public static string Common_Browse {
+            get {
+                return ResourceManager.GetString("Common_Browse", resourceCulture);
             }
         }
         
@@ -173,15 +191,6 @@ namespace Interface.Resources {
         public static string Export_Author {
             get {
                 return ResourceManager.GetString("Export_Author", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Export_Browse {
-            get {
-                return ResourceManager.GetString("Export_Browse", resourceCulture);
             }
         }
         
@@ -348,6 +357,24 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed.
+        /// </summary>
+        public static string Export_ResultFailure {
+            get {
+                return ResourceManager.GetString("Export_ResultFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successful.
+        /// </summary>
+        public static string Export_ResultSuccess {
+            get {
+                return ResourceManager.GetString("Export_ResultSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shuffle answer order.
         /// </summary>
         public static string Export_Shuffle {
@@ -371,6 +398,15 @@ namespace Interface.Resources {
         public static string Export_Success {
             get {
                 return ResourceManager.GetString("Export_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PdfLaTeX is inaccessible..
+        /// </summary>
+        public static string Export_TexInaccessible {
+            get {
+                return ResourceManager.GetString("Export_TexInaccessible", resourceCulture);
             }
         }
         
@@ -531,15 +567,6 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Import_Browse {
-            get {
-                return ResourceManager.GetString("Import_Browse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string Import_Confirm {
@@ -590,6 +617,15 @@ namespace Interface.Resources {
         public static string MenuTabs_Export {
             get {
                 return ResourceManager.GetString("MenuTabs_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string MenuTabs_Settings {
+            get {
+                return ResourceManager.GetString("MenuTabs_Settings", resourceCulture);
             }
         }
         
@@ -738,6 +774,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string Password_SettingsButton {
+            get {
+                return ResourceManager.GetString("Password_SettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New database created successfully..
         /// </summary>
         public static string PasswordResult_CreatedSuccess {
@@ -783,20 +828,102 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable CSV headers.
+        /// </summary>
+        public static string Settings_CsvHeaders {
+            get {
+                return ResourceManager.GetString("Settings_CsvHeaders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CSV locale:.
+        /// </summary>
+        public static string Settings_CsvLocale {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string Settings_CsvLocaleEng {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleEng", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hungarian.
+        /// </summary>
+        public static string Settings_CsvLocaleHun {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleHun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language based.
+        /// </summary>
+        public static string Settings_CsvLocaleLang {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleLang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Locale based.
+        /// </summary>
+        public static string Settings_CsvLocaleLoc {
+            get {
+                return ResourceManager.GetString("Settings_CsvLocaleLoc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language:.
+        /// </summary>
+        public static string Settings_Language {
+            get {
+                return ResourceManager.GetString("Settings_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing the language requires the program to restart.
+        ///Would you like to restart the program now?.
+        /// </summary>
+        public static string Settings_LanguageChangeRestart {
+            get {
+                return ResourceManager.GetString("Settings_LanguageChangeRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart Required.
+        /// </summary>
+        public static string Settings_RestartRequired {
+            get {
+                return ResourceManager.GetString("Settings_RestartRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PdfLaTeX path:.
+        /// </summary>
+        public static string Settings_TexPath {
+            get {
+                return ResourceManager.GetString("Settings_TexPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Setup_Back {
             get {
                 return ResourceManager.GetString("Setup_Back", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        public static string Setup_Browse {
-            get {
-                return ResourceManager.GetString("Setup_Browse", resourceCulture);
             }
         }
         
@@ -1152,7 +1279,7 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pdflatex is unreachable, use pdflatex-path.txt to set the path manually!.
+        ///   Looks up a localized string similar to Pdflatex is unreachable, use settings to set the path manually!.
         /// </summary>
         public static string Tex_NoInstall {
             get {

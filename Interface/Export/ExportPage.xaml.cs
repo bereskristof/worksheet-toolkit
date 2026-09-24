@@ -172,16 +172,22 @@ public partial class ExportPage : INotifyPropertyChanged
             e.Result = new PreviewTuple(ex.Message, [], 0, 0, "");
             return;
         }
-        var pdfPath = MultiExamBuilder.TryExportPdf(builder, out var success, out var errorMessage);
-        if (!success)
+        var result = MultiExamBuilder.TryExportPdf(builder);
+        switch (result.Result)
         {
-            e.Result = new PreviewTuple(errorMessage, [], 0, 0, pdfPath);
-            return;
+            case PdfExportResult.Results.ExecutableInaccessible:
+                e.Result = new PreviewTuple(Interface.Resources.Lang.Export_TexInaccessible, [], 0, 0, string.Empty);
+                return;
+            case PdfExportResult.Results.ErrorWithMessage:
+                e.Result = new PreviewTuple(result.Message, [], 0, 0, string.Empty);
+                return;
+            case PdfExportResult.Results.Success:
+                break;
         }
         
         // Preview the PDF file
         using var doclib = Docnet.Core.DocLib.Instance;
-        using var reader = doclib.GetDocReader(pdfPath, new PageDimensions(_dimX, _dimY));
+        using var reader = doclib.GetDocReader(result.Message, new PageDimensions(_dimX, _dimY));
 
         var pageCount = reader.GetPageCount();
 
@@ -220,7 +226,7 @@ public partial class ExportPage : INotifyPropertyChanged
             canvasXOffset = int.Max(width + 2, canvasXOffset);
         }
 
-        e.Result = new PreviewTuple(null, pages, canvasYOffset, canvasXOffset, pdfPath);
+        e.Result = new PreviewTuple(null, pages, canvasYOffset, canvasXOffset, result.Message);
     }
 
     private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)

@@ -1,33 +1,48 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using Interface.Settings;
 using Storage;
 
 namespace Interface;
 
 public partial class MainEditor
 {
-    private readonly BackgroundWorker _backgroundWorker = new();
+    private ulong _activeWorkerSerial = 0;
     private string[] _missingPackages = [];
     
     public MainEditor()
     {
         InitializeComponent();
-        _backgroundWorker.DoWork += BackgroundLoader_DoWork;
-        _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
-        _backgroundWorker.RunWorkerAsync();
+        CreateTexCheckWorker();
+    }
+
+    /// Creates a new `BackgroundWorker` to test if PdfLaTeX is accessible and set-up correctly. 
+    private void CreateTexCheckWorker()
+    {
+        _activeWorkerSerial++;
+        BackgroundWorker backgroundWorker = new();
+        backgroundWorker.DoWork += BackgroundLoader_DoWork;
+        backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
+        backgroundWorker.RunWorkerAsync(_activeWorkerSerial);
     }
     
     private void BackgroundLoader_DoWork(object? sender, DoWorkEventArgs e)
     {
-        var latexStatus = TexDoctor.VerifyTexInstallation(out var missingPackages);
+        var latexStatus = TexDoctor.VerifyTexInstallation(out var missingPackages, SettingsManager.GetTexPath() ?? string.Empty);
         _missingPackages = missingPackages;
-        e.Result = latexStatus;
+        ulong mySerial = (ulong)(e.Argument ?? 0);
+        e.Result = (latexStatus, mySerial);
     }
 
     private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
-        var latexStatus = (TexDoctor.TexStatus)(e.Result ?? -1);
+        var (latexStatus, mySerial) = (ValueTuple<TexDoctor.TexStatus, ulong>)(e.Result ?? (-1, 0));
+        if (mySerial != _activeWorkerSerial) // Checking if result became out of date.
+        {
+            Log.Write("TexCheck background worker was out of date.");
+            return;
+        }
         TexStatusProgressBar.Visibility = Visibility.Collapsed;
         switch (latexStatus)
         {
@@ -47,5 +62,13 @@ public partial class MainEditor
                 throw new UnreachableException("VerifyTexInstallation TexStatus outside of enum range.");
         }
 
+    }
+
+    private void SettingsPage_OnTexPathWasUpdated(object? sender, EventArgs e)
+    {
+        TexStatusProgressBar.Visibility = Visibility.Visible;
+        WarningBox.Visibility = Visibility.Collapsed;
+        ErrorBox.Visibility = Visibility.Collapsed;
+        CreateTexCheckWorker();
     }
 }

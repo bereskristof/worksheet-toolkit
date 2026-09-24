@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,9 +18,6 @@ public partial class PasswordPage
         _backgroundLoader.DoWork += BackgroundLoader_DoWork;
         _backgroundLoader.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
         Loaded += Page_Loaded;
-        LanguageComboBox.Text = Equals(Thread.CurrentThread.CurrentCulture, CultureInfo.GetCultureInfo("hu-HU")) ? "Magyar" : "English";
-        LanguageComboBoxEn.Selected += LanguageEnglish_Selected;
-        LanguageComboBoxHu.Selected += LanguageHungarian_Selected;
     }
     
     // Main password page methods
@@ -196,18 +192,14 @@ public partial class PasswordPage
         return defaultPath;
     }
 
-    private void LanguageEnglish_Selected(object sender, RoutedEventArgs e) 
-        => ChangeLanguage("en-US");
-
-    private void LanguageHungarian_Selected(object sender, RoutedEventArgs e) 
-        => ChangeLanguage("hu-HU");
-
-    private static void ChangeLanguage(string newCulture)
+    /// Toggle settings sidebar visibility
+    private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var key = Registry.CurrentUser.CreateSubKey(Interface.Resources.RegistryNames.KeyPath, RegistryKeyPermissionCheck.ReadWriteSubTree);
-        key.SetValue(Interface.Resources.RegistryNames.ValueLocale, newCulture);
-        
-        System.Diagnostics.Process.Start(Environment.ProcessPath ?? throw new InvalidOperationException());
-        Application.Current.Shutdown();
+        var targetVisibility = SettingsBar.Visibility switch
+        {
+            Visibility.Collapsed => Visibility.Visible,
+            _ => Visibility.Collapsed,
+        };
+        SettingsBar.Visibility = targetVisibility;
     }
 }

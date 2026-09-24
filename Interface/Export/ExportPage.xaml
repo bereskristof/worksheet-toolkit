@@ -51,7 +51,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Margin="0, 3, 0, 0" Name="ExportBox"/>
-                <Button Grid.Column="1" Margin="3, 3, 0, 0" Content="{x:Static res:Lang.Export_Browse}" Padding="3, 0" Click="BrowseButton_OnClick"/>
+                <Button Grid.Column="1" Margin="3, 3, 0, 0" Content="{x:Static res:Lang.Common_Browse}" Padding="3, 0" Click="BrowseButton_OnClick"/>
             </Grid>
             <Button Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Content="{x:Static res:Lang.Export_Export}" Margin="0, 3, 0, 0" Click="ExportButton_OnClick"/>
             <Label Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Content="{x:Static res:Lang.Export_Exceptions}" Name="ExceptionLabel" Padding="0" Margin="0, 3, 3, 0"/>

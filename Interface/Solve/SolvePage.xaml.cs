@@ -1,15 +1,13 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Threading;
 using Docnet.Core.Models;
 using Docnet.Core.Readers;
+using Interface.Settings;
 using Microsoft.Win32;
-using OpenCvSharp;
 using Scanner;
 using Storage;
 
@@ -105,6 +103,9 @@ public partial class SolvePage
     /// Return the header for the specified number of tasks.
     private static string GetCsvHeader(LocaleSpecifics locale, int taskCount)
     {
+        if (!SettingsManager.GetCsvHeaders())
+            return string.Empty;
+        
         var sb = new StringBuilder();
         var sep = locale.ListSeparator;
         sb.Append(Interface.Resources.Lang.Export_HeaderPage).Append(sep)
@@ -238,7 +239,7 @@ public partial class SolvePage
         return newResult;
     }
 
-    private static void HandleUnfinishedResults(ref ScanResult result, int i, Docnet.Core.Readers.IDocReader reader)
+    private static void HandleUnfinishedResults(ref ScanResult result, int i, IDocReader reader)
     {
         switch (result.CurrentState)
         {
@@ -266,15 +267,30 @@ public partial class SolvePage
         ExportResultsAltButton.IsEnabled = true;
     }
 
+    /// Return LocaleSpecifics based on the CsvLocale setting.
+    /// NOTE: Locale settings does *not* modify header & success texts, those rely on the program's language.
+    /// Locale exists specifically due to Excel's bullshit, and is not meant to be a separate language setting for exports.
     private static LocaleSpecifics GetLocaleSpecifics()
     {
-        return new LocaleSpecifics()
+        return GetLocaleSpecificsFromCulture(SettingsManager.GetCsvLocale() switch
         {
-            Culture = CultureInfo.CurrentCulture,
-            DecimalPoint = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator,
-            ListSeparator = CultureInfo.CurrentCulture.TextInfo.ListSeparator,
-            SuccessText = "Sikeres", // TODO: Localize
-            FailText = "Sikertelen", // TODO: Localize
+            SettingsManager.CsvLocale.LanguageBased => CultureInfo.CurrentCulture,
+            SettingsManager.CsvLocale.LocaleBased => CultureInfo.InstalledUICulture,
+            SettingsManager.CsvLocale.English => SettingsManager.Language.En.ToCulture(),
+            SettingsManager.CsvLocale.Hungarian => SettingsManager.Language.Hu.ToCulture(),
+            _ => throw new ArgumentOutOfRangeException("", @"GetCsvLocale() returned an unexpected value."),
+        });
+    }
+
+    private static LocaleSpecifics GetLocaleSpecificsFromCulture(CultureInfo culture)
+    {
+        return new LocaleSpecifics
+        {
+            Culture = culture,
+            DecimalPoint = culture.NumberFormat.NumberDecimalSeparator,
+            ListSeparator = culture.TextInfo.ListSeparator,
+            SuccessText = Interface.Resources.Lang.Export_ResultSuccess,
+            FailText = Interface.Resources.Lang.Export_ResultFailure,
         };
     }
 }

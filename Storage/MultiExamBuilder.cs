@@ -1,9 +1,10 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Storage.Sheet;
 using Storage.Task;
-
+using static Storage.PdfExportResult.Results;
 using Skeleton = System.Tuple<long, long, long, System.Guid>;
 using Skeletons = System.Collections.Generic.List<System.Tuple<long, long, long, System.Guid>>;
 
@@ -191,7 +192,7 @@ public static class MultiExamBuilder
         return filename;
     }
 
-    public static string TryExportPdf(LatexBuilder builder, out bool success, out string? errorMessage)
+    public static PdfExportResult TryExportPdf(LatexBuilder builder)
     {
         var batchUuid = Guid.NewGuid();
         var filename = ExportTex(builder, batchUuid);
@@ -203,22 +204,25 @@ public static class MultiExamBuilder
         catch (TimeoutException e)
         {
             Log.Write($"ExportPdf: Failed to export PDF: {e.Message}", Log.Severity.Error);
-            success = false;
-            errorMessage = e.Message;
-            return filename;
+            return new PdfExportResult(ErrorWithMessage, "Timeout export failed: " + e.Message);
+        }
+        catch (Win32Exception e)
+        {
+            Log.Write($"ExportPdf: Failed to export PDF: {e.Message}", Log.Severity.Error);
+            if (e.NativeErrorCode == 2)
+                return new PdfExportResult(ExecutableInaccessible);
+            return new  PdfExportResult(ErrorWithMessage, "Win32 error: " + e.Message);
         }
         var pdfPath = Path.ChangeExtension(filename, ".pdf");
         Log.Write($"ExportPdf: Exported PDF to {pdfPath}");
-        success = true;
-        errorMessage = null;
-        return pdfPath;
+        return new PdfExportResult(Success, pdfPath);
     }
     
     private static void CallPdfLatex(string texPath)
     {
         var process = new Process();
         var flags = $"-halt-on-error -output-directory=\"{Path.GetDirectoryName(texPath)}\" \"{texPath}\"";
-        process.StartInfo = new ProcessStartInfo("pdflatex", flags)
+        process.StartInfo = new ProcessStartInfo(TexDoctor.GetTexPath("pdflatex"), flags)
             { CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
         process.Start();
         var stdout = process.StandardOutput.ReadToEnd(); // Latex very helpfully puts its error messages to stdout, not to stderr
