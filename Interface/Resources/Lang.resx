@@ -430,4 +430,10 @@ Would you like to restart the program now?</value>
     <data name="Export_TexInaccessible" xml:space="preserve">
         <value>PdfLaTeX is inaccessible.</value>
     </data>
+    <data name="Export_ResultSuccess" xml:space="preserve">
+        <value>Successful</value>
+    </data>
+    <data name="Export_ResultFailure" xml:space="preserve">
+        <value>Failed</value>
+    </data>
 </root>

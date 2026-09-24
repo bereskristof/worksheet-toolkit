@@ -357,6 +357,24 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed.
+        /// </summary>
+        public static string Export_ResultFailure {
+            get {
+                return ResourceManager.GetString("Export_ResultFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successful.
+        /// </summary>
+        public static string Export_ResultSuccess {
+            get {
+                return ResourceManager.GetString("Export_ResultSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shuffle answer order.
         /// </summary>
         public static string Export_Shuffle {

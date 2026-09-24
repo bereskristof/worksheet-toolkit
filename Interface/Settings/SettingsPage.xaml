@@ -33,11 +33,11 @@
             <Button Grid.Column="1" Content="{x:Static res:Lang.Common_Browse}" Padding="4, 0" Margin="4, 0, 0, 0" Click="TexBrowse_OnClick"/>
         </Grid>
         <Label Grid.Column="0" Grid.Row="2" Padding="0" Margin="0, 4, 4, 0" Content="{x:Static res:Lang.Settings_CsvLocale}"/>
-        <ComboBox Grid.Column="1" Grid.Row="2" Padding="4, 0" Margin="0, 4, 0, 0"  IsEnabled="False">
-            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLang}" IsSelected="True"/>
-            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLoc}"/>
-            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleEng}"/>
-            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleHun}"/>
+        <ComboBox Grid.Column="1" Grid.Row="2" Padding="4, 0" Margin="0, 4, 0, 0" Name="CsvLocaleDropdown">
+            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLang}" Name="CsvLocaleDropdownLang" IsSelected="True"/>
+            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleLoc}" Name="CsvLocaleDropdownLoc"/>
+            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleEng}" Name="CsvLocaleDropdownEng"/>
+            <ComboBoxItem Content="{x:Static res:Lang.Settings_CsvLocaleHun}"  Name="CsvLocaleDropdownHun"/>
         </ComboBox>
         <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Name="CsvHeaderCheck" Margin="0, 4, 0, 0" Content="{x:Static res:Lang.Settings_CsvHeaders}" IsChecked="True" Click="CsvHeaderCheck_OnClick"/>
     </Grid>

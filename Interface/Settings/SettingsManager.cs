@@ -26,10 +26,23 @@ public static class SettingsManager
         Language.Hu => "hu-HU",
         _ => "en-US",
     };
+
+    public enum CsvLocale
+    {
+        // NOTE: Ordering should match the setting menu dropdown order!
+        /// Formatting is based on the programs' language.
+        LanguageBased = 0,
+        /// Formatting is based on the host systems locale settings.
+        LocaleBased = 1,
+        English = 2,
+        Hungarian = 3,
+        Count,
+    }
     
     private const string KeyPath = @"SOFTWARE\WorksheetToolkit";
     private const string ProgramLocaleKey = "ProgramLocale";
     private const string TexPathKey = "TexPath";
+    private const string CsvLocaleKey = "CsvLocale";
     private const string CsvHeadersKey = "CsvHeaders";
 
     /// Used to avoid needlessly updating the registry multiple times.
@@ -83,6 +96,28 @@ public static class SettingsManager
             return;
         Key.SetValue(TexPathKey, texPath);
         Log.Write($"Tex path set in registry: {texPath}");
+    }
+
+    /// Get which locale to use for CSV exports.
+    /// This is required since Excel uses the systems locale when importing a CSV file.
+    internal static CsvLocale GetCsvLocale()
+    {
+        var csvLocaleDword = Key.GetValue(CsvLocaleKey) as int? ?? 0;
+        var csvLocale = csvLocaleDword switch
+        {
+            >= 0 and < ((int)CsvLocale.Count) => (CsvLocale)csvLocaleDword,
+            _ => CsvLocale.LanguageBased, // Necessary in case the registry is changed by hand.
+        };
+        Log.Write($"Csv locale obtained: {csvLocaleDword} -> {csvLocale}");
+        return csvLocale;
+    }
+
+    /// Set which locale to use for CSV exports.
+    /// This is required since Excel uses the systems locale when importing a CSV file.
+    internal static void SetCsvLocale(CsvLocale newCsvLocale)
+    {
+        Key.SetValue(CsvLocaleKey, (int)newCsvLocale);
+        Log.Write($"Csv locale set in registry: {newCsvLocale}");
     }
 
     /// Get whether headers are enabled for CSV exports.

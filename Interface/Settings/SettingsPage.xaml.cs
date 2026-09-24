@@ -37,6 +37,15 @@ public partial class SettingsPage
 
     private void InitializeCsvFields()
     {
+        CsvLocaleDropdown.SelectedIndex = (int)SettingsManager.GetCsvLocale();
+        CsvLocaleDropdownLang.Selected += (_, _) =>
+            SettingsManager.SetCsvLocale(SettingsManager.CsvLocale.LanguageBased);
+        CsvLocaleDropdownLoc.Selected += (_, _) =>
+            SettingsManager.SetCsvLocale(SettingsManager.CsvLocale.LocaleBased);
+        CsvLocaleDropdownEng.Selected += (_, _) =>
+            SettingsManager.SetCsvLocale(SettingsManager.CsvLocale.English);
+        CsvLocaleDropdownHun.Selected += (_, _) =>
+            SettingsManager.SetCsvLocale(SettingsManager.CsvLocale.Hungarian);
         CsvHeaderCheck.IsChecked = SettingsManager.GetCsvHeaders();
     }
     

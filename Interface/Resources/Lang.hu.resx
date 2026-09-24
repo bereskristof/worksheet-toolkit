@@ -423,4 +423,10 @@ Szeretné a programot most újraindítani?</value>
     <data name="Export_TexInaccessible" xml:space="preserve">
         <value>PdfLaTeX nem érhető el.</value>
     </data>
+    <data name="Export_ResultFailure" xml:space="preserve">
+        <value>Sikertelen</value>
+    </data>
+    <data name="Export_ResultSuccess" xml:space="preserve">
+        <value>Sikeres</value>
+    </data>
 </root>
