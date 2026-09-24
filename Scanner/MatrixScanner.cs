@@ -7,22 +7,21 @@ namespace Scanner;
 public class MatrixScanner
 {
     private const float WidthToCircleDiameterRatio = 0.064f;
-    
-    private readonly Mat _originalImage;
+
     private readonly Mat _grayImage = new();
     
     public MatrixScanner(byte[] imageData)
     {
-        _originalImage = Cv2.ImDecode(imageData, ImreadModes.Color);
-        Cv2.CvtColor(_originalImage, _grayImage, ColorConversionCodes.BGR2GRAY);
+        var originalImage = Cv2.ImDecode(imageData, ImreadModes.Color);
+        Cv2.CvtColor(originalImage, _grayImage, ColorConversionCodes.BGR2GRAY);
     }
 
     /// <exception cref="MarkerException">Failed to find at least 3 markers, or a marker was repeated</exception>
     public CircleSegment[] FindBubbles(uint questionCount = 15, uint answerCount = 5)
     {
-        var dict = CvAruco.GetPredefinedDictionary(PredefinedDictionaryName.Dict4X4_50);
-        var parameters = new DetectorParameters();
-        CvAruco.DetectMarkers(_grayImage, dict, out var corners, out var ids, parameters, out _);
+        var dict = CvAruco.GetPredefinedDictionary(PredefinedDictionaryType.Dict4X4_50);
+        var detector = new ArucoDetector(dict);
+        detector.DetectMarkers(_grayImage, out var corners, out var ids, out _);
 
         var maybeAnswerMatrixCorners = GetMaybeMarkerCenters(corners, ids);
         var answerMatrixCorners = GetAnswerMatrixCorners(maybeAnswerMatrixCorners);

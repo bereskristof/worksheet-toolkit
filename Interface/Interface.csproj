@@ -53,7 +53,7 @@
 
     <ItemGroup>
       <PackageReference Include="Docnet.Core" Version="2.6.0" />
-      <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+      <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
     </ItemGroup>
 
 </Project>
