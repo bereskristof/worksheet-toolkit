@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using Docnet.Core.Models;
 using Docnet.Core.Readers;
 using Interface.Settings;
@@ -34,14 +35,62 @@ public partial class SolvePage
         string path = GetLoadPath(Interface.Resources.Lang.Browse_SolveImportTitle);
         if (string.IsNullOrEmpty(path)) 
             return;
-        
-        //ProgressBar.Value = 0;
-        //ExportResultsButton.IsEnabled = false;
-        //ExportResultsAltButton.IsEnabled = false;
-        //ProgressLogs.Text = "";
+
+        ImportPdfTextbox.Text = path;
+    }
+
+    private void CorrectPdf_OnClick(object sender, RoutedEventArgs e)
+    {
+        var pdfPath = ImportPdfTextbox.Text;
+        if (!IsPathValidPdf(pdfPath))
+        {
+            MessageBox.Show(Interface.Resources.Lang.Solve_NotAPdf, Interface.Resources.Lang.Common_Error,
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        BeginFileCorrection(pdfPath);
+    }
+
+    private void BeginFileCorrection(string path)
+    {
+        ProgressBar.Value = 0;
+        ExportResultsButton.IsEnabled = false;
+        ExportResultsAltButton.IsEnabled = false;
+        // TODO: Empty out DataGrid
         _backgroundWorker.WorkerReportsProgress = true;
-        //ProgressBar.Maximum = GetPageCount(path);
+        ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
+    }
+
+    /// Toggle CorrectPdf button based on if path is set to a value.
+    private void ImportPdfTextbox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var textboxText = ImportPdfTextbox.Text;
+        var isPathValid = File.Exists(textboxText);
+        var isPathEmpty = string.IsNullOrEmpty(textboxText);
+        CorrectPdf.IsEnabled = isPathValid;
+        InvalidPathWarningBox.Visibility = (isPathValid || isPathEmpty) ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    /// Checks if the provided file has a valid PDF file signature.
+    private bool IsPathValidPdf(string path)
+    {
+        try
+        {
+            var fileSignature = new byte[5];
+            var file = File.Open(path, FileMode.Open);
+            file.ReadExactly(fileSignature);
+            file.Close();
+            return fileSignature
+                .Zip("%PDF-")
+                .Select(s => s.First == s.Second)
+                .All(b => b);
+        }
+        catch (Exception e) when (e is PathTooLongException or UnauthorizedAccessException or NotSupportedException
+                                      or EndOfStreamException or IOException)
+        {
+            return false;
+        }
     }
 
     private void ExportResults_OnClick(object sender, RoutedEventArgs e)
@@ -92,10 +141,10 @@ public partial class SolvePage
         foreach (var line in stringLines)
         {
             text.Append(line);
-            //if (ExtraInfoCheckbox.IsChecked ?? false)
-            //{
-            //    text.Append(line.ToExtraString());
-            //}
+            if (ExtraInfoCheckbox.IsChecked ?? false)
+            {
+                text.Append(line.ToExtraString());
+            }
         }
         return text;
     }
@@ -155,10 +204,8 @@ public partial class SolvePage
 
     private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
     {
-        var scanResult = (ScanResult?)e.UserState;
-        //ProgressBar.Value = e.ProgressPercentage;
-        //ProgressLogs.Text += $"Page {e.ProgressPercentage}/{ProgressBar.Maximum}: {scanResult?.CurrentState}\n";
-        //ProgressLogsScroll.ScrollToEnd();
+        _ = (ScanResult?)e.UserState; // TODO
+        ProgressBar.Value = e.ProgressPercentage;
     }
 
     private void BackgroundLoader_DoWork(object? sender, DoWorkEventArgs e)
@@ -263,8 +310,8 @@ public partial class SolvePage
             return;
         }
         _csvBuffer = results;
-        // ExportResultsButton.IsEnabled = true;
-        // ExportResultsAltButton.IsEnabled = true;
+        ExportResultsButton.IsEnabled = true;
+        ExportResultsAltButton.IsEnabled = true;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.

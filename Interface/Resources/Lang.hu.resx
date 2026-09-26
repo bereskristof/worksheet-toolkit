@@ -444,4 +444,10 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_HeaderReset" xml:space="preserve">
         <value>Vissza</value>
     </data>
+    <data name="Solve_InvalidFileWarning" xml:space="preserve">
+        <value>A megadott fájl nem létezik!</value>
+    </data>
+    <data name="Solve_NotAPdf" xml:space="preserve">
+        <value>A megadott fájl nem egy PDF!</value>
+    </data>
 </root>

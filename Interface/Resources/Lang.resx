@@ -451,4 +451,10 @@ Would you like to restart the program now?</value>
     <data name="Solve_HeaderReset" xml:space="preserve">
         <value>Reset</value>
     </data>
+    <data name="Solve_InvalidFileWarning" xml:space="preserve">
+        <value>The provided path doesn't point to a valid file!</value>
+    </data>
+    <data name="Solve_NotAPdf" xml:space="preserve">
+        <value>The provided file is not a PDF!</value>
+    </data>
 </root>
