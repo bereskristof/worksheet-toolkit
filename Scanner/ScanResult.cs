@@ -27,7 +27,7 @@ public struct ScanResult
         UnexpectedException,
     }
     
-    private const int SuccessScoreCount = 24;
+    public const int SuccessScoreCount = 24;
     
     public struct QuestionResult
     {

@@ -450,4 +450,16 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_NotAPdf" xml:space="preserve">
         <value>A megadott fájl nem egy PDF!</value>
     </data>
+    <data name="Solve_HeaderState" xml:space="preserve">
+        <value>Állapot</value>
+    </data>
+    <data name="Solve_StateOk" xml:space="preserve">
+        <value>OK</value>
+    </data>
+    <data name="Solve_StateWarning" xml:space="preserve">
+        <value>Hiányos</value>
+    </data>
+    <data name="Solve_StateError" xml:space="preserve">
+        <value>Hiba</value>
+    </data>
 </root>
