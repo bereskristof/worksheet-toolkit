@@ -362,19 +362,19 @@ Folytatja ennek ellenére?</value>
     <data name="Tex_NoInstall" xml:space="preserve">
         <value>A Pdflatex nem érhető el. Használja a beállításokat, hogy megadja!</value>
     </data>
-    <data name="Export_HeaderNeptun" xml:space="preserve">
+    <data name="Solve_HeaderNeptun" xml:space="preserve">
         <value>Neptun</value>
     </data>
-    <data name="Export_HeaderPage" xml:space="preserve">
+    <data name="Solve_HeaderPage" xml:space="preserve">
         <value>Oldal</value>
     </data>
-    <data name="Export_HeaderTotal" xml:space="preserve">
+    <data name="Solve_HeaderTotal" xml:space="preserve">
         <value>Összpontszám</value>
     </data>
-    <data name="Export_HeaderSuccess" xml:space="preserve">
+    <data name="Solve_HeaderSuccess" xml:space="preserve">
         <value>Eredmény</value>
     </data>
-    <data name="Export_HeaderTask" xml:space="preserve">
+    <data name="Solve_HeaderTask" xml:space="preserve">
         <value>#NUM#. Feladat</value>
     </data>
     <data name="Settings_Language" xml:space="preserve">
@@ -428,5 +428,20 @@ Szeretné a programot most újraindítani?</value>
     </data>
     <data name="Export_ResultSuccess" xml:space="preserve">
         <value>Sikeres</value>
+    </data>
+    <data name="Solve_History" xml:space="preserve">
+        <value>Előzmények</value>
+    </data>
+    <data name="Solve_CorrectLabel" xml:space="preserve">
+        <value>Kijavítandó oldalak:</value>
+    </data>
+    <data name="Solve_Start" xml:space="preserve">
+        <value>PDF kijavítása</value>
+    </data>
+    <data name="Solve_HeaderTaskShort" xml:space="preserve">
+        <value>#NUM#.</value>
+    </data>
+    <data name="Solve_HeaderReset" xml:space="preserve">
+        <value>Vissza</value>
     </data>
 </root>

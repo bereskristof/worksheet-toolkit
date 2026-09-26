@@ -8,23 +8,101 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Button Grid.Column="0" Grid.Row="0" Content="{x:Static res:Lang.Solve_Select}" Click="ImportPdf_OnClick" VerticalAlignment="Top"/>
-        <Button Grid.Column="0" Grid.Row="1" Content="{x:Static res:Lang.Solve_Get}" Click="ExportResults_OnClick" VerticalAlignment="Top" IsEnabled="False" Name="ExportResultsButton" Margin="0, 3, 0, 0"/>
-        <Button Grid.Column="0" Grid.Row="2" Content="{x:Static res:Lang.Solve_GetAlt}" Click="ExportStats_OnClick" VerticalAlignment="Top" IsEnabled="False" Name="ExportResultsAltButton" Margin="0, 3, 0, 0"/>
-        <CheckBox Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Content="{x:Static res:Lang.Solve_IncludeConfidence}" Name="ExtraInfoCheckbox" Margin="0, 3, 3, 0"/>
-        <ProgressBar Grid.Column="1" Grid.Row="0" Height="10" Margin="3, 0, 0, 0" Name="ProgressBar" VerticalAlignment="Top"/>
-        <ScrollViewer Name="ProgressLogsScroll" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" Margin="3, 0, 0, 0">
-            <TextBlock Name="ProgressLogs" Text=""/>
-        </ScrollViewer>
+        <Grid Grid.Column="0" Visibility="Collapsed">
+            
+        </Grid>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Margin="3,0,3,0" Visibility="Collapsed"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="{x:Static res:Lang.Solve_CorrectLabel}" Padding="0"/>
+                <TextBox Grid.Column="1" Margin="3, 0, 0, 0"/>
+                <Button Grid.Column="2" Content="{x:Static res:Lang.Common_Browse}" Click="ImportPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0"/>
+                <Button Grid.Column="3" Content="{x:Static res:Lang.Solve_Start}" Margin="3, 0, 0, 0" Padding="3, 0"/>
+            </Grid>
+            <Grid Grid.Row="1" Margin="0, 3, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0"/>
+                <Button Grid.Column="1" Content="{x:Static res:Lang.Solve_Get}" Click="ExportResults_OnClick" Name="ExportResultsButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
+                <Button Grid.Column="2" Content="{x:Static res:Lang.Solve_GetAlt}" Click="ExportStats_OnClick" Name="ExportResultsAltButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
+                <CheckBox Grid.Column="3" VerticalAlignment="Center" Content="{x:Static res:Lang.Solve_IncludeConfidence}" Name="ExtraInfoCheckbox" Padding="3, 0" Margin="3, 0, 0, 0"/>
+            </Grid>
+            <ProgressBar Grid.Row="2" Height="10" Name="ProgressBar" VerticalAlignment="Top" Margin="3, 11, 3, 3"/>
+            <DataGrid Grid.Row="3" GridLinesVisibility="None" SelectionMode="Single" BorderThickness="0"
+                      Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <!-- Styling -->
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                     Color="LightBlue" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                     Color="Black" />
+                </DataGrid.Resources>
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" />
+                        <Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Padding" Value="4, 2" />
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="BorderThickness" Value="0, 0, 0, 1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" />
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="LightBlue" />
+                            </Trigger>
+                            <Trigger Property="IsEditing" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="LightBlue" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding FailedToDecrypt}" Value="True">
+                                <Setter Property="Foreground" Value="Brown"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+                <!-- Styling -->
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderPage}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderNeptun}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderSuccess}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderTotal}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderReset}" Width="Auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </UserControl>
