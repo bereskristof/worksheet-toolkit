@@ -1099,6 +1099,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to State.
+        /// </summary>
+        public static string Solve_HeaderState {
+            get {
+                return ResourceManager.GetString("Solve_HeaderState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Result.
         /// </summary>
         public static string Solve_HeaderSuccess {
@@ -1185,6 +1194,33 @@ namespace Interface.Resources {
         public static string Solve_Start {
             get {
                 return ResourceManager.GetString("Solve_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Solve_StateError {
+            get {
+                return ResourceManager.GetString("Solve_StateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string Solve_StateOk {
+            get {
+                return ResourceManager.GetString("Solve_StateOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partial.
+        /// </summary>
+        public static string Solve_StateWarning {
+            get {
+                return ResourceManager.GetString("Solve_StateWarning", resourceCulture);
             }
         }
         

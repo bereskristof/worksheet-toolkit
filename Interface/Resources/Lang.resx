@@ -457,4 +457,16 @@ Would you like to restart the program now?</value>
     <data name="Solve_NotAPdf" xml:space="preserve">
         <value>The provided file is not a PDF!</value>
     </data>
+    <data name="Solve_HeaderState" xml:space="preserve">
+        <value>State</value>
+    </data>
+    <data name="Solve_StateOk" xml:space="preserve">
+        <value>OK</value>
+    </data>
+    <data name="Solve_StateWarning" xml:space="preserve">
+        <value>Partial</value>
+    </data>
+    <data name="Solve_StateError" xml:space="preserve">
+        <value>Error</value>
+    </data>
 </root>
