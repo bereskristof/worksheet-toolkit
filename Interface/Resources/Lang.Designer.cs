@@ -1153,6 +1153,24 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provided path doesn&apos;t point to a valid file!.
+        /// </summary>
+        public static string Solve_InvalidFileWarning {
+            get {
+                return ResourceManager.GetString("Solve_InvalidFileWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided file is not a PDF!.
+        /// </summary>
+        public static string Solve_NotAPdf {
+            get {
+                return ResourceManager.GetString("Solve_NotAPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select file....
         /// </summary>
         public static string Solve_Select {

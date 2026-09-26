@@ -21,6 +21,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
@@ -31,9 +32,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="{x:Static res:Lang.Solve_CorrectLabel}" Padding="0"/>
-                <TextBox Grid.Column="1" Margin="3, 0, 0, 0"/>
+                <TextBox Grid.Column="1" Margin="3, 0, 0, 0" Name="ImportPdfTextbox" TextChanged="ImportPdfTextbox_OnTextChanged"/>
                 <Button Grid.Column="2" Content="{x:Static res:Lang.Common_Browse}" Click="ImportPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0"/>
-                <Button Grid.Column="3" Content="{x:Static res:Lang.Solve_Start}" Margin="3, 0, 0, 0" Padding="3, 0"/>
+                <Button Grid.Column="3" Content="{x:Static res:Lang.Solve_Start}" Name="CorrectPdf" Click="CorrectPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0" IsEnabled="False"/>
             </Grid>
             <Grid Grid.Row="1" Margin="0, 3, 0, 0">
                 <Grid.ColumnDefinitions>
@@ -42,13 +43,17 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0"/>
+                <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0" IsEnabled="False" Opacity="0.5"/>
                 <Button Grid.Column="1" Content="{x:Static res:Lang.Solve_Get}" Click="ExportResults_OnClick" Name="ExportResultsButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
                 <Button Grid.Column="2" Content="{x:Static res:Lang.Solve_GetAlt}" Click="ExportStats_OnClick" Name="ExportResultsAltButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
                 <CheckBox Grid.Column="3" VerticalAlignment="Center" Content="{x:Static res:Lang.Solve_IncludeConfidence}" Name="ExtraInfoCheckbox" Padding="3, 0" Margin="3, 0, 0, 0"/>
             </Grid>
-            <ProgressBar Grid.Row="2" Height="10" Name="ProgressBar" VerticalAlignment="Top" Margin="3, 11, 3, 3"/>
-            <DataGrid Grid.Row="3" GridLinesVisibility="None" SelectionMode="Single" BorderThickness="0"
+            <Border Grid.Row="2" Margin="0, 3, 0, 0" Background="#FFD" BorderBrush="#CC0"
+                    BorderThickness="1,1,1,1" Name="InvalidPathWarningBox" Visibility="Collapsed">
+                <Label Content="{x:Static res:Lang.Solve_InvalidFileWarning}"/>
+            </Border>
+            <ProgressBar Grid.Row="3" Height="10" Name="ProgressBar" VerticalAlignment="Top" Margin="3, 11, 3, 3"/>
+            <DataGrid Grid.Row="4" GridLinesVisibility="None" SelectionMode="Single" BorderThickness="0"
                       Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <!-- Styling -->
