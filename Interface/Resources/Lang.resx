@@ -369,19 +369,19 @@ Continue anyway?</value>
     <data name="Tex_NoInstall" xml:space="preserve">
         <value>Pdflatex is unreachable, use settings to set the path manually!</value>
     </data>
-    <data name="Export_HeaderPage" xml:space="preserve">
+    <data name="Solve_HeaderPage" xml:space="preserve">
         <value>Page</value>
     </data>
-    <data name="Export_HeaderNeptun" xml:space="preserve">
+    <data name="Solve_HeaderNeptun" xml:space="preserve">
         <value>Neptun</value>
     </data>
-    <data name="Export_HeaderTotal" xml:space="preserve">
+    <data name="Solve_HeaderTotal" xml:space="preserve">
         <value>Total Points</value>
     </data>
-    <data name="Export_HeaderSuccess" xml:space="preserve">
+    <data name="Solve_HeaderSuccess" xml:space="preserve">
         <value>Result</value>
     </data>
-    <data name="Export_HeaderTask" xml:space="preserve">
+    <data name="Solve_HeaderTask" xml:space="preserve">
         <value>Task #NUM#</value>
     </data>
     <data name="Settings_Language" xml:space="preserve">
@@ -435,5 +435,20 @@ Would you like to restart the program now?</value>
     </data>
     <data name="Export_ResultFailure" xml:space="preserve">
         <value>Failed</value>
+    </data>
+    <data name="Solve_History" xml:space="preserve">
+        <value>History</value>
+    </data>
+    <data name="Solve_CorrectLabel" xml:space="preserve">
+        <value>Pages to correct:</value>
+    </data>
+    <data name="Solve_Start" xml:space="preserve">
+        <value>Correct PDF</value>
+    </data>
+    <data name="Solve_HeaderTaskShort" xml:space="preserve">
+        <value>#NUM#.</value>
+    </data>
+    <data name="Solve_HeaderReset" xml:space="preserve">
+        <value>Reset</value>
     </data>
 </root>

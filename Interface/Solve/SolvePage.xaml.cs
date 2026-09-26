@@ -35,12 +35,12 @@ public partial class SolvePage
         if (string.IsNullOrEmpty(path)) 
             return;
         
-        ProgressBar.Value = 0;
-        ExportResultsButton.IsEnabled = false;
-        ExportResultsAltButton.IsEnabled = false;
-        ProgressLogs.Text = "";
+        //ProgressBar.Value = 0;
+        //ExportResultsButton.IsEnabled = false;
+        //ExportResultsAltButton.IsEnabled = false;
+        //ProgressLogs.Text = "";
         _backgroundWorker.WorkerReportsProgress = true;
-        ProgressBar.Maximum = GetPageCount(path);
+        //ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
     }
 
@@ -92,10 +92,10 @@ public partial class SolvePage
         foreach (var line in stringLines)
         {
             text.Append(line);
-            if (ExtraInfoCheckbox.IsChecked ?? false)
-            {
-                text.Append(line.ToExtraString());
-            }
+            //if (ExtraInfoCheckbox.IsChecked ?? false)
+            //{
+            //    text.Append(line.ToExtraString());
+            //}
         }
         return text;
     }
@@ -108,11 +108,11 @@ public partial class SolvePage
         
         var sb = new StringBuilder();
         var sep = locale.ListSeparator;
-        sb.Append(Interface.Resources.Lang.Export_HeaderPage).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderNeptun).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderTotal).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderSuccess);
-        var taskTemplate = Interface.Resources.Lang.Export_HeaderTask;
+        sb.Append(Interface.Resources.Lang.Solve_HeaderPage).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderNeptun).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderTotal).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderSuccess);
+        var taskTemplate = Interface.Resources.Lang.Solve_HeaderTask;
         foreach (var taskNum in Enumerable.Range(0, taskCount))
         {
             sb.Append(sep).Append(taskTemplate.Replace("#NUM#", (taskNum + 1).ToString()));
@@ -156,9 +156,9 @@ public partial class SolvePage
     private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
     {
         var scanResult = (ScanResult?)e.UserState;
-        ProgressBar.Value = e.ProgressPercentage;
-        ProgressLogs.Text += $"Page {e.ProgressPercentage}/{ProgressBar.Maximum}: {scanResult?.CurrentState}\n";
-        ProgressLogsScroll.ScrollToEnd();
+        //ProgressBar.Value = e.ProgressPercentage;
+        //ProgressLogs.Text += $"Page {e.ProgressPercentage}/{ProgressBar.Maximum}: {scanResult?.CurrentState}\n";
+        //ProgressLogsScroll.ScrollToEnd();
     }
 
     private void BackgroundLoader_DoWork(object? sender, DoWorkEventArgs e)
@@ -263,8 +263,8 @@ public partial class SolvePage
             return;
         }
         _csvBuffer = results;
-        ExportResultsButton.IsEnabled = true;
-        ExportResultsAltButton.IsEnabled = true;
+        // ExportResultsButton.IsEnabled = true;
+        // ExportResultsAltButton.IsEnabled = true;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.
