@@ -365,9 +365,15 @@ public partial class SolvePage
 
     private void ExtendDataGridToTaskCount(int taskCount)
     {
-        var resetColumnIndex = ResultsTable.Columns.Count - 1;
-        var resetColumn = ResultsTable.Columns[resetColumnIndex];
-        ResultsTable.Columns.RemoveAt(resetColumnIndex);
+        const int rightHandColumnCount = 2;
+        var firstRightHandColumnIndex = ResultsTable.Columns.Count - rightHandColumnCount;
+        var rightHandColumns = ResultsTable.Columns
+            .Skip(firstRightHandColumnIndex)
+            .Take(rightHandColumnCount)
+            .ToArray(); // ToArray() is used to create a copy of the data, otherwise only references are used, which would point to incorrect data.
+        for (int i = ResultsTable.Columns.Count - 1; i >= firstRightHandColumnIndex; i--)
+            ResultsTable.Columns.RemoveAt(i);
+
         while (_resultsTableTaskColumnCount < taskCount)
         {
             var column = new DataGridTextColumn();
@@ -377,6 +383,7 @@ public partial class SolvePage
             ResultsTable.Columns.Add(column);
             _resultsTableTaskColumnCount++;
         }
-        ResultsTable.Columns.Add(resetColumn);
+        foreach (var rightHandColumn in rightHandColumns)
+            ResultsTable.Columns.Add(rightHandColumn);
     }
 }
