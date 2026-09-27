@@ -109,6 +109,7 @@
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderNeptun}" Binding="{Binding UserCode}" Width="Auto"/>
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderSuccess}" Binding="{Binding Result}" Width="Auto"/>
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderTotal}" Binding="{Binding TotalPoints}" Width="Auto"/>
+                    <DataGridTextColumn Header="" Width="*" MinWidth="0"/> <!-- Spacer -->
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderReset}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>
