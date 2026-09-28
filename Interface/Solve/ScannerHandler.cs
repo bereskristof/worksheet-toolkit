@@ -4,6 +4,7 @@ using System.IO;
 using Docnet.Core.Readers;
 using OpenCvSharp;
 using Scanner;
+using Scanner.Result;
 using Storage;
 
 namespace Interface.Solve;
@@ -87,12 +88,12 @@ public static class ScannerHandler
         var bubbleChecker = new BubbleChecker(imageData);
         var matrixResults = bubbleChecker.CheckBubbles(matrixBubbles, questionCount, answerCount);
 
-        result.Results = new ScanResult.QuestionResult[questionCount];
+        result.Results = new QuestionResult[questionCount];
 
         for (int i = 0; i < matrixResults.Length; i++)
         {
             var (mResult, mBest, mNextBest) = matrixResults[i];
-            result.Results[i] = new ScanResult.QuestionResult
+            result.Results[i] = new QuestionResult
             {
                 TaskIndex = null,
                 BestFilledAnswer = mResult,
@@ -110,13 +111,13 @@ public static class ScannerHandler
         for (int i = 0; i < result.Results.Length; i++)
         {
             var res = result.Results[i];
-            if (res.FillConfidence < ScanResult.QuestionResult.MinFillConfidence)
+            if (res.FillConfidence < QuestionResult.MinFillConfidence)
             {
-                result.Results[i].Points = ScanResult.QuestionResult.EmptyAnswerPoints;
+                result.Results[i].Points = QuestionResult.EmptyAnswerPoints;
             }
-            else if (res.DeltaConfidence <= ScanResult.QuestionResult.MinDeltaConfidence)
+            else if (res.DeltaConfidence <= QuestionResult.MinDeltaConfidence)
             {
-                result.Results[i].Points = ScanResult.QuestionResult.WrongAnswerPoints;
+                result.Results[i].Points = QuestionResult.WrongAnswerPoints;
             }
             // Else: Answer is filled correctly. Points will be assigned later, and as such, is left as null for now.
         }

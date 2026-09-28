@@ -1,5 +1,6 @@
 using System.Drawing;
 using OpenCvSharp;
+using Scanner.Result;
 using ZXing;
 using ZXing.Common;
 using ZXing.Multi;
