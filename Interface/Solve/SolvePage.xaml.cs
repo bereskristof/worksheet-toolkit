@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
@@ -24,7 +25,7 @@ public partial class SolvePage
     private int _resultsTableTaskColumnCount = 0;
     
     private readonly BackgroundWorker _backgroundWorker = new();
-    private List<ScanResultView> _csvBuffer = [];
+    private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
     
     public SolvePage()
     {
@@ -32,6 +33,7 @@ public partial class SolvePage
         _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
         _backgroundWorker.DoWork += BackgroundLoader_DoWork;
         _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
+        ResultsTable.DataContext = _csvBuffer;
     }
 
     private void ImportPdf_OnClick(object sender, RoutedEventArgs e)
@@ -63,7 +65,7 @@ public partial class SolvePage
         ImportPdfTextbox.IsEnabled = false;
         BrowseButton.IsEnabled = false;
         CorrectPdf.IsEnabled = false;
-        ResultsTable.Items.Clear();
+        _csvBuffer.Clear();
         _backgroundWorker.WorkerReportsProgress = true;
         ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
@@ -80,7 +82,7 @@ public partial class SolvePage
     }
 
     /// Checks if the provided file has a valid PDF file signature.
-    private bool IsPathValidPdf(string path)
+    private static bool IsPathValidPdf(string path)
     {
         try
         {
@@ -213,7 +215,7 @@ public partial class SolvePage
     {
         var result = (ScanResultView?)e.UserState ?? throw new ArgumentNullException(nameof(e.UserState));
         _csvBuffer.Add(result);
-        RecordToResultsTable(result);
+        UpdateResultsTableColumns(result);
         ProgressBar.Value = e.ProgressPercentage;
     }
 
@@ -348,15 +350,13 @@ public partial class SolvePage
         };
     }
 
-    private void RecordToResultsTable(ScanResultView result)
+    private void UpdateResultsTableColumns(ScanResultView result)
     {
         var taskCount = result.TaskCount;
         if (_resultsTableTaskColumnCount < taskCount)
         {
             ExtendDataGridToTaskCount(taskCount);
         }
-
-        ResultsTable.Items.Add(result);
     }
 
     private void ExtendDataGridToTaskCount(int taskCount)
