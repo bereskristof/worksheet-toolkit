@@ -12,7 +12,7 @@ public record ScanResultViewPointAccess
     }
 
     public int? this[int index]
-        => (_scanResult.Results.Length > index) ? (_scanResult.Results[index].Points ?? 0) : null;
+        => (_scanResult.Results.Length > index) ? (_scanResult.Results[index].Points.Get() ?? 0) : null;
     
-    internal int[] Get() => [.. _scanResult.Results.Select(r => r.Points ?? 0)];
+    internal int[] Get() => [.. _scanResult.Results.Select(r => r.Points.Get() ?? 0)];
 }
