@@ -244,8 +244,8 @@ public partial class SolvePage
                 scanResult = new ScanResult
                 {
                     CurrentState = ScanResult.State.UnexpectedException,
-                    ExamCode = null,
-                    UserCode = null,
+                    ExamCode = new Rollbackable<Guid?>(null),
+                    UserCode = new Rollbackable<string?>(null),
                     Results = [],
                 };
             }

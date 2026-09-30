@@ -14,7 +14,7 @@ public static class ExamResultObtainer
     {
         var verifyCommand = Manager.Connection.CreateCommand();
         verifyCommand.CommandText = "SELECT AnswerNumber, QuestionId, QuestionNumber FROM Solutions WHERE Uuid == @Uuid ORDER BY QuestionNumber ASC;";
-        verifyCommand.Parameters.AddWithValue("@Uuid", (result.ExamCode ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!")).ToString());
+        verifyCommand.Parameters.AddWithValue("@Uuid", (result.ExamCode.Get() ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!")).ToString());
         using var reader = verifyCommand.ExecuteReader();
         while (reader.Read())
         {

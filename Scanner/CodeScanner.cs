@@ -77,17 +77,21 @@ public class CodeScanner
             if (IsUuid(text))
             {
                 var uuid = Guid.ParseExact(text, "N");
-                result.ExamCode = uuid;
+                result.ExamCode = new Rollbackable<Guid?>(uuid);
             }
             else if (IsNeptunCode(text))
             {
-                result.UserCode = text;
+                result.UserCode = new Rollbackable<string?>(text);
             }
         }
     }
     
     public static bool IsValidScanResult(ScanResult result)
-        => result is { ExamCode: not null, UserCode: not null } && result.ExamCode != Guid.Empty && !string.IsNullOrEmpty(result.UserCode);
+    {
+        var examCode = result.ExamCode.Get();
+        var userCode = result.UserCode.Get();
+        return examCode != Guid.Empty && !string.IsNullOrEmpty(userCode);
+    }
 
     public static bool IsUuid(string text)
         => Guid.TryParseExact(text, "N", out _);
