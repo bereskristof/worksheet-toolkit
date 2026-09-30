@@ -28,7 +28,7 @@ public static class ExamResultObtainer
             var answerNumber = BitConverter.ToInt64(decryptedData, 0);
             
             var select = result.Results[i];
-            select.TaskIndex = new Rollbackable<int?>(questionId);
+            select.TaskIndex = new Rollback<int?>(questionId);
             
             if (select.Points.Get() != null)
             {
@@ -40,7 +40,7 @@ public static class ExamResultObtainer
                 select.BestFilledAnswer == answerNumber 
                 ? QuestionResult.CorrectAnswerPoints
                 : QuestionResult.WrongAnswerPoints;
-            select.Points = new Rollbackable<int?>(points);
+            select.Points = new Rollback<int?>(points);
             
             result.Results[i] = select;
         }
