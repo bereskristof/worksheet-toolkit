@@ -133,7 +133,8 @@ public partial class SolvePage
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToTaskCsv(i, locale));
             var maxTaskIndex = _csvBuffer.Select(v =>
-                v.ScanResult.Results.Select(q => q.TaskIndex).Where(i => i is not null).Select(i => (int)i!).Max()).Max();
+                v.ScanResult.Results.Select(q => q.TaskIndex).Where(i => i.Get() is not null).Select(i => (int)i.Get()!)
+                    .Max()).Max();
             var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskIndex));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -245,7 +246,6 @@ public partial class SolvePage
                     CurrentState = ScanResult.State.UnexpectedException,
                     ExamCode = null,
                     UserCode = null,
-                    FinalPoints = null,
                     Results = [],
                 };
             }
@@ -265,7 +265,6 @@ public partial class SolvePage
                 {
                     Log.Write($"Unexpected exception while trying to check manually corrected exam: {ex.Message}", Log.Severity.Error);
                     scanResult.CurrentState = ScanResult.State.UnexpectedException;
-                    scanResult.FinalPoints = null;
                     scanResult.Results = [];
                 }
             }

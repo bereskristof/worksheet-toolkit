@@ -23,7 +23,7 @@ public struct ScanResult
     public Guid? ExamCode;
     public string? UserCode;
     
-    public int? FinalPoints;
+    public int? FinalPoints => Results.Sum(r => r.Points.Get() ?? 0);
     
     public QuestionResult[] Results;
     

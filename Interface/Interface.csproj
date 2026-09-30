@@ -17,6 +17,11 @@
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DebugType>full</DebugType>
+      <WarningsAsErrors>;NU1605;SYSLIB0011;Nullable</WarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <WarningsAsErrors>;NU1605;SYSLIB0011;Nullable</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>

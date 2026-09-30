@@ -2,7 +2,6 @@
 using System.Text;
 using Scanner;
 using Scanner.Result;
-using Storage;
 
 namespace Interface.Solve;
 
@@ -84,10 +83,10 @@ public class ScanResultView(int page, ScanResult sourceResult)
         sb.Append(UserCode, "");
         sb.Append(TotalPoints.ToString(), "");
         sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
-        var orderedResults = ScanResult.Results.OrderBy(r => r.TaskIndex ?? -1).ToArray();
+        var orderedResults = ScanResult.Results.OrderBy(r => r.TaskIndex.Get() ?? -1).ToArray();
         foreach (var result in orderedResults)
         {
-            if (result.TaskIndex == null)
+            if (result.TaskIndex.Get() == null)
             {
                 sb.Append("!", "");
                 continue;
