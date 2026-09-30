@@ -47,12 +47,12 @@ public static class ScannerHandler
         {
             var qrScanner = new CodeScanner(imageData);
             qrScanner.FindCodes(ref result);
-            if (result.ExamCode == null)
+            if (result.ExamCode.Get() == null)
             {
                 result.CurrentState = ScanResult.State.MissingExamCode;
                 return result;
             }
-            if (result.UserCode == null)
+            if (result.UserCode.Get() == null)
             {
                 result.CurrentState = ScanResult.State.MissingUserCode;
             }
@@ -65,7 +65,7 @@ public static class ScannerHandler
         uint questionCount;
         try
         {
-            questionCount = ExamResultObtainer.ObtainExamQuestionCount((Guid)result.ExamCode!);
+            questionCount = ExamResultObtainer.ObtainExamQuestionCount((Guid)result.ExamCode.Get()!);
         }
         catch (InvalidExamQuestionCountException)
         {
@@ -138,7 +138,7 @@ public static class ScannerHandler
             case CodeType.ExamCode:
                 if (!CodeScanner.IsUuid(newCode)) return false;
                 var uuid = Guid.ParseExact(newCode, "N");
-                result.ExamCode = uuid;
+                result.ExamCode.Set(uuid);
                 if (CodeScanner.IsValidScanResult(result))
                 {
                     result.CurrentState = ScanResult.State.ManuallyCorrected;
@@ -146,7 +146,7 @@ public static class ScannerHandler
                 return true;
             case CodeType.UserCode:
                 if (!CodeScanner.IsNeptunCode(newCode)) return false;
-                result.UserCode = newCode;
+                result.UserCode.Set(newCode);
                 if (CodeScanner.IsValidScanResult(result))
                 {
                     result.CurrentState = ScanResult.State.ManuallyCorrected;

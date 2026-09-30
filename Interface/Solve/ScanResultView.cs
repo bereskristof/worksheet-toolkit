@@ -40,8 +40,8 @@ public class ScanResultView(int page, ScanResult sourceResult)
     public bool MajorError => GetScanResultHuman() == ScanResultHuman.Error;
     public bool MinorError => GetScanResultHuman() == ScanResultHuman.Partial;
     
-    public string UserCode => ScanResult.UserCode ?? UnknownString;
-    public string ExamCode => ScanResult.ExamCode?.ToString() ?? UnknownString;
+    public string UserCode => ScanResult.UserCode.Get() ?? UnknownString;
+    public string ExamCode => ScanResult.ExamCode.Get()?.ToString() ?? UnknownString;
     
     public int TotalPoints => Points.Get().Sum();
     public int TaskCount => Points.Get().Length;
