@@ -49,12 +49,7 @@ public static class ScannerHandler
             qrScanner.FindCodes(ref result);
             if (result.ExamCode.Get() == null)
             {
-                result.CurrentState = ScanResult.State.MissingExamCode;
                 return result;
-            }
-            if (result.UserCode.Get() == null)
-            {
-                result.CurrentState = ScanResult.State.MissingUserCode;
             }
         }
         else
@@ -69,7 +64,7 @@ public static class ScannerHandler
         }
         catch (InvalidExamQuestionCountException)
         {
-            result.CurrentState = ScanResult.State.UnreliableDataFromDatabase;
+            result.Issues.Set(result.Issues.Get() | ScanResult.IssueFlags.UnreliableDataFromDatabase);
             return result;
         }
 
@@ -81,7 +76,7 @@ public static class ScannerHandler
         }
         catch (MarkerException)
         {
-            result.CurrentState =  ScanResult.State.MarkerDetectionError;
+            result.Issues.Set(result.Issues.Get() | ScanResult.IssueFlags.MarkerDetectionError);
             return result;
         }
         
@@ -95,11 +90,11 @@ public static class ScannerHandler
             var (mResult, mBest, mNextBest) = matrixResults[i];
             result.Results[i] = new QuestionResult
             {
-                TaskIndex = new Rollback<int?>(null),
+                TaskIndex = RollbackConversions.GetNullInt(),
                 BestFilledAnswer = mResult,
                 DeltaConfidence = double.IsNaN((mBest - mNextBest) / mBest) ? 1.0 : ((mBest - mNextBest) / mBest), // [0, 1], since mNextBest <= mBest
                 FillConfidence = mBest, // [0, 1], since it's a ratio
-                Points = new Rollback<int?>(null),
+                Points = RollbackConversions.GetNullInt(),
             };
         }
 
@@ -113,11 +108,11 @@ public static class ScannerHandler
             var res = result.Results[i];
             if (res.FillConfidence < QuestionResult.MinFillConfidence)
             {
-                result.Results[i].Points = new Rollback<int?>(QuestionResult.EmptyAnswerPoints);
+                result.Results[i].Points = QuestionResult.EmptyAnswerPoints.ToNullableRollback();
             }
             else if (res.DeltaConfidence <= QuestionResult.MinDeltaConfidence)
             {
-                result.Results[i].Points = new Rollback<int?>(QuestionResult.WrongAnswerPoints);
+                result.Results[i].Points = QuestionResult.WrongAnswerPoints.ToNullableRollback();
             }
             // Else: Answer is filled correctly. Points will be assigned later, and as such, is left as null for now.
         }
@@ -139,18 +134,10 @@ public static class ScannerHandler
                 if (!CodeScanner.IsUuid(newCode)) return false;
                 var uuid = Guid.ParseExact(newCode, "N");
                 result.ExamCode.Set(uuid);
-                if (CodeScanner.IsValidScanResult(result))
-                {
-                    result.CurrentState = ScanResult.State.ManuallyCorrected;
-                }
                 return true;
             case CodeType.UserCode:
                 if (!CodeScanner.IsNeptunCode(newCode)) return false;
                 result.UserCode.Set(newCode);
-                if (CodeScanner.IsValidScanResult(result))
-                {
-                    result.CurrentState = ScanResult.State.ManuallyCorrected;
-                }
                 return true;
             default:
                 return false;

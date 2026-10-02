@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Interface.Solve;
 using Scanner;
 using Scanner.Result;
 using Storage.Sheet;
@@ -28,7 +29,7 @@ public static class ExamResultObtainer
             var answerNumber = BitConverter.ToInt64(decryptedData, 0);
             
             var select = result.Results[i];
-            select.TaskIndex = new Rollback<int?>(questionId);
+            select.TaskIndex = questionId.ToNullableRollback();
             
             if (select.Points.Get() != null)
             {
@@ -40,24 +41,14 @@ public static class ExamResultObtainer
                 select.BestFilledAnswer == answerNumber 
                 ? QuestionResult.CorrectAnswerPoints
                 : QuestionResult.WrongAnswerPoints;
-            select.Points = new Rollback<int?>(points);
+            select.Points = points.ToNullableRollback();
             
             result.Results[i] = select;
         }
-        
-        if (result.CurrentState == ScanResult.State.Unknown)
+
+        if (result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null))
         {
-            result.CurrentState =
-                result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null)
-                    ? ScanResult.State.MissingTaskFromDatabase
-                    : ScanResult.State.Completed;
-        }
-        if (result.CurrentState == ScanResult.State.ManuallyCorrected)
-        {
-            result.CurrentState =
-                result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null)
-                    ? ScanResult.State.MissingTaskFromDatabase
-                    : ScanResult.State.CompletedWithManualCorrection;
+            result.Issues.Set(result.Issues.Get() | ScanResult.IssueFlags.MissingTaskFromDatabase);
         }
     }
 

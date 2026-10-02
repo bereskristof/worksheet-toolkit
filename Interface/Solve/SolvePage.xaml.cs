@@ -243,16 +243,16 @@ public partial class SolvePage
                 Log.Write($"Unexpected exception while trying to check exam: {ex.Message}", Log.Severity.Error);
                 scanResult = new ScanResult
                 {
-                    CurrentState = ScanResult.State.UnexpectedException,
-                    ExamCode = new Rollback<Guid?>(null),
-                    UserCode = new Rollback<string?>(null),
+                    Issues = ScanResult.IssueFlags.UnexpectedException.ToRollback(),
+                    ExamCode = RollbackConversions.GetNullGuid(),
+                    UserCode = RollbackConversions.GetNullString(),
                     Results = [],
                 };
             }
 
             // If there is a missing code, open the dialog to fix it.
-            if (!skipDialog
-                && scanResult.CurrentState is ScanResult.State.MissingExamCode or ScanResult.State.MissingUserCode)
+            if (!skipDialog && scanResult.Issues.Get() == ScanResult.IssueFlags.None &&
+                scanResult.GetMissingFields() != ScanResult.MissingFieldFlags.None)
             {
                 var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
                 DispatchHelpDialog(pageImg, ref scanResult, out skipDialog);
@@ -264,11 +264,12 @@ public partial class SolvePage
                 catch (Exception ex)
                 {
                     Log.Write($"Unexpected exception while trying to check manually corrected exam: {ex.Message}", Log.Severity.Error);
-                    scanResult.CurrentState = ScanResult.State.UnexpectedException;
+                    scanResult.Issues = ScanResult.IssueFlags.UnexpectedException.ToRollback();
                     scanResult.Results = [];
                 }
             }
 
+            scanResult.Issues = ReinitIssueFlagsRollback(scanResult.Issues);
             var page = i + 1;
             var scanResultView = new ScanResultView(page, scanResult);
             _backgroundWorker.ReportProgress(page, scanResultView);
@@ -299,17 +300,10 @@ public partial class SolvePage
 
     private static void HandleUnfinishedResults(ref ScanResult result, int i, IDocReader reader)
     {
-        switch (result.CurrentState)
-        {
-            case ScanResult.State.MissingExamCode:
-                return; // If still missing code, skip processing
-            case ScanResult.State.ManuallyCorrected:
-            {
-                var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
-                result = ScannerHandler.ScanPageResults(pageImg, 5, result);
-                break;
-            }
-        }
+        if (result.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingExamCode))
+            return;
+        var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
+        result = ScannerHandler.ScanPageResults(pageImg, 5, result);
         ScannerHandler.ProcessScanResults(ref result, i);
     }
 
@@ -380,4 +374,7 @@ public partial class SolvePage
         foreach (var rightHandColumn in rightHandColumns)
             ResultsTable.Columns.Add(rightHandColumn);
     }
+
+    private static Rollback<ScanResult.IssueFlags> ReinitIssueFlagsRollback(Rollback<ScanResult.IssueFlags> old)
+        => new(old.Get());
 }

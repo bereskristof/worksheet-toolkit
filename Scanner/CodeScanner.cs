@@ -1,4 +1,5 @@
 using System.Drawing;
+using Interface.Solve;
 using OpenCvSharp;
 using Scanner.Result;
 using ZXing;
@@ -77,11 +78,11 @@ public class CodeScanner
             if (IsUuid(text))
             {
                 var uuid = Guid.ParseExact(text, "N");
-                result.ExamCode = new Rollback<Guid?>(uuid);
+                result.ExamCode = uuid.ToNullableRollback();
             }
             else if (IsNeptunCode(text))
             {
-                result.UserCode = new Rollback<string?>(text);
+                result.UserCode = text.ToNullableRollback();
             }
         }
     }
