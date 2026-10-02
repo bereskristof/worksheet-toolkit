@@ -342,7 +342,6 @@ public partial class SolvePage
         return new LocaleSpecifics
         {
             Culture = culture,
-            DecimalPoint = culture.NumberFormat.NumberDecimalSeparator,
             ListSeparator = culture.TextInfo.ListSeparator,
             SuccessText = Interface.Resources.Lang.Export_ResultSuccess,
             FailText = Interface.Resources.Lang.Export_ResultFailure,
