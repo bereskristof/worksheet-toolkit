@@ -54,7 +54,7 @@
             </Border>
             <ProgressBar Grid.Row="3" Height="10" Name="ProgressBar" VerticalAlignment="Top" Margin="3, 11, 3, 3"/>
             <DataGrid Grid.Row="4" GridLinesVisibility="None" SelectionMode="Single" BorderThickness="0"
-                      Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0" IsReadOnly="True"
+                      Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="ResultsTable"
                       ItemsSource="{Binding}" AutoGenerateColumns="False">
                 <!-- Styling -->
@@ -105,13 +105,13 @@
                 </DataGrid.CellStyle>
                 <!-- Styling -->
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderPage}" Binding="{Binding Page}" Width="Auto"/>
-                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderState}" Binding="{Binding StateString}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderPage}" Binding="{Binding Page}" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderState}" Binding="{Binding StateString}" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderNeptun}" Binding="{Binding UserCode}" Width="Auto"/>
-                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderSuccess}" Binding="{Binding Result}" Width="Auto"/>
-                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderTotal}" Binding="{Binding TotalPoints}" Width="Auto"/>
-                    <DataGridTextColumn Header="" Width="*" MinWidth="0"/> <!-- Spacer -->
-                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderReset}" Width="Auto"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderSuccess}" Binding="{Binding Result}" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderTotal}" Binding="{Binding TotalPoints}" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="" Width="*" MinWidth="0" IsReadOnly="True"/> <!-- Spacer -->
+                    <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderReset}" Width="Auto" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
