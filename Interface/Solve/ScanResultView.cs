@@ -23,6 +23,9 @@ internal class ScanResultView : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPoints)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
     }
 
     private enum ScanResultHuman
@@ -40,7 +43,6 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public int Page { get; init; }
 
-    public ScanResult.State State => ScanResult.CurrentState;
     public string StateString => GetScanResultHuman() switch
     {
         ScanResultHuman.Ok => Resources.Lang.Solve_StateOk,
@@ -52,7 +54,7 @@ internal class ScanResultView : INotifyPropertyChanged
     
     public string UserCode
     {
-        get => ScanResult.UserCode.Get() ?? UnknownString;
+        get => (ScanResult.UserCode.Get() ?? UnknownString).ToUpper();
         set
         {
             if (CodeScanner.IsNeptunCode(value))
@@ -83,13 +85,12 @@ internal class ScanResultView : INotifyPropertyChanged
 
     private ScanResultHuman GetScanResultHuman()
     {
-        return State switch
-        {
-            ScanResult.State.Completed => ScanResultHuman.Ok,
-            ScanResult.State.CompletedWithManualCorrection => ScanResultHuman.Ok,
-            ScanResult.State.MissingUserCode => ScanResultHuman.Partial,
-            _ => ScanResultHuman.Error
-        };
+        if (ScanResult.Issues.Get() != ScanResult.IssueFlags.None ||
+            ScanResult.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingExamCode))
+            return ScanResultHuman.Error;
+        if (ScanResult.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingUserCode))
+            return ScanResultHuman.Partial;
+        return ScanResultHuman.Ok;
     }
     
     public DualAutoSeparatedStringBuilder ToSheetCsv(int pageIndex, LocaleSpecifics localeSpecifics)
@@ -119,7 +120,7 @@ internal class ScanResultView : INotifyPropertyChanged
     public DualAutoSeparatedStringBuilder ToCsvCommonHeader(int pageIndex, LocaleSpecifics localeSpecifics)
     {
         var sb = new DualAutoSeparatedStringBuilder(localeSpecifics.ListSeparator, (pageIndex + 1).ToString(),
-            State.ToString());
+            "");
         sb.Append(UserCode, "");
         sb.Append(TotalPoints.ToString(), "");
         sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
