@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 using System.Text;
+using System.Windows;
 using Scanner;
 using Scanner.Result;
 
@@ -21,11 +22,17 @@ internal class ScanResultView : INotifyPropertyChanged
     private void InvokePropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        InvokePropertyChangedDerived();
+    }
+
+    private void InvokePropertyChangedDerived()
+    {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPoints)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsResetVisible)));
     }
 
     private enum ScanResultHuman
@@ -84,6 +91,8 @@ internal class ScanResultView : INotifyPropertyChanged
     }
 
     public ScanResultViewPointAccess Points { get; init; }
+
+    public Visibility IsResetVisible => ScanResult.IsModified() ? Visibility.Visible : Visibility.Collapsed;
 
     public ScanResultView(int page, ScanResult sourceResult)
     {
@@ -144,6 +153,14 @@ internal class ScanResultView : INotifyPropertyChanged
             .ToString("0.000", localeSpecifics.Culture);
         confidence += " " + IntToLetterAlphabetical(result.BestFilledAnswer);
         sb.Append(result.Points.ToString(), confidence);
+    }
+
+    public void Reset()
+    {
+        ScanResult.Reset();
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserCode)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Points)));
+        InvokePropertyChangedDerived();
     }
 
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).

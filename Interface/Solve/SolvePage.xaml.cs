@@ -13,6 +13,7 @@ using Interface.Settings;
 using Microsoft.Win32;
 using Scanner;
 using Scanner.Result;
+using Scanner.Rollback;
 using Storage;
 
 namespace Interface.Solve;
@@ -36,6 +37,7 @@ public partial class SolvePage
         _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
         _resultsTableInitialColumns = [.. ResultsTable.Columns];
         ResultsTable.DataContext = _csvBuffer;
+        ResultsTable.Visibility = Visibility.Visible;
     }
 
     private void ImportPdf_OnClick(object sender, RoutedEventArgs e)
@@ -388,4 +390,13 @@ public partial class SolvePage
 
     private static Rollback<ScanResult.IssueFlags> ReinitIssueFlagsRollback(Rollback<ScanResult.IssueFlags> old)
         => new(old.Get());
+
+    private void ResetSelected_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+        if (button.DataContext is not ScanResultView view)
+            return;
+        view.Reset();
+    }
 }

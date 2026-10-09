@@ -1,7 +1,7 @@
 using System.Drawing;
-using Interface.Solve;
 using OpenCvSharp;
 using Scanner.Result;
+using Scanner.Rollback;
 using ZXing;
 using ZXing.Common;
 using ZXing.Multi;

@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using Scanner.Rollback;
 
 namespace Scanner.Result;
 
@@ -66,5 +66,34 @@ public struct ScanResult
         flags |= (ExamCode.Get() is null) ? MissingFieldFlags.MissingExamCode : MissingFieldFlags.None;
         flags |= (UserCode.Get() is null) ? MissingFieldFlags.MissingUserCode : MissingFieldFlags.None;
         return flags;
+    }
+
+    public bool IsModified()
+    {
+        var rollbacks = new List<IRollback>
+        {
+            ExamCode,
+            UserCode,
+            Issues
+        };
+        foreach (var result in Results)
+        {
+            rollbacks.Add(result.Points);
+            rollbacks.Add(result.TaskIndex);
+        }
+        return rollbacks.Any(rollback => rollback.IsModified());
+    }
+
+    public void Reset()
+    {
+        ExamCode.Reset();
+        UserCode.Reset();
+        Issues.Reset();
+        var max = Results.Length;
+        for (var i = 0; i < max; i++) // `QuestionResult` is a struct, you can't use a foreach here.
+        {
+            Results[i].Points.Reset();
+            Results[i].TaskIndex.Reset();
+        }
     }
 }
