@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0" IsEnabled="False" Opacity="0.5"/>
+                <!-- <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0" IsEnabled="False" Opacity="0.5"/> -->
                 <Button Grid.Column="1" Content="{x:Static res:Lang.Solve_Get}" Click="ExportResults_OnClick" Name="ExportResultsButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
                 <Button Grid.Column="2" Content="{x:Static res:Lang.Solve_GetAlt}" Click="ExportStats_OnClick" Name="ExportResultsAltButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
                 <CheckBox Grid.Column="3" VerticalAlignment="Center" Content="{x:Static res:Lang.Solve_IncludeConfidence}" Name="ExtraInfoCheckbox" Padding="3, 0" Margin="3, 0, 0, 0"/>
