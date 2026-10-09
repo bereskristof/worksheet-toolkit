@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using Scanner;
 using Scanner.Result;
@@ -9,23 +8,15 @@ namespace Interface.Solve;
 public struct LocaleSpecifics
 {
     public CultureInfo Culture;
+    public string DecimalPoint;
     public string ListSeparator;
     public string SuccessText;
     public string FailText;
 }
 
-internal class ScanResultView : INotifyPropertyChanged
+public class ScanResultView(int page, ScanResult sourceResult)
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void InvokePropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPoints)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
-    }
-
-    private enum ScanResultHuman
+    enum ScanResultHuman
     {
         Ok,
         Partial,
@@ -36,9 +27,8 @@ internal class ScanResultView : INotifyPropertyChanged
     private const int SuccessfulMinimumScore = ScanResult.SuccessScoreCount;
     private const string UnknownString = "?";
 
-    public ScanResult ScanResult;
-
-    public int Page { get; init; }
+    public ScanResult ScanResult = sourceResult;
+    public int Page { get; init; } = page;
 
     public ScanResult.State State => ScanResult.CurrentState;
     public string StateString => GetScanResultHuman() switch
@@ -50,19 +40,7 @@ internal class ScanResultView : INotifyPropertyChanged
     public bool MajorError => GetScanResultHuman() == ScanResultHuman.Error;
     public bool MinorError => GetScanResultHuman() == ScanResultHuman.Partial;
     
-    public string UserCode
-    {
-        get => ScanResult.UserCode.Get() ?? UnknownString;
-        set
-        {
-            if (CodeScanner.IsNeptunCode(value))
-            {
-                ScanResult.UserCode.Set(value);
-            }
-            InvokePropertyChanged(nameof(UserCode));
-        }
-    }
-
+    public string UserCode => ScanResult.UserCode.Get() ?? UnknownString;
     public string ExamCode => ScanResult.ExamCode.Get()?.ToString() ?? UnknownString;
     
     public int TotalPoints => Points.Get().Sum();
@@ -71,15 +49,7 @@ internal class ScanResultView : INotifyPropertyChanged
         ? Resources.Lang.Export_ResultSuccess
         : Resources.Lang.Export_ResultFailure;
     
-    public ScanResultViewPointAccess Points { get; init; }
-
-    public ScanResultView(int page, ScanResult sourceResult)
-    {
-        ScanResult = sourceResult;
-        Page = page;
-        Points = new ScanResultViewPointAccess(sourceResult);
-        Points.ElementChanged += (_, _) => InvokePropertyChanged(nameof(Points));
-    }
+    public ScanResultViewPointAccess Points { get; init; } = new(sourceResult);
 
     private ScanResultHuman GetScanResultHuman()
     {
@@ -94,15 +64,25 @@ internal class ScanResultView : INotifyPropertyChanged
     
     public DualAutoSeparatedStringBuilder ToSheetCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
-        var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
+        var sb = new DualAutoSeparatedStringBuilder(localeSpecifics.ListSeparator, (pageIndex + 1).ToString(), State.ToString());
+        sb.Append(UserCode, "");
+        sb.Append(TotalPoints.ToString(), "");
+        sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
         foreach (var result in ScanResult.Results)
-            ToCsvCommonResult(ref sb, result, localeSpecifics);
+        {
+            var confidence = ScanResult.CalculateConfidence(result.FillConfidence, result.DeltaConfidence).ToString("0.000", localeSpecifics.Culture);
+            confidence += " " + IntToLetterAlphabetical(result.BestFilledAnswer);
+            sb.Append(result.Points.ToString() ?? "!", confidence);
+        }
         return sb;
     }
 
     public DualAutoSeparatedStringBuilder ToTaskCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
-        var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
+        var sb = new DualAutoSeparatedStringBuilder(localeSpecifics.ListSeparator, (pageIndex + 1).ToString(), State.ToString());
+        sb.Append(UserCode, "");
+        sb.Append(TotalPoints.ToString(), "");
+        sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
         var orderedResults = ScanResult.Results.OrderBy(r => r.TaskIndex.Get() ?? -1).ToArray();
         foreach (var result in orderedResults)
         {
@@ -111,31 +91,15 @@ internal class ScanResultView : INotifyPropertyChanged
                 sb.Append("!", "");
                 continue;
             }
-            ToCsvCommonResult(ref sb, result, localeSpecifics);
+
+            var confidence = ScanResult.CalculateConfidence(result.FillConfidence, result.DeltaConfidence).ToString("0.000", localeSpecifics.Culture);
+            confidence += " " + IntToLetterAlphabetical(result.BestFilledAnswer);
+            sb.Append(result.Points.ToString() ?? "!", confidence);
         }
         return sb;
     }
 
-    public DualAutoSeparatedStringBuilder ToCsvCommonHeader(int pageIndex, LocaleSpecifics localeSpecifics)
-    {
-        var sb = new DualAutoSeparatedStringBuilder(localeSpecifics.ListSeparator, (pageIndex + 1).ToString(),
-            State.ToString());
-        sb.Append(UserCode, "");
-        sb.Append(TotalPoints.ToString(), "");
-        sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
-        return sb;
-    }
-
-    public static void ToCsvCommonResult(ref DualAutoSeparatedStringBuilder sb, QuestionResult result,
-        LocaleSpecifics localeSpecifics)
-    {
-        var confidence = ScanResult.CalculateConfidence(result.FillConfidence, result.DeltaConfidence)
-            .ToString("0.000", localeSpecifics.Culture);
-        confidence += " " + IntToLetterAlphabetical(result.BestFilledAnswer);
-        sb.Append(result.Points.ToString(), confidence);
-    }
-
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).
-    /// Values greater than 25 return successive UTF32 characters (26 => '[').
-    private static string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
+    /// Values greater than 25 return successive UTF32 characters (26 => [).
+    private string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
 }

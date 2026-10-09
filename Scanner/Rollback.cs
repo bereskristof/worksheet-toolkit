@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace Scanner;
+﻿namespace Scanner;
 
 /// Create a T value that can be user changed,
 /// with a guarantee to always allow rolling back to it's initial value.
@@ -11,7 +9,6 @@ public struct Rollback<T>(T initial)
     private readonly T _initial = initial;
     private T _override = initial;
     
-    [Pure]
     public T Get() => _override;
     
     public void Set(T @override) => _override = @override;
