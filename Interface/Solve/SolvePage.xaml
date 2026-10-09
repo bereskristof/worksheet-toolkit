@@ -55,8 +55,7 @@
             <ProgressBar Grid.Row="3" Height="10" Name="ProgressBar" VerticalAlignment="Top" Margin="3, 11, 3, 3"/>
             <DataGrid Grid.Row="4" GridLinesVisibility="None" SelectionMode="Single" BorderThickness="0"
                       Background="Transparent" CanUserResizeRows="False" RowHeaderWidth="0" IsReadOnly="True"
-                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="ResultsTable"
-                      ItemsSource="{Binding}" AutoGenerateColumns="False">
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="ResultsTable">
                 <!-- Styling -->
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
