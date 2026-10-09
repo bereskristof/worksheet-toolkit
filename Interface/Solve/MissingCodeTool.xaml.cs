@@ -69,6 +69,7 @@ public partial class MissingCodeTool
             return;
         }
         
+        FixedResult.CurrentState = ScanResult.State.ManuallyCorrected;
         Close();
     }
 
