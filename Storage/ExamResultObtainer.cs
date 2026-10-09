@@ -1,5 +1,6 @@
 using System.Diagnostics;
-using Scanner;
+using Scanner.Rollback;
+using Scanner.Result;
 using Storage.Sheet;
 using static System.Math;
 
@@ -13,7 +14,7 @@ public static class ExamResultObtainer
     {
         var verifyCommand = Manager.Connection.CreateCommand();
         verifyCommand.CommandText = "SELECT AnswerNumber, QuestionId, QuestionNumber FROM Solutions WHERE Uuid == @Uuid ORDER BY QuestionNumber ASC;";
-        verifyCommand.Parameters.AddWithValue("@Uuid", (result.ExamCode ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!")).ToString());
+        verifyCommand.Parameters.AddWithValue("@Uuid", (result.ExamCode.Get() ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!")).ToString());
         using var reader = verifyCommand.ExecuteReader();
         while (reader.Read())
         {
@@ -24,38 +25,29 @@ public static class ExamResultObtainer
             var memoryStream = new MemoryStream();
             answerNumberBlob.CopyTo(memoryStream);
             var decryptedData = Encryption.DecryptBlob(memoryStream.ToArray());
-            long answerNumber = BitConverter.ToInt64(decryptedData, 0);
+            var answerNumber = BitConverter.ToInt64(decryptedData, 0);
             
             var select = result.Results[i];
-            select.TaskIndex = questionId;
+            select.TaskIndex = questionId.ToNullableRollback();
             
-            if (select.Points != null)
+            if (select.Points.Get() != null)
             {
                 result.Results[i] = select;
                 continue; // Already processed (empty or double filled)
             }
 
-            select.Points =
+            var points =
                 select.BestFilledAnswer == answerNumber 
-                ? ScanResult.QuestionResult.CorrectAnswerPoints
-                : ScanResult.QuestionResult.WrongAnswerPoints;
+                ? QuestionResult.CorrectAnswerPoints
+                : QuestionResult.WrongAnswerPoints;
+            select.Points = points.ToNullableRollback();
             
             result.Results[i] = select;
         }
-        
-        if (result.CurrentState == ScanResult.State.Unknown)
+
+        if (result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null))
         {
-            result.CurrentState =
-                result.Results.Any(x => x.Points == null || x.TaskIndex == null)
-                    ? ScanResult.State.MissingTaskFromDatabase
-                    : ScanResult.State.Completed;
-        }
-        if (result.CurrentState == ScanResult.State.ManuallyCorrected)
-        {
-            result.CurrentState =
-                result.Results.Any(x => x.Points == null || x.TaskIndex == null)
-                    ? ScanResult.State.MissingTaskFromDatabase
-                    : ScanResult.State.CompletedWithManualCorrection;
+            result.Issues.Set(result.Issues.Get() | ScanResult.IssueFlags.MissingTaskFromDatabase);
         }
     }
 

@@ -1,14 +1,19 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using Docnet.Core.Models;
 using Docnet.Core.Readers;
 using Interface.Settings;
 using Microsoft.Win32;
 using Scanner;
+using Scanner.Result;
+using Scanner.Rollback;
 using Storage;
 
 namespace Interface.Solve;
@@ -17,9 +22,12 @@ public partial class SolvePage
 {
     private const int DimX = 1200;
     private const int DimY = 1700;
+
+    private int _resultsTableTaskColumnCount = 0;
     
     private readonly BackgroundWorker _backgroundWorker = new();
-    private ScanResult[] _csvBuffer = [];
+    private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
+    private readonly DataGridColumn[] _resultsTableInitialColumns;
     
     public SolvePage()
     {
@@ -27,6 +35,9 @@ public partial class SolvePage
         _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
         _backgroundWorker.DoWork += BackgroundLoader_DoWork;
         _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
+        _resultsTableInitialColumns = [.. ResultsTable.Columns];
+        ResultsTable.DataContext = _csvBuffer;
+        ResultsTable.Visibility = Visibility.Visible;
     }
 
     private void ImportPdf_OnClick(object sender, RoutedEventArgs e)
@@ -34,14 +45,66 @@ public partial class SolvePage
         string path = GetLoadPath(Interface.Resources.Lang.Browse_SolveImportTitle);
         if (string.IsNullOrEmpty(path)) 
             return;
-        
+
+        ImportPdfTextbox.Text = path;
+    }
+
+    private void CorrectPdf_OnClick(object sender, RoutedEventArgs e)
+    {
+        var pdfPath = ImportPdfTextbox.Text;
+        if (!IsPathValidPdf(pdfPath))
+        {
+            MessageBox.Show(Interface.Resources.Lang.Solve_NotAPdf, Interface.Resources.Lang.Common_Error,
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        BeginFileCorrection(pdfPath);
+    }
+
+    private void BeginFileCorrection(string path)
+    {
         ProgressBar.Value = 0;
         ExportResultsButton.IsEnabled = false;
         ExportResultsAltButton.IsEnabled = false;
-        ProgressLogs.Text = "";
+        ImportPdfTextbox.IsEnabled = false;
+        BrowseButton.IsEnabled = false;
+        CorrectPdf.IsEnabled = false;
+        _csvBuffer.Clear();
+        ResetTaskCount();
         _backgroundWorker.WorkerReportsProgress = true;
         ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
+    }
+
+    /// Toggle CorrectPdf button based on if path is set to a value.
+    private void ImportPdfTextbox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var textboxText = ImportPdfTextbox.Text;
+        var isPathValid = File.Exists(textboxText);
+        var isPathEmpty = string.IsNullOrEmpty(textboxText);
+        CorrectPdf.IsEnabled = isPathValid;
+        InvalidPathWarningBox.Visibility = (isPathValid || isPathEmpty) ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    /// Checks if the provided file has a valid PDF file signature.
+    private static bool IsPathValidPdf(string path)
+    {
+        try
+        {
+            var fileSignature = new byte[5];
+            var file = File.Open(path, FileMode.Open);
+            file.ReadExactly(fileSignature);
+            file.Close();
+            return fileSignature
+                .Zip("%PDF-")
+                .Select(s => s.First == s.Second)
+                .All(b => b);
+        }
+        catch (Exception e) when (e is PathTooLongException or UnauthorizedAccessException or NotSupportedException
+                                      or EndOfStreamException or IOException)
+        {
+            return false;
+        }
     }
 
     private void ExportResults_OnClick(object sender, RoutedEventArgs e)
@@ -53,7 +116,7 @@ public partial class SolvePage
         {
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToSheetCsv(i, locale));
-            var maxTaskCount = _csvBuffer.Select((v, _) => v.Results.Length).Max();
+            var maxTaskCount = _csvBuffer.Select(v => v.TaskCount).Max();
             var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskCount));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -74,8 +137,9 @@ public partial class SolvePage
         {
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToTaskCsv(i, locale));
-            var maxTaskIndex = _csvBuffer.Select((v, _) =>
-                v.Results.Select(q => q.TaskIndex).Where(i => i is not null).Select(i => (int)i!).Max()).Max();
+            var maxTaskIndex = _csvBuffer.Select(v =>
+                v.ScanResult.Results.Select(q => q.TaskIndex).Where(i => i.Get() is not null).Select(i => (int)i.Get()!)
+                    .Max()).Max();
             var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskIndex));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -108,11 +172,11 @@ public partial class SolvePage
         
         var sb = new StringBuilder();
         var sep = locale.ListSeparator;
-        sb.Append(Interface.Resources.Lang.Export_HeaderPage).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderNeptun).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderTotal).Append(sep)
-            .Append(Interface.Resources.Lang.Export_HeaderSuccess);
-        var taskTemplate = Interface.Resources.Lang.Export_HeaderTask;
+        sb.Append(Interface.Resources.Lang.Solve_HeaderPage).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderNeptun).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderTotal).Append(sep)
+            .Append(Interface.Resources.Lang.Solve_HeaderSuccess);
+        var taskTemplate = Interface.Resources.Lang.Solve_HeaderTask;
         foreach (var taskNum in Enumerable.Range(0, taskCount))
         {
             sb.Append(sep).Append(taskTemplate.Replace("#NUM#", (taskNum + 1).ToString()));
@@ -155,10 +219,10 @@ public partial class SolvePage
 
     private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
     {
-        var scanResult = (ScanResult?)e.UserState;
+        var result = (ScanResultView?)e.UserState ?? throw new ArgumentNullException(nameof(e.UserState));
+        _csvBuffer.Add(result);
+        UpdateResultsTableColumns(result);
         ProgressBar.Value = e.ProgressPercentage;
-        ProgressLogs.Text += $"Page {e.ProgressPercentage}/{ProgressBar.Maximum}: {scanResult?.CurrentState}\n";
-        ProgressLogsScroll.ScrollToEnd();
     }
 
     private void BackgroundLoader_DoWork(object? sender, DoWorkEventArgs e)
@@ -169,58 +233,58 @@ public partial class SolvePage
         using var reader = doclib.GetDocReader(path, new PageDimensions(DimX, DimY));
 
         var pageCount = reader.GetPageCount();
-        var scanResults = new ScanResult[pageCount];
 
         var skipDialog = false;
     
         for (var i = 0; i < pageCount; i++)
         {
+            ScanResult scanResult;
             try
             {
-                scanResults[i] = ScannerHandler.ScanPdfPage(reader, i);
+                scanResult = ScannerHandler.ScanPdfPage(reader, i);
             }
             catch (Exception ex)
             {
                 Log.Write($"Unexpected exception while trying to check exam: {ex.Message}", Log.Severity.Error);
-                scanResults[i] = new ScanResult
+                scanResult = new ScanResult
                 {
-                    CurrentState = ScanResult.State.UnexpectedException,
-                    ExamCode = null,
-                    UserCode = null,
-                    FinalPoints = null,
+                    Issues = ScanResult.IssueFlags.UnexpectedException.ToRollback(),
+                    ExamCode = RollbackConversions.GetNullGuid(),
+                    UserCode = RollbackConversions.GetNullString(),
                     Results = [],
                 };
             }
 
             // If there is a missing code, open the dialog to fix it.
-            if (!skipDialog
-                && (scanResults[i].CurrentState == ScanResult.State.MissingExamCode
-                || scanResults[i].CurrentState == ScanResult.State.MissingUserCode))
+            if (!skipDialog && scanResult.Issues.Get() == ScanResult.IssueFlags.None &&
+                scanResult.GetMissingFields() != ScanResult.MissingFieldFlags.None)
             {
                 var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
-                scanResults[i] = DispatchHelpDialog(pageImg, scanResults[i], out skipDialog);
+                DispatchHelpDialog(pageImg, ref scanResult, out skipDialog);
                 
                 try 
                 {
-                    HandleUnfinishedResults(ref scanResults[i], i, reader);
+                    HandleUnfinishedResults(ref scanResult, i, reader);
                 }
                 catch (Exception ex)
                 {
                     Log.Write($"Unexpected exception while trying to check manually corrected exam: {ex.Message}", Log.Severity.Error);
-                    scanResults[i].CurrentState = ScanResult.State.UnexpectedException;
-                    scanResults[i].FinalPoints = null;
-                    scanResults[i].Results = [];
+                    scanResult.Issues = ScanResult.IssueFlags.UnexpectedException.ToRollback();
+                    scanResult.Results = [];
                 }
             }
-            
-            _backgroundWorker.ReportProgress(i + 1, scanResults[i]);
+
+            scanResult.Issues = ReinitIssueFlagsRollback(scanResult.Issues);
+            var page = i + 1;
+            var scanResultView = new ScanResultView(page, scanResult);
+            _backgroundWorker.ReportProgress(page, scanResultView);
         }
-        e.Result = scanResults;
     }
 
-    private static ScanResult DispatchHelpDialog(Bitmap image, ScanResult invalidResult, out bool skipFuture)
+    private static void DispatchHelpDialog(Bitmap image, ref ScanResult invalidResult, out bool skipFuture)
     {
         bool skipFuturePrompts = false;
+        ScanResult invalidResultCopy = invalidResult;
         ScanResult newResult = invalidResult;
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -228,43 +292,33 @@ public partial class SolvePage
             {
                 Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                FixedResult = invalidResult,
+                FixedResult = invalidResultCopy,
             };
-            window.Setup(image, invalidResult);
+            window.Setup(image, invalidResultCopy);
             window.ShowDialog();
             newResult = window.FixedResult;
             skipFuturePrompts = window.SkipFuturePrompts;
         });
         skipFuture = skipFuturePrompts;
-        return newResult;
+        invalidResult = newResult;
     }
 
     private static void HandleUnfinishedResults(ref ScanResult result, int i, IDocReader reader)
     {
-        switch (result.CurrentState)
-        {
-            case ScanResult.State.MissingExamCode:
-                return; // If still missing code, skip processing
-            case ScanResult.State.ManuallyCorrected:
-            {
-                var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
-                result = ScannerHandler.ScanPageResults(pageImg, 5, result);
-                break;
-            }
-        }
+        if (result.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingExamCode))
+            return;
+        var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
+        result = ScannerHandler.ScanPageResults(pageImg, 5, result);
         ScannerHandler.ProcessScanResults(ref result, i);
     }
 
     private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
-        var results = (ScanResult[]?)e.Result;
-        if (results == null || results.Length == 0)
-        {
-            return;
-        }
-        _csvBuffer = results;
         ExportResultsButton.IsEnabled = true;
         ExportResultsAltButton.IsEnabled = true;
+        ImportPdfTextbox.IsEnabled = true;
+        BrowseButton.IsEnabled = true;
+        CorrectPdf.IsEnabled = true;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.
@@ -287,10 +341,62 @@ public partial class SolvePage
         return new LocaleSpecifics
         {
             Culture = culture,
-            DecimalPoint = culture.NumberFormat.NumberDecimalSeparator,
             ListSeparator = culture.TextInfo.ListSeparator,
             SuccessText = Interface.Resources.Lang.Export_ResultSuccess,
             FailText = Interface.Resources.Lang.Export_ResultFailure,
         };
+    }
+
+    private void UpdateResultsTableColumns(ScanResultView result)
+    {
+        var taskCount = result.TaskCount;
+        if (_resultsTableTaskColumnCount < taskCount)
+        {
+            ExtendDataGridToTaskCount(taskCount);
+        }
+    }
+
+    private void ExtendDataGridToTaskCount(int taskCount)
+    {
+        const int rightHandColumnCount = 2;
+        var firstRightHandColumnIndex = ResultsTable.Columns.Count - rightHandColumnCount;
+        var rightHandColumns = ResultsTable.Columns
+            .Skip(firstRightHandColumnIndex)
+            .Take(rightHandColumnCount)
+            .ToArray(); // ToArray() is used to create a copy of the data, otherwise only references are used, which would point to incorrect data.
+        for (int i = ResultsTable.Columns.Count - 1; i >= firstRightHandColumnIndex; i--)
+            ResultsTable.Columns.RemoveAt(i);
+
+        while (_resultsTableTaskColumnCount < taskCount)
+        {
+            var column = new DataGridTextColumn();
+            column.Header = Interface.Resources.Lang.Solve_HeaderTaskShort.Replace("#NUM#",
+                (_resultsTableTaskColumnCount + 1).ToString());
+            column.Binding = new Binding($"Points[{_resultsTableTaskColumnCount}]");
+            ResultsTable.Columns.Add(column);
+            _resultsTableTaskColumnCount++;
+        }
+        foreach (var rightHandColumn in rightHandColumns)
+            ResultsTable.Columns.Add(rightHandColumn);
+    }
+
+    private void ResetTaskCount()
+    {
+        _resultsTableTaskColumnCount = 0;
+        ResultsTable.Columns.Clear();
+        foreach (var column in _resultsTableInitialColumns)
+            ResultsTable.Columns.Add(column);
+    }
+
+    private static Rollback<ScanResult.IssueFlags> ReinitIssueFlagsRollback(Rollback<ScanResult.IssueFlags> old)
+        => new(old.Get());
+
+    private void ResetSelected_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+        if (button.DataContext is not ScanResultView view)
+            return;
+        view.Reset();
     }
 }

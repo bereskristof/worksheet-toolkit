@@ -1,14 +1,14 @@
 using System.Drawing;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Scanner;
+using Scanner.Result;
 
 namespace Interface.Solve;
 
-public partial class MissingCodeTool : Window
+public partial class MissingCodeTool
 {
     public ScanResult FixedResult = new();
     public bool SkipFuturePrompts = false;
@@ -21,8 +21,8 @@ public partial class MissingCodeTool : Window
     public void Setup(Bitmap image, ScanResult scanResult)
     {
         PreviewImage.Source = ConvertBitmapToImageSource(image);
-        ExamTextBox.Text = (scanResult.ExamCode.ToString() ?? "").Replace("-", "");
-        CodeTextBox.Text = scanResult.UserCode ?? "";
+        ExamTextBox.Text = scanResult.ExamCode.ToString().Replace("-", "");
+        CodeTextBox.Text = scanResult.UserCode.ToString();
     }
     
     private static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
@@ -44,7 +44,7 @@ public partial class MissingCodeTool : Window
         string examCode = ExamTextBox.Text.Trim();
         if (CodeScanner.IsUuid(examCode)) 
         {
-            FixedResult.ExamCode = Guid.Parse(examCode);
+            FixedResult.ExamCode.Set(Guid.Parse(examCode));
         }
         else
         {
@@ -55,7 +55,7 @@ public partial class MissingCodeTool : Window
         string userCode = CodeTextBox.Text.Trim();
         if (CodeScanner.IsNeptunCode(userCode))
         {
-            FixedResult.UserCode = userCode;
+            FixedResult.UserCode.Set(userCode);
         }
         else
         {
@@ -69,7 +69,6 @@ public partial class MissingCodeTool : Window
             return;
         }
         
-        FixedResult.CurrentState = ScanResult.State.ManuallyCorrected;
         Close();
     }
 

@@ -240,51 +240,6 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Neptun.
-        /// </summary>
-        public static string Export_HeaderNeptun {
-            get {
-                return ResourceManager.GetString("Export_HeaderNeptun", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Page.
-        /// </summary>
-        public static string Export_HeaderPage {
-            get {
-                return ResourceManager.GetString("Export_HeaderPage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Result.
-        /// </summary>
-        public static string Export_HeaderSuccess {
-            get {
-                return ResourceManager.GetString("Export_HeaderSuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task #NUM#.
-        /// </summary>
-        public static string Export_HeaderTask {
-            get {
-                return ResourceManager.GetString("Export_HeaderTask", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Points.
-        /// </summary>
-        public static string Export_HeaderTotal {
-            get {
-                return ResourceManager.GetString("Export_HeaderTotal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to High.
         /// </summary>
         public static string Export_High {
@@ -1081,6 +1036,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pages to correct:.
+        /// </summary>
+        public static string Solve_CorrectLabel {
+            get {
+                return ResourceManager.GetString("Solve_CorrectLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exporting PDF.
         /// </summary>
         public static string Solve_ExportingPdf {
@@ -1108,6 +1072,87 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Neptun.
+        /// </summary>
+        public static string Solve_HeaderNeptun {
+            get {
+                return ResourceManager.GetString("Solve_HeaderNeptun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page.
+        /// </summary>
+        public static string Solve_HeaderPage {
+            get {
+                return ResourceManager.GetString("Solve_HeaderPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Solve_HeaderReset {
+            get {
+                return ResourceManager.GetString("Solve_HeaderReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State.
+        /// </summary>
+        public static string Solve_HeaderState {
+            get {
+                return ResourceManager.GetString("Solve_HeaderState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Result.
+        /// </summary>
+        public static string Solve_HeaderSuccess {
+            get {
+                return ResourceManager.GetString("Solve_HeaderSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task #NUM#.
+        /// </summary>
+        public static string Solve_HeaderTask {
+            get {
+                return ResourceManager.GetString("Solve_HeaderTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #NUM#..
+        /// </summary>
+        public static string Solve_HeaderTaskShort {
+            get {
+                return ResourceManager.GetString("Solve_HeaderTaskShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Points.
+        /// </summary>
+        public static string Solve_HeaderTotal {
+            get {
+                return ResourceManager.GetString("Solve_HeaderTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to History.
+        /// </summary>
+        public static string Solve_History {
+            get {
+                return ResourceManager.GetString("Solve_History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export with confidence.
         /// </summary>
         public static string Solve_IncludeConfidence {
@@ -1117,11 +1162,65 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provided path doesn&apos;t point to a valid file!.
+        /// </summary>
+        public static string Solve_InvalidFileWarning {
+            get {
+                return ResourceManager.GetString("Solve_InvalidFileWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided file is not a PDF!.
+        /// </summary>
+        public static string Solve_NotAPdf {
+            get {
+                return ResourceManager.GetString("Solve_NotAPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select file....
         /// </summary>
         public static string Solve_Select {
             get {
                 return ResourceManager.GetString("Solve_Select", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Correct PDF.
+        /// </summary>
+        public static string Solve_Start {
+            get {
+                return ResourceManager.GetString("Solve_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Solve_StateError {
+            get {
+                return ResourceManager.GetString("Solve_StateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string Solve_StateOk {
+            get {
+                return ResourceManager.GetString("Solve_StateOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partial.
+        /// </summary>
+        public static string Solve_StateWarning {
+            get {
+                return ResourceManager.GetString("Solve_StateWarning", resourceCulture);
             }
         }
         

@@ -1,5 +1,7 @@
 using System.Drawing;
 using OpenCvSharp;
+using Scanner.Result;
+using Scanner.Rollback;
 using ZXing;
 using ZXing.Common;
 using ZXing.Multi;
@@ -76,17 +78,21 @@ public class CodeScanner
             if (IsUuid(text))
             {
                 var uuid = Guid.ParseExact(text, "N");
-                result.ExamCode = uuid;
+                result.ExamCode = uuid.ToNullableRollback();
             }
             else if (IsNeptunCode(text))
             {
-                result.UserCode = text;
+                result.UserCode = text.ToNullableRollback();
             }
         }
     }
     
     public static bool IsValidScanResult(ScanResult result)
-        => result is { ExamCode: not null, UserCode: not null } && result.ExamCode != Guid.Empty && !string.IsNullOrEmpty(result.UserCode);
+    {
+        var examCode = result.ExamCode.Get();
+        var userCode = result.UserCode.Get();
+        return examCode != Guid.Empty && !string.IsNullOrEmpty(userCode);
+    }
 
     public static bool IsUuid(string text)
         => Guid.TryParseExact(text, "N", out _);
