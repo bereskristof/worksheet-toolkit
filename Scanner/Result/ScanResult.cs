@@ -20,8 +20,8 @@ public struct ScanResult
     
     public State CurrentState;
     
-    public Rollback<Guid?> ExamCode;
-    public Rollback<string?> UserCode;
+    public Rollbackable<Guid?> ExamCode;
+    public Rollbackable<string?> UserCode;
     
     public int? FinalPoints => Results.Sum(r => r.Points.Get() ?? 0);
     

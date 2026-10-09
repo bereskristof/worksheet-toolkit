@@ -77,11 +77,11 @@ public class CodeScanner
             if (IsUuid(text))
             {
                 var uuid = Guid.ParseExact(text, "N");
-                result.ExamCode = new Rollback<Guid?>(uuid);
+                result.ExamCode = new Rollbackable<Guid?>(uuid);
             }
             else if (IsNeptunCode(text))
             {
-                result.UserCode = new Rollback<string?>(text);
+                result.UserCode = new Rollbackable<string?>(text);
             }
         }
     }

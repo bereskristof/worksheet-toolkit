@@ -12,10 +12,6 @@ public static class Program
     
     public static void Main(string[] args)
     {
-        if ((int?)8 == (int?)7)
-        {
-            
-        }
         // Uncomment the desired test method to run
         // ScanTest();
         // GuidTest();

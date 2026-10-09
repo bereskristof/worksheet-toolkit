@@ -2,7 +2,7 @@
 
 /// Create a T value that can be user changed,
 /// with a guarantee to always allow rolling back to it's initial value.
-public struct Rollback<T>(T initial)
+public struct Rollbackable<T>(T initial)
 {
     // NOTE: struct here forces sane nullability!
     
