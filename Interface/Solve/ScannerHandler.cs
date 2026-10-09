@@ -95,11 +95,11 @@ public static class ScannerHandler
             var (mResult, mBest, mNextBest) = matrixResults[i];
             result.Results[i] = new QuestionResult
             {
-                TaskIndex = new Rollbackable<int?>(null),
+                TaskIndex = null,
                 BestFilledAnswer = mResult,
                 DeltaConfidence = double.IsNaN((mBest - mNextBest) / mBest) ? 1.0 : ((mBest - mNextBest) / mBest), // [0, 1], since mNextBest <= mBest
                 FillConfidence = mBest, // [0, 1], since it's a ratio
-                Points = new Rollbackable<int?>(null),
+                Points = null,
             };
         }
 
@@ -113,16 +113,17 @@ public static class ScannerHandler
             var res = result.Results[i];
             if (res.FillConfidence < QuestionResult.MinFillConfidence)
             {
-                result.Results[i].Points = new Rollbackable<int?>(QuestionResult.EmptyAnswerPoints);
+                result.Results[i].Points = QuestionResult.EmptyAnswerPoints;
             }
             else if (res.DeltaConfidence <= QuestionResult.MinDeltaConfidence)
             {
-                result.Results[i].Points = new Rollbackable<int?>(QuestionResult.WrongAnswerPoints);
+                result.Results[i].Points = QuestionResult.WrongAnswerPoints;
             }
             // Else: Answer is filled correctly. Points will be assigned later, and as such, is left as null for now.
         }
 
         ExamResultObtainer.ObtainResults(ref result);
+        result.FinalPoints = result.Results.Select(r => r.Points).Sum();
     }
     
     public enum CodeType

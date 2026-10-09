@@ -6,14 +6,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <WarningsAsErrors>;NU1605;SYSLIB0011;Nullable</WarningsAsErrors>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <WarningsAsErrors>;NU1605;SYSLIB0011;Nullable</WarningsAsErrors>
-    </PropertyGroup>
-
     <ItemGroup>
       <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260627" />
       <PackageReference Include="OpenCvSharp4.Windows" Version="4.13.0.20260627" />

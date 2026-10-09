@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Scanner;
 using Scanner.Result;
 using Storage.Sheet;
 using static System.Math;
@@ -25,22 +24,21 @@ public static class ExamResultObtainer
             var memoryStream = new MemoryStream();
             answerNumberBlob.CopyTo(memoryStream);
             var decryptedData = Encryption.DecryptBlob(memoryStream.ToArray());
-            var answerNumber = BitConverter.ToInt64(decryptedData, 0);
+            long answerNumber = BitConverter.ToInt64(decryptedData, 0);
             
             var select = result.Results[i];
-            select.TaskIndex = new Rollbackable<int?>(questionId);
+            select.TaskIndex = questionId;
             
-            if (select.Points.Get() != null)
+            if (select.Points != null)
             {
                 result.Results[i] = select;
                 continue; // Already processed (empty or double filled)
             }
 
-            var points =
+            select.Points =
                 select.BestFilledAnswer == answerNumber 
                 ? QuestionResult.CorrectAnswerPoints
                 : QuestionResult.WrongAnswerPoints;
-            select.Points = new Rollbackable<int?>(points);
             
             result.Results[i] = select;
         }
@@ -48,14 +46,14 @@ public static class ExamResultObtainer
         if (result.CurrentState == ScanResult.State.Unknown)
         {
             result.CurrentState =
-                result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null)
+                result.Results.Any(x => x.Points == null || x.TaskIndex == null)
                     ? ScanResult.State.MissingTaskFromDatabase
                     : ScanResult.State.Completed;
         }
         if (result.CurrentState == ScanResult.State.ManuallyCorrected)
         {
             result.CurrentState =
-                result.Results.Any(x => x.Points.Get() == null || x.TaskIndex.Get() == null)
+                result.Results.Any(x => x.Points == null || x.TaskIndex == null)
                     ? ScanResult.State.MissingTaskFromDatabase
                     : ScanResult.State.CompletedWithManualCorrection;
         }
