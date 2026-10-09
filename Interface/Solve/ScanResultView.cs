@@ -67,22 +67,12 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public string ExamCode => ScanResult.ExamCode.Get()?.ToString() ?? UnknownString;
     
-    public int? TotalPoints => (GetScanResultHuman() != ScanResultHuman.Error) ? Points.Get().Sum() : null;
+    public int TotalPoints => Points.Get().Sum();
     public int TaskCount => Points.Get().Length;
-    public string? Result
-    {
-        get
-        {
-            if (TotalPoints is { } totalPoints)
-            {
-                return (totalPoints >= SuccessfulMinimumScore)
-                    ? Resources.Lang.Export_ResultSuccess
-                    : Resources.Lang.Export_ResultFailure;
-            }
-            return null;
-        }
-    }
-
+    public string Result => (TotalPoints >= SuccessfulMinimumScore)
+        ? Resources.Lang.Export_ResultSuccess
+        : Resources.Lang.Export_ResultFailure;
+    
     public ScanResultViewPointAccess Points { get; init; }
 
     public ScanResultView(int page, ScanResult sourceResult)
@@ -132,7 +122,7 @@ internal class ScanResultView : INotifyPropertyChanged
         var sb = new DualAutoSeparatedStringBuilder(localeSpecifics.ListSeparator, (pageIndex + 1).ToString(),
             "");
         sb.Append(UserCode, "");
-        sb.Append(TotalPoints.ToString() ?? "", "");
+        sb.Append(TotalPoints.ToString(), "");
         sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
         return sb;
     }
