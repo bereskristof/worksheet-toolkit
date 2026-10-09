@@ -5,11 +5,9 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using Docnet.Core.Models;
 using Docnet.Core.Readers;
 using Interface.Settings;
-using Interface.Task;
 using Microsoft.Win32;
 using Scanner;
 using Storage;
@@ -20,8 +18,6 @@ public partial class SolvePage
 {
     private const int DimX = 1200;
     private const int DimY = 1700;
-
-    private int _resultsTableTaskColumnCount = 0;
     
     private readonly BackgroundWorker _backgroundWorker = new();
     private ScanResult[] _csvBuffer = [];
@@ -60,10 +56,7 @@ public partial class SolvePage
         ProgressBar.Value = 0;
         ExportResultsButton.IsEnabled = false;
         ExportResultsAltButton.IsEnabled = false;
-        ImportPdfTextbox.IsEnabled = false;
-        BrowseButton.IsEnabled = false;
-        CorrectPdf.IsEnabled = false;
-        ResultsTable.Items.Clear();
+        // TODO: Empty out DataGrid
         _backgroundWorker.WorkerReportsProgress = true;
         ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
@@ -211,8 +204,7 @@ public partial class SolvePage
 
     private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
     {
-        var result = (ScanResult?)e.UserState ?? throw new ArgumentNullException(nameof(e.UserState));
-        RecordToResultsTable(e.ProgressPercentage, result);
+        _ = (ScanResult?)e.UserState; // TODO
         ProgressBar.Value = e.ProgressPercentage;
     }
 
@@ -320,9 +312,6 @@ public partial class SolvePage
         _csvBuffer = results;
         ExportResultsButton.IsEnabled = true;
         ExportResultsAltButton.IsEnabled = true;
-        ImportPdfTextbox.IsEnabled = true;
-        BrowseButton.IsEnabled = true;
-        CorrectPdf.IsEnabled = true;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.
@@ -350,33 +339,5 @@ public partial class SolvePage
             SuccessText = Interface.Resources.Lang.Export_ResultSuccess,
             FailText = Interface.Resources.Lang.Export_ResultFailure,
         };
-    }
-
-    private void RecordToResultsTable(int page, ScanResult result)
-    {
-        var record = new ResultViewRecord(page, result);
-        var taskCount = record.TaskCount;
-        if (_resultsTableTaskColumnCount < taskCount)
-        {
-            ExtendDataGridToTaskCount(taskCount);
-        }
-        ResultsTable.Items.Add(record);
-    }
-
-    private void ExtendDataGridToTaskCount(int taskCount)
-    {
-        var resetColumnIndex = ResultsTable.Columns.Count - 1;
-        var resetColumn = ResultsTable.Columns[resetColumnIndex];
-        ResultsTable.Columns.RemoveAt(resetColumnIndex);
-        while (_resultsTableTaskColumnCount < taskCount)
-        {
-            var column = new DataGridTextColumn();
-            column.Header = Interface.Resources.Lang.Solve_HeaderTaskShort.Replace("#NUM#",
-                (_resultsTableTaskColumnCount + 1).ToString());
-            column.Binding = new Binding($"Points[{_resultsTableTaskColumnCount}]");
-            ResultsTable.Columns.Add(column);
-            _resultsTableTaskColumnCount++;
-        }
-        ResultsTable.Columns.Add(resetColumn);
     }
 }
