@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Scanner.Result;
+using Scanner;
 using Storage.Sheet;
 using static System.Math;
 
@@ -37,8 +37,8 @@ public static class ExamResultObtainer
 
             select.Points =
                 select.BestFilledAnswer == answerNumber 
-                ? QuestionResult.CorrectAnswerPoints
-                : QuestionResult.WrongAnswerPoints;
+                ? ScanResult.QuestionResult.CorrectAnswerPoints
+                : ScanResult.QuestionResult.WrongAnswerPoints;
             
             result.Results[i] = select;
         }

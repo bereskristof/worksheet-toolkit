@@ -1,5 +1,4 @@
 ﻿using Scanner;
-using Scanner.Result;
 using Storage.Sheet;
 
 namespace Interface.Task;

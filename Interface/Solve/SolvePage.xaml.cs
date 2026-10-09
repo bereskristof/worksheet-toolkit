@@ -12,7 +12,6 @@ using Interface.Settings;
 using Interface.Task;
 using Microsoft.Win32;
 using Scanner;
-using Scanner.Result;
 using Storage;
 
 namespace Interface.Solve;
