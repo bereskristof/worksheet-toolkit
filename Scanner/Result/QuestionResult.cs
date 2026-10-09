@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Scanner.Rollback;
 
 namespace Scanner.Result;
 

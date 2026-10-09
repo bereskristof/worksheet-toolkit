@@ -1,7 +1,6 @@
-﻿using Scanner;
-using Scanner.Result;
+﻿using Scanner.Result;
 
-namespace Interface.Solve;
+namespace Scanner.Rollback;
 
 public static class RollbackConversions
 {
