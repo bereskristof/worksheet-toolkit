@@ -26,7 +26,6 @@ public partial class SolvePage
     
     private readonly BackgroundWorker _backgroundWorker = new();
     private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
-    private readonly DataGridColumn[] _resultsTableInitialColumns;
     
     public SolvePage()
     {
@@ -34,7 +33,6 @@ public partial class SolvePage
         _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
         _backgroundWorker.DoWork += BackgroundLoader_DoWork;
         _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
-        _resultsTableInitialColumns = [.. ResultsTable.Columns];
         ResultsTable.DataContext = _csvBuffer;
     }
 
@@ -68,7 +66,6 @@ public partial class SolvePage
         BrowseButton.IsEnabled = false;
         CorrectPdf.IsEnabled = false;
         _csvBuffer.Clear();
-        ResetTaskCount();
         _backgroundWorker.WorkerReportsProgress = true;
         ProgressBar.Maximum = GetPageCount(path);
         _backgroundWorker.RunWorkerAsync(argument: path);
@@ -376,14 +373,6 @@ public partial class SolvePage
         }
         foreach (var rightHandColumn in rightHandColumns)
             ResultsTable.Columns.Add(rightHandColumn);
-    }
-
-    private void ResetTaskCount()
-    {
-        _resultsTableTaskColumnCount = 0;
-        ResultsTable.Columns.Clear();
-        foreach (var column in _resultsTableInitialColumns)
-            ResultsTable.Columns.Add(column);
     }
 
     private static Rollback<ScanResult.IssueFlags> ReinitIssueFlagsRollback(Rollback<ScanResult.IssueFlags> old)
