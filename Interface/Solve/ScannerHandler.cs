@@ -5,7 +5,6 @@ using Docnet.Core.Readers;
 using OpenCvSharp;
 using Scanner;
 using Scanner.Result;
-using Scanner.Rollback;
 using Storage;
 
 namespace Interface.Solve;
