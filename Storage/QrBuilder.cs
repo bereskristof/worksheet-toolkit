@@ -7,23 +7,23 @@ namespace Storage;
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 public class QrBuilder
 {
-    private const int Width = 328;
-    private const int Height = 328;
+    private const int QrCellSize = 25;
     
-    private readonly Image _image = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
+    // 300 PPI, although due to downscaling, it may look worse.
+    private const int Width = 437;
+    private const int Height = 437;
     
-    public QrBuilder(Guid uuid)
+    private readonly Image _image;
+    
+    public QrBuilder(string key)
     {
-        using Graphics graphics = Graphics.FromImage(_image);
-        graphics.Clear(Color.White);
-        
         using var codeGenerator = new QRCodeGenerator();
-        using var qrCodeData = codeGenerator.CreateQrCode(uuid.ToString().Replace("-", ""), QRCodeGenerator.ECCLevel.H);
+        using var qrCodeData = codeGenerator.CreateQrCode(key, QRCodeGenerator.ECCLevel.H);
         using var pngCode = new PngByteQRCode(qrCodeData);
         
-        byte[] qrCodePng = pngCode.GetGraphic(8, Color.Black, Color.Transparent);
+        byte[] qrCodePng = pngCode.GetGraphic(QrCellSize, Color.Black, Color.White);
         Image qrCodeImage = Image.FromStream(new MemoryStream(qrCodePng));
-        graphics.DrawImageUnscaled(qrCodeImage, 0, 0);
+        _image = new Bitmap(qrCodeImage, Width, Height);
     }
     
     public void Save(string filePath)
