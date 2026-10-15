@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Scanner;
+namespace Interface.Solve.ResultView;
 
 public class DualAutoSeparatedStringBuilder
 {

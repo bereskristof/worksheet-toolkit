@@ -1,16 +1,14 @@
 using System.Drawing;
 using System.IO;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Scanner;
-using Scanner.Result;
+using Scanner.Codes;
 
 namespace Interface.Solve;
 
 public partial class MissingCodeTool
 {
-    public ScanResult FixedResult = new();
+    public required MissingDataEntry MissingDataEntry;
     public bool SkipFuturePrompts = false;
     
     public MissingCodeTool()
@@ -18,14 +16,14 @@ public partial class MissingCodeTool
         InitializeComponent();
     }
 
-    public void Setup(Bitmap image, ScanResult scanResult)
+    public void Setup()
     {
-        PreviewImage.Source = ConvertBitmapToImageSource(image);
-        ExamTextBox.Text = scanResult.ExamCode.ToString().Replace("-", "");
-        CodeTextBox.Text = scanResult.UserCode.ToString();
+        PreviewImage.Source = ConvertBitmapToImageSource(MissingDataEntry.PageBitmap);
+        ExamTextBox.Text = MissingDataEntry.ExamCode?.ToString().Replace("-", "") ?? string.Empty;
+        CodeTextBox.Text = MissingDataEntry.UserCode?.ToString() ?? string.Empty;
     }
     
-    private static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
+    private static BitmapImage ConvertBitmapToImageSource(Bitmap bitmap)
     {
         using var memoryStream = new MemoryStream();
         bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
@@ -44,7 +42,7 @@ public partial class MissingCodeTool
         var examCodeStr = ExamTextBox.Text.Trim();
         if (ExamCode.TryCreate(examCodeStr) is { } examCode) 
         {
-            FixedResult.ExamCode.Set(examCode);
+            MissingDataEntry.ExamCode = examCode.Inner;
         }
         else
         {
@@ -52,20 +50,14 @@ public partial class MissingCodeTool
             return;
         }
         
-        string userCode = CodeTextBox.Text.Trim();
-        if (CodeScanner.IsNeptunCode(userCode))
+        var userCodeStr = CodeTextBox.Text.Trim();
+        if (UserCode.TryCreate(userCodeStr) is { } userCode)
         {
-            FixedResult.UserCode.Set(userCode);
+            MissingDataEntry.UserCode = userCode;
         }
         else
         {
             MessageBox.Show(Interface.Resources.Lang.Missing_Neptun, Interface.Resources.Lang.Common_Error, MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (!CodeScanner.IsValidScanResult(FixedResult))
-        {
-            MessageBox.Show(Interface.Resources.Lang.Missing_ResultInvalid, Interface.Resources.Lang.Common_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
         

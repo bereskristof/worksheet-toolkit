@@ -15,10 +15,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Docnet.Core" Version="2.6.0" />
       <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260627" />
       <PackageReference Include="OpenCvSharp4.Windows" Version="4.13.0.20260627" />
+      <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
       <PackageReference Include="ZXing.Net" Version="0.16.11" />
       <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.16" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Storage\Storage.csproj" />
     </ItemGroup>
 
 </Project>

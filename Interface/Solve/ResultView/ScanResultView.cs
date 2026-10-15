@@ -2,10 +2,9 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
-using Scanner;
 using Scanner.Result;
 
-namespace Interface.Solve;
+namespace Interface.Solve.ResultView;
 
 public struct LocaleSpecifics
 {
@@ -17,6 +16,8 @@ public struct LocaleSpecifics
 
 internal class ScanResultView : INotifyPropertyChanged
 {
+    // TODO: This should also be refactored, the current look is just to quickly test if it works at all...
+    
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void InvokePropertyChanged(string propertyName)
@@ -43,10 +44,10 @@ internal class ScanResultView : INotifyPropertyChanged
     }
     
     /// Score to have a successful test.
-    private const int SuccessfulMinimumScore = ScanResult.SuccessScoreCount;
+    private const int SuccessfulMinimumScore = Scanner.Result.ScanResult.SuccessScoreCount;
     private const string UnknownString = "?";
 
-    public ScanResult ScanResult;
+    public IScanResult ScanResult;
 
     public int Page { get; init; }
 
@@ -61,18 +62,18 @@ internal class ScanResultView : INotifyPropertyChanged
     
     public string UserCode
     {
-        get => (ScanResult.UserCode.Get() ?? UnknownString).ToUpper();
+        get => ScanResultNullable?.UserCode.Get().Code.ToUpper() ?? string.Empty;
         set
         {
-            if (CodeScanner.IsNeptunCode(value))
+            if (Scanner.Codes.UserCode.TryCreate(value) is { } userCode)
             {
-                ScanResult.UserCode.Set(value);
+                ScanResultNullable?.UserCode.Set(userCode);
             }
             InvokePropertyChanged(nameof(UserCode));
         }
     }
 
-    public string ExamCode => ScanResult.ExamCode.Get().Code ?? UnknownString;
+    public string ExamCode => ScanResultNullable?.ExamCode.Get().Code ?? UnknownString;
     
     public int? TotalPoints => (GetScanResultHuman() != ScanResultHuman.Error) ? Points.Get().Sum() : null;
     public int TaskCount => Points.Get().Length;
@@ -92,9 +93,9 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public ScanResultViewPointAccess Points { get; init; }
 
-    public Visibility IsResetVisible => ScanResult.IsModified() ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility IsResetVisible => (ScanResultNullable?.IsModified() ?? false) ? Visibility.Visible : Visibility.Collapsed;
 
-    public ScanResultView(int page, ScanResult sourceResult)
+    public ScanResultView(int page, IScanResult sourceResult)
     {
         ScanResult = sourceResult;
         Page = page;
@@ -104,18 +105,15 @@ internal class ScanResultView : INotifyPropertyChanged
 
     private ScanResultHuman GetScanResultHuman()
     {
-        if (ScanResult.Issues.Get() != ScanResult.IssueFlags.None ||
-            ScanResult.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingExamCode))
-            return ScanResultHuman.Error;
-        if (ScanResult.GetMissingFields().HasFlag(ScanResult.MissingFieldFlags.MissingUserCode))
-            return ScanResultHuman.Partial;
-        return ScanResultHuman.Ok;
+        if (ScanResult is ScanResult scanResult)
+            return scanResult.UserCode.Get().Code == string.Empty ? ScanResultHuman.Ok : ScanResultHuman.Partial;
+        return ScanResultHuman.Error;
     }
     
     public DualAutoSeparatedStringBuilder ToSheetCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
         var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
-        foreach (var result in ScanResult.Results)
+        foreach (var result in ScanResultNullable?.Results ?? [])
             ToCsvCommonResult(ref sb, result, localeSpecifics);
         return sb;
     }
@@ -123,14 +121,9 @@ internal class ScanResultView : INotifyPropertyChanged
     public DualAutoSeparatedStringBuilder ToTaskCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
         var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
-        var orderedResults = ScanResult.Results.OrderBy(r => r.TaskIndex.Get() ?? -1).ToArray();
+        var orderedResults = (ScanResultNullable?.Results ?? []).OrderBy(r => r.TaskIndex).ToArray();
         foreach (var result in orderedResults)
         {
-            if (result.TaskIndex.Get() == null)
-            {
-                sb.Append("!", "");
-                continue;
-            }
             ToCsvCommonResult(ref sb, result, localeSpecifics);
         }
         return sb;
@@ -149,15 +142,14 @@ internal class ScanResultView : INotifyPropertyChanged
     public static void ToCsvCommonResult(ref DualAutoSeparatedStringBuilder sb, QuestionResult result,
         LocaleSpecifics localeSpecifics)
     {
-        var confidence = ScanResult.CalculateConfidence(result.FillConfidence, result.DeltaConfidence)
-            .ToString("0.000", localeSpecifics.Culture);
+        var confidence = result.Confidence.ToString("0.000", localeSpecifics.Culture);
         confidence += " " + IntToLetterAlphabetical(result.BestFilledAnswer);
         sb.Append(result.Points.ToString(), confidence);
     }
 
     public void Reset()
     {
-        ScanResult.Reset();
+        ScanResultNullable?.Reset();
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserCode)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Points)));
         InvokePropertyChangedDerived();
@@ -166,4 +158,14 @@ internal class ScanResultView : INotifyPropertyChanged
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).
     /// Values greater than 25 return successive UTF32 characters (26 => '[').
     private static string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
+
+    public ScanResult? ScanResultNullable
+    {
+        get
+        {
+            if (ScanResult is ScanResult scanResult)
+                return scanResult;
+            return null;
+        }
+    }
 }

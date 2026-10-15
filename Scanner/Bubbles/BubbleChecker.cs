@@ -1,7 +1,6 @@
 using OpenCvSharp;
-using OpenCvSharp.Aruco;
 
-namespace Scanner;
+namespace Scanner.Bubbles;
 
 public record BubbleScanResult
 {
@@ -36,7 +35,7 @@ public class BubbleChecker
         Cv2.BitwiseNot(invertedThreshImage, _threshImage);
     }
     
-    public BubbleScanResult[] CheckBubbles(CircleSegment[] bubbles, uint questionCount = 15, uint answerCount = 5)
+    public BubbleScanResult[] CheckBubbles(CircleSegment[] bubbles, uint questionCount, uint answerCount)
     {
         var results = new List<BubbleScanResult>();
         for (int q = 0; q < questionCount; q++)

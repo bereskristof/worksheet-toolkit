@@ -70,8 +70,8 @@
                 </Style>
             </TextBox.Style>
         </TextBox>
-        <!-- <CheckBox Grid.Row="3" Grid.Column="1" Content="Skip every following user code issue" Margin="0, 0, 3, 3" Checked="ToggleButton_OnChecked" Unchecked="ToggleButton_OnUnchecked"/> -->
-        <Button Grid.Row="4" Grid.Column="1" Content="{x:Static res:Lang.Missing_EnterCode}" Margin="0, 0, 3, 3" Click="EnterButton_OnClick"/>
-        <Button Grid.Row="5" Grid.Column="1" Content="{x:Static res:Lang.Missing_Skip}" Margin="0, 0, 3, 0" Click="SkipButton_OnClick"/>
+        <Button Grid.Row="3" Grid.Column="1" Content="{x:Static res:Lang.Missing_EnterCode}" Margin="0, 0, 3, 3" Click="EnterButton_OnClick"/>
+        <Button Grid.Row="4" Grid.Column="1" Content="{x:Static res:Lang.Missing_Skip}" Margin="0, 0, 3, 3" Click="SkipButton_OnClick"/>
+        <CheckBox Grid.Row="5" Grid.Column="1" Content="##Skip every following user code issue" Margin="0, 0, 3, 3" Checked="ToggleButton_OnChecked" Unchecked="ToggleButton_OnUnchecked"/>
     </Grid>
 </Window>

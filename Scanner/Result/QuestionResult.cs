@@ -4,16 +4,20 @@ namespace Scanner.Result;
 
 public struct QuestionResult
 {
-    public const int CorrectAnswerPoints = 4;
-    public const int EmptyAnswerPoints = 0;
-    public const int WrongAnswerPoints = -1;
-
-    public const double MinDeltaConfidence = 0.4; /// Minimum difference between best and next best answer to consider it not double filled
-    public const double MinFillConfidence = 0.1; /// Minimum % of pixels filled in the bubble to consider it filled (0.2 skips)
+    public Rollback<int> Points;
+    public readonly int TaskIndex;
+    public readonly int BestFilledAnswer;
+    public readonly double DeltaConfidence;
+    public readonly double FillConfidence;
+    public readonly double Confidence;
     
-    public required Rollback<int?> TaskIndex;
-    public required Rollback<int?> Points;
-    public int BestFilledAnswer;
-    public double DeltaConfidence;
-    public double FillConfidence;
+    internal QuestionResult(int points, int taskIndex, int bestFilledAnswer, double deltaConfidence, double fillConfidence, double confidence)
+    {
+        Points = new Rollback<int>(points);
+        TaskIndex = taskIndex;
+        BestFilledAnswer = bestFilledAnswer;
+        DeltaConfidence = deltaConfidence;
+        FillConfidence = fillConfidence;
+        Confidence = confidence;
+    }
 }

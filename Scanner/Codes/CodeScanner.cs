@@ -1,17 +1,35 @@
 using System.Drawing;
 using OpenCvSharp;
-using Scanner.Result;
-using Scanner.Rollback;
 using ZXing;
 using ZXing.Common;
 using ZXing.Multi;
 using ZXing.Windows.Compatibility;
 using Image = System.Drawing.Image;
 
-namespace Scanner;
+namespace Scanner.Codes;
+
+internal struct FoundCodes
+{
+    public ExamCodeNotNull? ExamCode;
+    public UserCode? UserCode;
+    
+    /// Returns true if both fields are set to a valid value.
+    public bool IsValid() => ExamCode is not null && UserCode is not null;
+
+    /// Join 2 separate results, keeping anything possible,
+    /// with a preference for the calling object.
+    internal FoundCodes Merge(FoundCodes other)
+    {
+        return new FoundCodes
+        {
+            ExamCode = ExamCode ?? other.ExamCode,
+            UserCode = UserCode ?? other.UserCode,
+        };
+    }
+}
 
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-public class CodeScanner
+internal class CodeScanner
 {
     private readonly Mat _originalImage;
     private readonly Mat _grayImage = new();
@@ -22,18 +40,18 @@ public class CodeScanner
         Cv2.CvtColor(_originalImage, _grayImage, ColorConversionCodes.BGR2GRAY);
     }
     
-    public void FindCodes(ref ScanResult result)
+    public FoundCodes FindCodes()
     {
         var bm = (Bitmap)Image.FromStream(_originalImage.ToMemoryStream());
         var findings = FindQrCodesUsingZxing(bm);
-        ParseDecodedText(ref result, findings);
-        if (IsValidScanResult(result))
+        var foundCodes = ParseDecodedText(findings);
+        if (foundCodes.IsValid())
         {
-            return;
+            return foundCodes;
         }
         
         var opencvFindings = FindQrCodesUsingOpenCv(_grayImage);
-        ParseDecodedText(ref result, opencvFindings);
+        return ParseDecodedText(opencvFindings).Merge(foundCodes);
     }
     
     private static string[] FindQrCodesUsingZxing(Bitmap image)
@@ -52,47 +70,44 @@ public class CodeScanner
         var reader = new GenericMultipleBarcodeReader(new ByQuadrantReader(baseReader));
         var result = reader.decodeMultiple(binary);
         
-        return (result ?? []).Select(r => r?.Text ?? string.Empty).ToArray();
+        return [.. (result ?? []).Select(r => r?.Text ?? string.Empty)];
     }
     
     private static string[] FindQrCodesUsingOpenCv(Mat image)
     {
         QRCodeDetector detector = new();
-        Point2f[] points;
-        
-        detector.DetectMulti(image, out points);
+
+        detector.DetectMulti(image, out var points);
         if (points.Length == 0)
         {
             return [];
         }
         
         detector.DecodeMulti(image, points, out var decodedTexts);
-        return decodedTexts.Select(r => r ?? string.Empty).ToArray();
+        return [.. decodedTexts.Select(r => r ?? string.Empty)];
     }
     
-    private static void ParseDecodedText(ref ScanResult result, string[] texts)
+    private static FoundCodes ParseDecodedText(string[] texts)
     {
+        ExamCodeNotNull? examCode = null;
+        UserCode? userCode = null;
         foreach (var text in texts)
         {
             if (string.IsNullOrEmpty(text)) continue;
-            if (IsNeptunCode(text))
+            if (UserCode.TryCreate(text) is { } foundUserCode)
             {
-                result.UserCode = text.ToNullableRollback();
+                userCode = foundUserCode;
             }
-            else if (ExamCode.TryCreate(text) is { } examCode)
+            else if (ExamCode.TryCreate(text) is { } foundExamCode)
             {
-                result.ExamCode = examCode.ToRollback();
+                examCode = foundExamCode;
             }
         }
-    }
-    
-    public static bool IsValidScanResult(ScanResult result)
-    {
-        var examCode = result.ExamCode.Get();
-        var userCode = result.UserCode.Get();
-        return !examCode.IsNull() && !string.IsNullOrEmpty(userCode);
-    }
 
-    public static bool IsNeptunCode(string text)
-        => text.Length == 6 && text.All(char.IsLetterOrDigit);
+        return new FoundCodes
+        {
+            ExamCode = examCode,
+            UserCode = userCode,
+        };
+    }
 }

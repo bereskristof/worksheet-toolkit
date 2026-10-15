@@ -1,8 +1,10 @@
-﻿namespace Scanner.Result;
+﻿namespace Scanner.Codes;
 
 // Unions are .NET 11
 public readonly struct ExamCode : IComparable<ExamCode>
 {
+    public static readonly ExamCode Empty = default;
+    
     private enum Active {
         Null,
         LegacyUuid,
@@ -22,12 +24,12 @@ public readonly struct ExamCode : IComparable<ExamCode>
     private readonly Guid _guid = Guid.Empty;
     private readonly string _sevenChar = string.Empty;
 
-    public string? Code => _active switch
+    public string Code => _active switch
     {
-        Active.Null => null,
+        Active.Null => string.Empty,
         Active.LegacyUuid => _guid.ToString(),
         Active.SevenChar => _sevenChar,
-        _ => throw new ArgumentOutOfRangeException(nameof(_active), "ExamCode invariant was broken!"),
+        _ => throw new ArgumentOutOfRangeException(nameof(_active), "ExamCode invariance was broken!"),
     };
 
     private ExamCode(Guid guid)
@@ -42,15 +44,15 @@ public readonly struct ExamCode : IComparable<ExamCode>
         _sevenChar = NormalizeSevenChar(sevenChar);
     }
 
-    public static ExamCode? TryCreate(string text)
+    public static ExamCodeNotNull? TryCreate(string text)
     {
         if (IsSevenChar(text))
         {
-            return new ExamCode(text);
+            return ExamCodeNotNull.Validate(new ExamCode(text));
         }
         if (IsUuid(text))
         {
-            return new ExamCode(Guid.ParseExact(text, "N"));
+            return ExamCodeNotNull.Validate(new ExamCode(Guid.ParseExact(text, "N")));
         }
         return null;
     }
@@ -83,14 +85,11 @@ public readonly struct ExamCode : IComparable<ExamCode>
 
     private static bool IsUuid(string text)
         => Guid.TryParseExact(text, "N", out _);
-    
-    public bool IsNull() => _active == Active.Null;
 
     public override string ToString()
     {
         return _active switch
         {
-            Active.Null => string.Empty,
             Active.LegacyUuid => _guid.ToString(),
             Active.SevenChar => _sevenChar,
             _ => throw new ArgumentOutOfRangeException(nameof(_active), "ExamCode invariant was broken!"),
@@ -98,4 +97,25 @@ public readonly struct ExamCode : IComparable<ExamCode>
     }
 
     public int CompareTo(ExamCode other) => string.Compare(Code, other.Code, StringComparison.Ordinal);
+}
+
+/// Lightweight contained with the added guarantee of the data not being empty.
+/// This is required to make rolling back to no exam code possible while not allowing
+/// to pass nullable exam codes to steps that require an exam code.
+public struct ExamCodeNotNull
+{
+    public readonly ExamCode Inner;
+
+    private ExamCodeNotNull(ExamCode examCode)
+    {
+        Inner = examCode;
+    }
+
+    /// Verify that the provided ExamCode isn't null.
+    internal static ExamCodeNotNull? Validate(ExamCode examCode)
+    {
+        if (string.IsNullOrEmpty(examCode.Code))
+            return null;
+        return new ExamCodeNotNull(examCode);
+    }
 }
