@@ -72,7 +72,7 @@ internal class ScanResultView : INotifyPropertyChanged
         }
     }
 
-    public string ExamCode => ScanResult.ExamCode.Get()?.ToString() ?? UnknownString;
+    public string ExamCode => ScanResult.ExamCode.Get().Code ?? UnknownString;
     
     public int? TotalPoints => (GetScanResultHuman() != ScanResultHuman.Error) ? Points.Get().Sum() : null;
     public int TaskCount => Points.Get().Length;

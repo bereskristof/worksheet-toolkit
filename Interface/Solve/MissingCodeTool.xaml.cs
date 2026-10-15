@@ -41,10 +41,10 @@ public partial class MissingCodeTool
 
     private void EnterButton_OnClick(object sender, RoutedEventArgs e)
     {
-        string examCode = ExamTextBox.Text.Trim();
-        if (CodeScanner.IsUuid(examCode)) 
+        var examCodeStr = ExamTextBox.Text.Trim();
+        if (ExamCode.TryCreate(examCodeStr) is { } examCode) 
         {
-            FixedResult.ExamCode.Set(Guid.Parse(examCode));
+            FixedResult.ExamCode.Set(examCode);
         }
         else
         {

@@ -75,14 +75,13 @@ public class CodeScanner
         foreach (var text in texts)
         {
             if (string.IsNullOrEmpty(text)) continue;
-            if (IsUuid(text))
-            {
-                var uuid = Guid.ParseExact(text, "N");
-                result.ExamCode = uuid.ToNullableRollback();
-            }
-            else if (IsNeptunCode(text))
+            if (IsNeptunCode(text))
             {
                 result.UserCode = text.ToNullableRollback();
+            }
+            else if (ExamCode.TryCreate(text) is { } examCode)
+            {
+                result.ExamCode = examCode.ToRollback();
             }
         }
     }
@@ -91,11 +90,8 @@ public class CodeScanner
     {
         var examCode = result.ExamCode.Get();
         var userCode = result.UserCode.Get();
-        return examCode != Guid.Empty && !string.IsNullOrEmpty(userCode);
+        return !examCode.IsNull() && !string.IsNullOrEmpty(userCode);
     }
-
-    public static bool IsUuid(string text)
-        => Guid.TryParseExact(text, "N", out _);
 
     public static bool IsNeptunCode(string text)
         => text.Length == 6 && text.All(char.IsLetterOrDigit);

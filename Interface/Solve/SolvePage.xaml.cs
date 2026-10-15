@@ -249,7 +249,7 @@ public partial class SolvePage
                 scanResult = new ScanResult
                 {
                     Issues = ScanResult.IssueFlags.UnexpectedException.ToRollback(),
-                    ExamCode = RollbackConversions.GetNullGuid(),
+                    ExamCode = RollbackConversions.GetNullExamCode(),
                     UserCode = RollbackConversions.GetNullString(),
                     Results = [],
                 };

@@ -16,7 +16,11 @@ public static class ScannerHandler
     {
         var pageImg = GetSinglePageAsBitmap(reader, i);
         var scanResult = ScanPageResults(pageImg, 5);
-        ProcessScanResults(ref scanResult, i);
+
+        var readyToSolve = scanResult.Issues.Get() == ScanResult.IssueFlags.None
+                           && scanResult.GetMissingFields() == ScanResult.MissingFieldFlags.None;
+        if (readyToSolve)
+            ProcessScanResults(ref scanResult, i);
         return scanResult;
     }
     
@@ -49,7 +53,7 @@ public static class ScannerHandler
         {
             var qrScanner = new CodeScanner(imageData);
             qrScanner.FindCodes(ref result);
-            if (result.ExamCode.Get() == null)
+            if (result.ExamCode.Get().IsNull())
             {
                 return result;
             }
@@ -62,7 +66,7 @@ public static class ScannerHandler
         uint questionCount;
         try
         {
-            questionCount = ExamResultObtainer.ObtainExamQuestionCount((Guid)result.ExamCode.Get()!);
+            questionCount = ExamResultObtainer.ObtainExamQuestionCount(result.ExamCode.Get());
         }
         catch (InvalidExamQuestionCountException)
         {
@@ -133,9 +137,8 @@ public static class ScannerHandler
         switch (newType)
         {
             case CodeType.ExamCode:
-                if (!CodeScanner.IsUuid(newCode)) return false;
-                var uuid = Guid.ParseExact(newCode, "N");
-                result.ExamCode.Set(uuid);
+                if (ExamCode.TryCreate(newCode) is not { } examCode) return false;
+                result.ExamCode.Set(examCode);
                 return true;
             case CodeType.UserCode:
                 if (!CodeScanner.IsNeptunCode(newCode)) return false;

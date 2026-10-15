@@ -14,7 +14,8 @@ public static class ExamResultObtainer
     {
         var verifyCommand = Manager.Connection.CreateCommand();
         verifyCommand.CommandText = "SELECT AnswerNumber, QuestionId, QuestionNumber FROM Solutions WHERE Uuid == @Uuid ORDER BY QuestionNumber ASC;";
-        verifyCommand.Parameters.AddWithValue("@Uuid", (result.ExamCode.Get() ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!")).ToString());
+        var examCodeStr = result.ExamCode.Get().Code ?? throw new UnreachableException("ObtainResults: ExamCode is null despite already checking it!");
+        verifyCommand.Parameters.AddWithValue("@Uuid", examCodeStr);
         using var reader = verifyCommand.ExecuteReader();
         while (reader.Read())
         {
@@ -53,14 +54,15 @@ public static class ExamResultObtainer
 
     /// Get the number of questions the exam sheet with the provided exam id contains.
     /// <exception cref="InvalidExamQuestionCountException"></exception>
-    public static uint ObtainExamQuestionCount(Guid examId)
+    public static uint ObtainExamQuestionCount(ExamCode examCode)
     {
         var uuidQuestionCountCommand = Manager.Connection.CreateCommand();
         uuidQuestionCountCommand.CommandText = "SELECT COUNT() FROM Solutions WHERE Uuid = @Uuid;";
-        uuidQuestionCountCommand.Parameters.AddWithValue("@Uuid", examId.ToString());
+        uuidQuestionCountCommand.Parameters.AddWithValue("@Uuid", examCode.Code
+                                                                  ?? throw new NullReferenceException("ObtainExamQuestionCount: ExamCode is null despite already checking it!"));
         if (uuidQuestionCountCommand.ExecuteScalar() is not long count) return 0;
         if (Clamp(count, 1, SheetTreeInfo.MaximumNumberOfQuestions) != count)
-            throw new InvalidExamQuestionCountException("The database contains an invalid number of exam questions for the provided index.");
+            throw new InvalidExamQuestionCountException("ObtainExamQuestionCount: The database contains an invalid number of exam questions for the provided index.");
         return (uint)count;
     }
 }

@@ -4,21 +4,6 @@ namespace Scanner.Result;
 
 public struct ScanResult
 {
-    [Obsolete("Superseeded by `IssueFlags` & `MissingFieldFlags`", error: true)]
-    public enum State
-    {
-        Unknown,
-        Completed,
-        CompletedWithManualCorrection,
-        MissingExamCode,
-        MissingUserCode,
-        MissingTaskFromDatabase,
-        UnreliableDataFromDatabase,
-        MarkerDetectionError,
-        ManuallyCorrected,
-        UnexpectedException,
-    }
-
     [Flags]
     public enum IssueFlags
     {
@@ -44,7 +29,7 @@ public struct ScanResult
     
     public Rollback<IssueFlags> Issues;
     
-    public Rollback<Guid?> ExamCode;
+    public Rollback<ExamCode> ExamCode;
     public Rollback<string?> UserCode;
     
     public int? FinalPoints => Results.Sum(r => r.Points.Get() ?? 0);
@@ -63,7 +48,7 @@ public struct ScanResult
     public MissingFieldFlags GetMissingFields()
     {
         var flags = MissingFieldFlags.None;
-        flags |= (ExamCode.Get() is null) ? MissingFieldFlags.MissingExamCode : MissingFieldFlags.None;
+        flags |= (ExamCode.Get().Code is null) ? MissingFieldFlags.MissingExamCode : MissingFieldFlags.None;
         flags |= (UserCode.Get() is null) ? MissingFieldFlags.MissingUserCode : MissingFieldFlags.None;
         return flags;
     }
