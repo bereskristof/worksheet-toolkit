@@ -262,7 +262,7 @@ public partial class SolvePage
                 var pageImg = ScannerHandler.GetSinglePageAsBitmap(reader, i);
                 DispatchHelpDialog(pageImg, ref scanResult, out skipDialog);
                 
-                try 
+                try
                 {
                     HandleUnfinishedResults(ref scanResult, i, reader);
                 }

@@ -16,6 +16,7 @@ public static class ScannerHandler
     {
         var pageImg = GetSinglePageAsBitmap(reader, i);
         var scanResult = ScanPageResults(pageImg, 5);
+        ProcessScanResults(ref scanResult, i);
         return scanResult;
     }
     
