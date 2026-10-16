@@ -5,7 +5,7 @@ namespace Scanner.Result;
 
 /// A possible result of the scanning process.
 /// Means no fatal error occured, and the results could be obtained.
-public struct ScanResult
+public class ScanResult
 {
     public const int SuccessScoreCount = 24;
     

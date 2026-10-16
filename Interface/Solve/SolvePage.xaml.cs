@@ -8,11 +8,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Docnet.Core.Models;
+using Docnet.Core.Readers;
 using Interface.Settings;
 using Interface.Solve.ResultView;
 using Microsoft.Win32;
 using Scanner.Bubbles;
 using Scanner.Codes;
+using Scanner.Collect;
 
 namespace Interface.Solve;
 
@@ -136,7 +138,7 @@ public partial class SolvePage
             var locale = GetLocaleSpecifics();
             var stringLines = _csvBuffer.Select((v, i) => v.ToTaskCsv(i, locale));
             var maxTaskIndex = _csvBuffer.Select(v =>
-                v.ScanResultNullable?.Results.Select(q => q.TaskIndex).Max()).Max() ?? 0;
+                v.Backing.Ok?.Results.Select(q => q.TaskIndex).Max()).Max() ?? 0;
             var sb = GetStringFromDualStringBuilders(stringLines, GetCsvHeader(locale, maxTaskIndex));
             File.WriteAllText(exportPath, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Interface.Resources.Lang.Export_ExportSaved, Interface.Resources.Lang.Export_WindowLabel, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -235,23 +237,30 @@ public partial class SolvePage
     
         for (var i = 0; i < pageCount; i++)
         {
-            var pageStep = Scanner.Scanner.Begin();
-            var codeStep = pageStep.GetPage(reader, i);
-            var codeResult = codeStep.GetCodes();
-            var bubblesStep = codeResult switch
-            {
-                IStepCodesBubbles bubbles => bubbles,
-                MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, skipDialog, out skipDialog),
-                _ => throw new UnreachableException(),
-            };
-            var checkStep = bubblesStep.GetSelectedAnswers();
-            var resultsStep = checkStep.CheckAnswers();
-            var result = resultsStep.CollectData();
+            var result = SolveSinglePage(reader, i, skipDialog, out skipDialog);
             
             var page = i + 1;
             var scanResultView = new ScanResultView(page, result);
             _backgroundWorker.ReportProgress(page, scanResultView);
         }
+    }
+
+    private static ScanResults SolveSinglePage(IDocReader reader, int pageIndex, bool skipCurrent, out bool skipFuture)
+    {
+        skipFuture = skipCurrent;
+        var pageStep = Scanner.Scanner.Begin();
+        var codeStep = pageStep.GetPage(reader, pageIndex);
+        var codeResult = codeStep.GetCodes();
+        var bubblesStep = codeResult switch
+        {
+            IStepCodesBubbles bubbles => bubbles,
+            MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, skipCurrent, out skipFuture),
+            _ => throw new UnreachableException(),
+        };
+        var checkStep = bubblesStep.GetSelectedAnswers();
+        var resultsStep = checkStep.CheckAnswers();
+        var result = resultsStep.CollectData();
+        return result;
     }
 
     private static IStepCodesBubbles HandleMissingDataEntry(IStepCodes codeStep, MissingDataEntry entry, bool skipCurrent, out bool skipFuture)

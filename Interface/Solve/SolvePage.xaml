@@ -116,7 +116,7 @@
                             <DataTemplate>
                                 <!-- MDL2 Undo Icon (PUA pointer) -->
                                 <Button Click="ResetSelected_OnClick" Content="&#xE845;" Padding="4, 0" FontFamily="Segoe MDL2 Assets"
-                                        HorizontalAlignment="Right" VerticalAlignment="Stretch" Visibility="{Binding IsResetVisible}"/>
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsResetVisible}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

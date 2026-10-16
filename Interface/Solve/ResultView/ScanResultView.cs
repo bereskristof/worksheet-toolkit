@@ -17,25 +17,7 @@ public struct LocaleSpecifics
 
 internal class ScanResultView : INotifyPropertyChanged
 {
-    // TODO: This should also be refactored, the current look is just to quickly test if it works at all...
-    
     public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void InvokePropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        InvokePropertyChangedDerived();
-    }
-
-    private void InvokePropertyChangedDerived()
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPoints)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsResetVisible)));
-    }
 
     private enum ScanResultHuman
     {
@@ -45,10 +27,10 @@ internal class ScanResultView : INotifyPropertyChanged
     }
     
     /// Score to have a successful test.
-    private const int SuccessfulMinimumScore = Scanner.Result.ScanResult.SuccessScoreCount;
+    private const int SuccessfulMinimumScore = ScanResult.SuccessScoreCount;
     private const string UnknownString = "?";
 
-    public ScanResults ScanResult;
+    public Result Backing;
 
     public int Page { get; init; }
 
@@ -58,23 +40,22 @@ internal class ScanResultView : INotifyPropertyChanged
         ScanResultHuman.Partial => Resources.Lang.Solve_StateWarning,
         _ => Resources.Lang.Solve_StateError,
     };
+    
     public bool MajorError => GetScanResultHuman() == ScanResultHuman.Error;
     public bool MinorError => GetScanResultHuman() == ScanResultHuman.Partial;
     
     public string UserCode
     {
-        get => ScanResultNullable?.UserCode.Get().Code.ToUpper() ?? string.Empty;
-        set
-        {
-            if (Scanner.Codes.UserCode.TryCreate(value) is { } userCode)
+        get => Backing.Ok?.UserCode.Get().Code.ToUpper() ?? string.Empty;
+        set => Backing.OnOk(result =>
             {
-                ScanResultNullable?.UserCode.Set(userCode);
-            }
-            InvokePropertyChanged(nameof(UserCode));
-        }
+                if (Scanner.Codes.UserCode.TryCreate(value) is { } userCode)
+                    result.UserCode.Set(userCode);
+                InvokePropertyChanged(nameof(UserCode));
+            });
     }
 
-    public string ExamCode => ScanResultNullable?.ExamCode.Get().Code ?? UnknownString;
+    public string ExamCode => Backing.Ok?.UserCode.Get().Code ?? UnknownString;
     
     public int? TotalPoints => (GetScanResultHuman() != ScanResultHuman.Error) ? Points.Get().Sum() : null;
     public int TaskCount => Points.Get().Length;
@@ -94,27 +75,43 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public ScanResultViewPointAccess Points { get; init; }
 
-    public Visibility IsResetVisible => (ScanResultNullable?.IsModified() ?? false) ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility IsResetVisible => (Backing.Ok?.IsModified() ?? false) ? Visibility.Visible : Visibility.Collapsed;
 
     public ScanResultView(int page, ScanResults sourceResult)
     {
-        ScanResult = sourceResult;
+        Backing = new Result(sourceResult);
         Page = page;
         Points = new ScanResultViewPointAccess(sourceResult);
         Points.ElementChanged += (_, _) => InvokePropertyChanged(nameof(Points));
     }
 
+    private void InvokePropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        InvokePropertyChangedDerived();
+    }
+
+    private void InvokePropertyChangedDerived()
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPoints)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsResetVisible)));
+    }
+
     private ScanResultHuman GetScanResultHuman()
     {
-        if (ScanResult is ScanResult scanResult)
-            return scanResult.UserCode.Get().Code == string.Empty ? ScanResultHuman.Ok : ScanResultHuman.Partial;
+        if (Backing.Ok is { } scanResult)
+            return string.IsNullOrEmpty(scanResult.UserCode.Get().Code) ? ScanResultHuman.Partial : ScanResultHuman.Ok;
         return ScanResultHuman.Error;
     }
     
     public DualAutoSeparatedStringBuilder ToSheetCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
         var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
-        foreach (var result in ScanResultNullable?.Results ?? [])
+        foreach (var result in Backing.Ok?.Results ?? [])
             ToCsvCommonResult(ref sb, result, localeSpecifics);
         return sb;
     }
@@ -122,7 +119,7 @@ internal class ScanResultView : INotifyPropertyChanged
     public DualAutoSeparatedStringBuilder ToTaskCsv(int pageIndex, LocaleSpecifics localeSpecifics)
     {
         var sb = ToCsvCommonHeader(pageIndex, localeSpecifics);
-        var orderedResults = (ScanResultNullable?.Results ?? []).OrderBy(r => r.TaskIndex).ToArray();
+        var orderedResults = (Backing.Ok?.Results ?? []).OrderBy(r => r.TaskIndex).ToArray();
         foreach (var result in orderedResults)
         {
             ToCsvCommonResult(ref sb, result, localeSpecifics);
@@ -150,7 +147,7 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public void Reset()
     {
-        ScanResultNullable?.Reset();
+        Backing.OnOk(result => result.Reset());
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserCode)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Points)));
         InvokePropertyChangedDerived();
@@ -159,14 +156,4 @@ internal class ScanResultView : INotifyPropertyChanged
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).
     /// Values greater than 25 return successive UTF32 characters (26 => '[').
     private static string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
-
-    public ScanResult? ScanResultNullable
-    {
-        get
-        {
-            if (ScanResult is ScanResult scanResult)
-                return scanResult;
-            return null;
-        }
-    }
 }

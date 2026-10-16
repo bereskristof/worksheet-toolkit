@@ -1,6 +1,6 @@
 ﻿namespace Scanner.Codes;
 
-public readonly struct UserCode
+public readonly struct UserCode : IComparable<UserCode>
 {
     public string Code { get; } = string.Empty;
 
@@ -22,4 +22,6 @@ public readonly struct UserCode
     
     private static bool IsUserCode(string text)
         => text.Length == 6 && text.All(char.IsLetterOrDigit);
+
+    public int CompareTo(UserCode other) => string.Compare(Code, other.Code, StringComparison.Ordinal);
 }
