@@ -46,12 +46,13 @@ public static class Manager
         cleanCommand.ExecuteNonQuery();
         cleanCommand.Dispose();
         
-        CodeGenerator = new CodeGenerator(Connection);
         Tables.Init(Connection);
         IdManager.Init();
         
         Encryption.SavePassword(password);
         Encryption.TryPassword(password);
+        
+        CodeGenerator = new CodeGenerator(Connection);
         
         Log.Write("Created database");
     }
@@ -70,9 +71,10 @@ public static class Manager
             return false;
         }
 
-        CodeGenerator = new CodeGenerator(Connection);
         Tables.Init(Connection);
         IdManager.Init();
+        CodeGenerator = new CodeGenerator(Connection);
+        
         Log.Write("Opened database");
         return true;
     }
