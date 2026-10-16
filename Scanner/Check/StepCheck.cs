@@ -43,7 +43,7 @@ public class StepCheck : IStepCheck
         
         for (var i = 0; i < length; i++)
         {
-            var result = Result.AnswerResult.NoAnswerMarked;
+            Result.AnswerResult result;
             
             var selectedAnswer = _selectedAnswers[i];
             var correctAnswer = correctAnswers[i];
@@ -56,12 +56,14 @@ public class StepCheck : IStepCheck
             {
                 result = Result.AnswerResult.IncorrectAnswer; // Multiple answers marked
             }
-
-            result = (selectedAnswer.BestFilledAnswer == correctAnswer.AnswerNumber) switch
+            else
             {
-                true => Result.AnswerResult.CorrectAnswer,
-                false => Result.AnswerResult.IncorrectAnswer,
-            };
+                result = (selectedAnswer.BestFilledAnswer == correctAnswer.AnswerNumber) switch
+                {
+                    true => Result.AnswerResult.CorrectAnswer,
+                    false => Result.AnswerResult.IncorrectAnswer,
+                };
+            }
             
             results[i] = new Result(result, selectedAnswer.FillConfidence, selectedAnswer.DeltaConfidence);
         }
