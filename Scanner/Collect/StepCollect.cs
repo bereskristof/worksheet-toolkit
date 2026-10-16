@@ -19,7 +19,7 @@ public class StepCollect : IStepCollect
         _results = results;
     }
 
-    public IScanResult CollectData()
+    public ScanResults CollectData()
     {
         if (_selectedAnswers.Length != _results.Length)
             // By necessity not possible

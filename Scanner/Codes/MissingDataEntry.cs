@@ -4,7 +4,7 @@ namespace Scanner.Codes;
 
 /// An object to fill in missing data user data, i.e.: Exam & Neptun codes.
 /// Owned by its parent StepGetCodes, it is runtime checked on return to be correct. 
-public struct MissingDataEntry : IStepCodesReturnable
+public struct MissingDataEntry
 {
     internal Guid OwnerKey;
     

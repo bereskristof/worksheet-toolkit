@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
+using Scanner.Collect;
 using Scanner.Result;
 
 namespace Interface.Solve.ResultView;
@@ -47,7 +48,7 @@ internal class ScanResultView : INotifyPropertyChanged
     private const int SuccessfulMinimumScore = Scanner.Result.ScanResult.SuccessScoreCount;
     private const string UnknownString = "?";
 
-    public IScanResult ScanResult;
+    public ScanResults ScanResult;
 
     public int Page { get; init; }
 
@@ -95,7 +96,7 @@ internal class ScanResultView : INotifyPropertyChanged
 
     public Visibility IsResetVisible => (ScanResultNullable?.IsModified() ?? false) ? Visibility.Visible : Visibility.Collapsed;
 
-    public ScanResultView(int page, IScanResult sourceResult)
+    public ScanResultView(int page, ScanResults sourceResult)
     {
         ScanResult = sourceResult;
         Page = page;

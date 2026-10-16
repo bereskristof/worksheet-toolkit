@@ -18,7 +18,7 @@ public class StepCodes : IStepCodes
         _bitmap = bitmap;
     }
     
-    public IStepCodesReturnable GetCodes()
+    public StepCodesReturnable GetCodes()
     {
         try
         {

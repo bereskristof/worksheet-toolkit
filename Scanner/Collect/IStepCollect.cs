@@ -2,7 +2,9 @@
 
 namespace Scanner.Collect;
 
+public union ScanResults(ScanError, ScanResult);
+
 public interface IStepCollect
 {
-    public IScanResult CollectData();
+    public ScanResults CollectData();
 }

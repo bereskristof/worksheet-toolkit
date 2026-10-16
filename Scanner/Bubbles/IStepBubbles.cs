@@ -3,7 +3,7 @@ using Scanner.Codes;
 
 namespace Scanner.Bubbles;
 
-public interface IStepCodesBubbles : IStepCodesReturnable
+public interface IStepCodesBubbles
 {
     /// Attempts to get which bubbles have been filled.
     public IStepCheck GetSelectedAnswers();

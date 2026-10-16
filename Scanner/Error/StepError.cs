@@ -20,7 +20,7 @@ internal class StepCodesError : IStepPage, IStepCodes, IStepCodesBubbles, IStepC
     
     public IStepCodes GetPage(IDocReader reader, int pageNumber) => this;
     
-    public IStepCodesReturnable GetCodes() => this;
+    public StepCodesReturnable GetCodes() => this;
     public IStepCodesBubbles GetCodesDataEntry(DataEntry dataEntry) => this;
     public IStepCodesBubbles GetCodesSkipDataEntry(MissingDataEntry missingDataEntry) => this;
     
@@ -28,7 +28,7 @@ internal class StepCodesError : IStepPage, IStepCodes, IStepCodesBubbles, IStepC
 
     public IStepCollect CheckAnswers() => this;
     
-    public IScanResult CollectData()
+    public ScanResults CollectData()
     {
         return new ScanError(_error);
     }

@@ -242,7 +242,7 @@ public partial class SolvePage
             {
                 IStepCodesBubbles bubbles => bubbles,
                 MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, skipDialog, out skipDialog),
-                _ => throw new UnreachableException("A new return type was added to StepGetCodes()"),
+                _ => throw new UnreachableException(),
             };
             var checkStep = bubblesStep.GetSelectedAnswers();
             var resultsStep = checkStep.CheckAnswers();

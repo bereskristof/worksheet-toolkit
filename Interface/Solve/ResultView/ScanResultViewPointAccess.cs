@@ -1,4 +1,5 @@
-﻿using Scanner.Result;
+﻿using Scanner.Collect;
+using Scanner.Result;
 
 namespace Interface.Solve.ResultView;
 
@@ -6,9 +7,9 @@ public record ScanResultViewPointAccess
 {
     public event EventHandler? ElementChanged;
     
-    private readonly IScanResult _scanResult;
+    private readonly ScanResults _scanResult;
     
-    internal ScanResultViewPointAccess(IScanResult scanResult)
+    internal ScanResultViewPointAccess(ScanResults scanResult)
     {
         _scanResult = scanResult;
     }
