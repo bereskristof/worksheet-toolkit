@@ -15,7 +15,7 @@ public struct LocaleSpecifics
     public string FailText;
 }
 
-internal class ScanResultView : INotifyPropertyChanged
+internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultView>
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -156,4 +156,6 @@ internal class ScanResultView : INotifyPropertyChanged
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).
     /// Values greater than 25 return successive UTF32 characters (26 => '[').
     private static string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
+
+    public int CompareTo(ScanResultView? other) => Page.CompareTo(other?.Page);
 }

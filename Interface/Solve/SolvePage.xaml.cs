@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -25,16 +24,14 @@ public partial class SolvePage
 
     private int _resultsTableTaskColumnCount = 0;
     
-    private readonly BackgroundWorker _backgroundWorker = new();
     private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
     private readonly DataGridColumn[] _resultsTableInitialColumns;
+
+    private static bool _skipSessionPrompts = false;
     
     public SolvePage()
     {
         InitializeComponent();
-        _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
-        _backgroundWorker.DoWork += BackgroundLoader_DoWork;
-        _backgroundWorker.RunWorkerCompleted += BackgroundLoader_RunWorkerCompleted;
         _resultsTableInitialColumns = [.. ResultsTable.Columns];
         ResultsTable.DataContext = _csvBuffer;
         ResultsTable.Visibility = Visibility.Visible;
@@ -71,9 +68,8 @@ public partial class SolvePage
         CorrectPdf.IsEnabled = false;
         _csvBuffer.Clear();
         ResetTaskCount();
-        _backgroundWorker.WorkerReportsProgress = true;
         ProgressBar.Maximum = GetPageCount(path);
-        _backgroundWorker.RunWorkerAsync(argument: path);
+        SolvePagesAsync(path);
     }
 
     /// Toggle CorrectPdf button based on if path is set to a value.
@@ -216,67 +212,82 @@ public partial class SolvePage
         return reader.GetPageCount();
     }
 
-    private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
+    private void UpdateProgress(ScanResultView result)
     {
-        var result = (ScanResultView?)e.UserState ?? throw new ArgumentNullException(nameof(e.UserState));
-        _csvBuffer.Add(result);
+        // Insert ordered
+        // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.binarysearch?view=net-10.0#returns
+        var index = _csvBuffer.ToList().BinarySearch(result);
+        if (index < 0)
+            index = ~index;
+        _csvBuffer.Insert(index, result);
+        
         UpdateResultsTableColumns(result);
-        ProgressBar.Value = e.ProgressPercentage;
+        ProgressBar.Value += 1;
     }
 
-    private void BackgroundLoader_DoWork(object? sender, DoWorkEventArgs e)
+    private async void SolvePagesAsync(string path)
     {
-        var path = (string)(e.Argument ?? "");
-        
         using var doclib = Docnet.Core.DocLib.Instance;
         using var reader = doclib.GetDocReader(path, new PageDimensions(DimX, DimY));
-
         var pageCount = reader.GetPageCount();
-
-        var skipDialog = false;
-    
-        for (var i = 0; i < pageCount; i++)
+        var mutex = new Mutex();
+        
+        var range = Enumerable.Range(0, pageCount);
+        // All tasks are awaited later:
+        // ReSharper disable once AccessToDisposedClosure
+        var tasks = range.Select(i => System.Threading.Tasks.Task.Run(() => SolveSinglePage(reader, i, mutex))).ToList();
+        
+        while (tasks.Count > 0)
         {
-            var result = SolveSinglePage(reader, i, skipDialog, out skipDialog);
+            var completed = await System.Threading.Tasks.Task.WhenAny(tasks);
+            tasks.Remove(completed);
             
-            var page = i + 1;
-            var scanResultView = new ScanResultView(page, result);
-            _backgroundWorker.ReportProgress(page, scanResultView);
+            var (pageIndex, results) = await completed;
+            var page = pageIndex + 1;
+            var scanResultView = new ScanResultView(page, results);
+            UpdateProgress(scanResultView);
         }
+
+        FinishSolvingPages();
     }
 
-    private static ScanResults SolveSinglePage(IDocReader reader, int pageIndex, bool skipCurrent, out bool skipFuture)
+    private static Tuple<int, ScanResults> SolveSinglePage(IDocReader reader, int pageIndex, Mutex mutex)
     {
-        skipFuture = skipCurrent;
         var pageStep = Scanner.Scanner.Begin();
         var codeStep = pageStep.GetPage(reader, pageIndex);
         var codeResult = codeStep.GetCodes();
         var bubblesStep = codeResult switch
         {
             IStepCodesBubbles bubbles => bubbles,
-            MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, skipCurrent, out skipFuture),
+            MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, mutex),
             _ => throw new UnreachableException(),
         };
         var checkStep = bubblesStep.GetSelectedAnswers();
         var resultsStep = checkStep.CheckAnswers();
         var result = resultsStep.CollectData();
-        return result;
+        return new Tuple<int, ScanResults>(pageIndex, result);
     }
 
-    private static IStepCodesBubbles HandleMissingDataEntry(IStepCodes codeStep, MissingDataEntry entry, bool skipCurrent, out bool skipFuture)
+    private static IStepCodesBubbles HandleMissingDataEntry(IStepCodes codeStep, MissingDataEntry entry, Mutex mutex)
     {
-        skipFuture = skipCurrent;
-        if (skipCurrent)
+        mutex.WaitOne();
+        try
+        {
+            if (_skipSessionPrompts)
+                return codeStep.GetCodesSkipDataEntry(entry);
+            entry = DispatchHelpDialog(entry);
+            if (entry.TryValidate() is { } fixedEntry)
+                return codeStep.GetCodesDataEntry(fixedEntry);
             return codeStep.GetCodesSkipDataEntry(entry);
-        entry = DispatchHelpDialog(entry, out skipFuture);
-        if (entry.TryValidate() is { } fixedEntry)
-            return codeStep.GetCodesDataEntry(fixedEntry);
-        return codeStep.GetCodesSkipDataEntry(entry);
+        }
+        finally
+        {
+            mutex.ReleaseMutex();
+        }
     }
 
-    private static MissingDataEntry DispatchHelpDialog(MissingDataEntry entry, out bool skipFuture)
+    private static MissingDataEntry DispatchHelpDialog(MissingDataEntry entry)
     {
-        var skipFuturePrompts = false;
         Application.Current.Dispatcher.Invoke(() =>
         {
             var window = new MissingCodeTool
@@ -288,19 +299,19 @@ public partial class SolvePage
             window.Setup();
             window.ShowDialog();
             entry = window.MissingDataEntry;
-            skipFuturePrompts = window.SkipFuturePrompts;
+            _skipSessionPrompts = window.SkipFuturePrompts;
         });
-        skipFuture = skipFuturePrompts;
         return entry;
     }
 
-    private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+    private void FinishSolvingPages()
     {
         ExportResultsButton.IsEnabled = true;
         ExportResultsAltButton.IsEnabled = true;
         ImportPdfTextbox.IsEnabled = true;
         BrowseButton.IsEnabled = true;
         CorrectPdf.IsEnabled = true;
+        _skipSessionPrompts = false;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.
