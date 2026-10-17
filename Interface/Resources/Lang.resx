@@ -469,4 +469,10 @@ Would you like to restart the program now?</value>
     <data name="Solve_StateError" xml:space="preserve">
         <value>Error</value>
     </data>
+    <data name="Solve_SkipUser" xml:space="preserve">
+        <value>Skip every following missing Neptun code issue...</value>
+    </data>
+    <data name="Solve_SkipExam" xml:space="preserve">
+        <value>Skip every following missing exam code issue...</value>
+    </data>
 </root>

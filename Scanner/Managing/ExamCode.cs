@@ -1,7 +1,6 @@
-﻿namespace Scanner.Codes;
+﻿namespace Scanner.Managing;
 
-// Unions are .NET 11
-public readonly struct ExamCode : IComparable<ExamCode>
+public readonly struct ExamCode : ICode<ExamCode>, IComparable<ExamCode>
 {
     public static readonly ExamCode Empty = default;
     
@@ -44,17 +43,17 @@ public readonly struct ExamCode : IComparable<ExamCode>
         _sevenChar = NormalizeSevenChar(sevenChar);
     }
 
-    public static ExamCodeNotNull? TryCreate(string text)
+    public static ExamCode Create(string text)
     {
         if (IsSevenChar(text))
         {
-            return ExamCodeNotNull.Validate(new ExamCode(text));
+            return new ExamCode(text);
         }
         if (IsUuid(text))
         {
-            return ExamCodeNotNull.Validate(new ExamCode(Guid.ParseExact(text, "N")));
+            return new ExamCode(Guid.ParseExact(text, "N"));
         }
-        return null;
+        return Empty;
     }
     
     /// Allows skipping the '-' character.
@@ -90,32 +89,11 @@ public readonly struct ExamCode : IComparable<ExamCode>
     {
         return _active switch
         {
-            Active.LegacyUuid => _guid.ToString(),
+            Active.LegacyUuid => (_guid == Guid.Empty) ? string.Empty : _guid.ToString(),
             Active.SevenChar => _sevenChar,
             _ => throw new ArgumentOutOfRangeException(nameof(_active), "ExamCode invariant was broken!"),
         };
     }
 
     public int CompareTo(ExamCode other) => string.Compare(Code, other.Code, StringComparison.Ordinal);
-}
-
-/// Lightweight contained with the added guarantee of the data not being empty.
-/// This is required to make rolling back to no exam code possible while not allowing
-/// to pass nullable exam codes to steps that require an exam code.
-public struct ExamCodeNotNull
-{
-    public readonly ExamCode Inner;
-
-    private ExamCodeNotNull(ExamCode examCode)
-    {
-        Inner = examCode;
-    }
-
-    /// Verify that the provided ExamCode isn't null.
-    internal static ExamCodeNotNull? Validate(ExamCode examCode)
-    {
-        if (string.IsNullOrEmpty(examCode.Code))
-            return null;
-        return new ExamCodeNotNull(examCode);
-    }
 }

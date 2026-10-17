@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using System.Drawing;
+using OpenCvSharp;
 using Scanner.Check;
 using Scanner.Codes;
 using Scanner.Error;
@@ -12,11 +13,13 @@ public class StepCodesBubbles : IStepCodesBubbles
     
     private readonly byte[] _image;
     private readonly CodePack _codes;
+    private readonly Bitmap _bitmap;
 
-    internal StepCodesBubbles(CodePack codes, byte[] image)
+    internal StepCodesBubbles(CodePack codes, byte[] image, Bitmap bitmap)
     {
         _image = image;
         _codes = codes;
+        _bitmap = bitmap;
     }
 
     public IStepCheck GetSelectedAnswers()
@@ -27,7 +30,7 @@ public class StepCodesBubbles : IStepCodesBubbles
             var answerBubbles = GetAnswerBubbles(questionCount);
             var userMarkings = GetUserMarkings(answerBubbles, questionCount);
             var filledAnswers = GetFilledAnswers(userMarkings);
-            return new StepCheck(_codes, filledAnswers);
+            return new StepCheck(_codes, filledAnswers, _bitmap);
         }
         catch (Exception e)
         {
@@ -37,7 +40,7 @@ public class StepCodesBubbles : IStepCodesBubbles
 
     private uint GetQuestionCount()
     {
-        return ExamResultObtainer.ObtainExamQuestionCount(_codes.ExamCode.Inner.Code);
+        return ExamResultObtainer.ObtainExamQuestionCount(_codes.ExamCode.Code);
     }
 
     private CircleSegment[] GetAnswerBubbles(uint questionCount)

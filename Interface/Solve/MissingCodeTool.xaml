@@ -72,6 +72,7 @@
         </TextBox>
         <Button Grid.Row="3" Grid.Column="1" Content="{x:Static res:Lang.Missing_EnterCode}" Margin="0, 0, 3, 3" Click="EnterButton_OnClick"/>
         <Button Grid.Row="4" Grid.Column="1" Content="{x:Static res:Lang.Missing_Skip}" Margin="0, 0, 3, 3" Click="SkipButton_OnClick"/>
-        <CheckBox Grid.Row="5" Grid.Column="1" Content="##Skip every following user code issue" Margin="0, 0, 3, 3" Checked="ToggleButton_OnChecked" Unchecked="ToggleButton_OnUnchecked"/>
+        <CheckBox Grid.Row="5" Grid.Column="1" Content="{x:Static res:Lang.Solve_SkipUser}" Name="SkipUser" Margin="0, 0, 3, 3" Checked="SkipUser_OnChecked" Unchecked="SkipUser_OnUnchecked"/>
+        <CheckBox Grid.Row="6" Grid.Column="1" Content="{x:Static res:Lang.Solve_SkipExam}" Name="SkipExam" Margin="0, 0, 3, 3" Checked="SkipExam_OnChecked" Unchecked="SkipExam_OnUnchecked"/>
     </Grid>
 </Window>

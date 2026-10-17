@@ -2,14 +2,18 @@ using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Scanner.Codes;
+using Scanner.Collect;
+using Scanner.Managing;
 
 namespace Interface.Solve;
 
 public partial class MissingCodeTool
 {
-    public required MissingDataEntry MissingDataEntry;
-    public bool SkipFuturePrompts = false;
+    public required MissingData MissingData;
+    public AnyData ReturnAnyData;
+    
+    public bool SkipFutureExamPrompts = false;
+    public bool SkipFutureUserPrompts = false;
     
     public MissingCodeTool()
     {
@@ -18,9 +22,15 @@ public partial class MissingCodeTool
 
     public void Setup()
     {
-        PreviewImage.Source = ConvertBitmapToImageSource(MissingDataEntry.PageBitmap);
-        ExamTextBox.Text = MissingDataEntry.ExamCode?.ToString().Replace("-", "") ?? string.Empty;
-        CodeTextBox.Text = MissingDataEntry.UserCode?.ToString() ?? string.Empty;
+        ReturnAnyData = MissingData;
+        PreviewImage.Source = ConvertBitmapToImageSource(MissingData.State.PageBitmap);
+        ExamTextBox.Text = MissingData.State.AutoExamCode.Replace("-", "");
+        CodeTextBox.Text = MissingData.State.AutoUserCode;
+        if (!string.IsNullOrEmpty(MissingData.UserCode.Code))
+            SkipUser.Visibility = Visibility.Collapsed;
+        if (!string.IsNullOrEmpty(MissingData.ExamCode.Code))
+            SkipExam.Visibility = Visibility.Collapsed;
+        ExamTextBox.IsEnabled = !MissingData.State.IsExamAlreadySolved;
     }
     
     private static BitmapImage ConvertBitmapToImageSource(Bitmap bitmap)
@@ -40,9 +50,9 @@ public partial class MissingCodeTool
     private void EnterButton_OnClick(object sender, RoutedEventArgs e)
     {
         var examCodeStr = ExamTextBox.Text.Trim();
-        if (ExamCode.TryCreate(examCodeStr) is { } examCode) 
+        if (ExamCode.Create(examCodeStr).TryValidate() is { } examCode) 
         {
-            MissingDataEntry.ExamCode = examCode.Inner;
+            MissingData.ExamCode = examCode;
         }
         else
         {
@@ -51,9 +61,9 @@ public partial class MissingCodeTool
         }
         
         var userCodeStr = CodeTextBox.Text.Trim();
-        if (UserCode.TryCreate(userCodeStr) is { } userCode)
+        if (UserCode.Create(userCodeStr).TryValidate() is { } userCode)
         {
-            MissingDataEntry.UserCode = userCode;
+            MissingData.UserCode = userCode;
         }
         else
         {
@@ -61,15 +71,21 @@ public partial class MissingCodeTool
             return;
         }
         
+        ReturnAnyData = MissingData.Validate(examCode, userCode);
         Close();
     }
 
     private void SkipButton_OnClick(object sender, RoutedEventArgs e)
     {
+        ReturnAnyData = MissingData;
         Close();
     }
 
-    private void ToggleButton_OnChecked(object sender, RoutedEventArgs e) => SkipFuturePrompts = true;
+    private void SkipUser_OnChecked(object sender, RoutedEventArgs e) => SkipFutureUserPrompts = true;
 
-    private void ToggleButton_OnUnchecked(object sender, RoutedEventArgs e) => SkipFuturePrompts = false;
+    private void SkipUser_OnUnchecked(object sender, RoutedEventArgs e) => SkipFutureUserPrompts = false;
+
+    private void SkipExam_OnChecked(object sender, RoutedEventArgs e) => SkipFutureExamPrompts = true;
+
+    private void SkipExam_OnUnchecked(object sender, RoutedEventArgs e) => SkipFutureExamPrompts = false;
 }

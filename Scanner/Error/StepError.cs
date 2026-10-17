@@ -3,6 +3,7 @@ using Scanner.Bubbles;
 using Scanner.Check;
 using Scanner.Codes;
 using Scanner.Collect;
+using Scanner.Managing;
 using Scanner.Page;
 using Scanner.Result;
 
@@ -21,14 +22,19 @@ internal class StepCodesError : IStepPage, IStepCodes, IStepCodesBubbles, IStepC
     public IStepCodes GetPage(IDocReader reader, int pageNumber) => this;
     
     public StepCodesReturnable GetCodes() => this;
-    public IStepCodesBubbles GetCodesDataEntry(DataEntry dataEntry) => this;
-    public IStepCodesBubbles GetCodesSkipDataEntry(MissingDataEntry missingDataEntry) => this;
+    public IStepCodesBubbles GetCodes(FilledData _) => this;
+    public IStepCodesBubbles GetCodes(MissingData _) => this;
     
     public IStepCheck GetSelectedAnswers() => this;
 
     public IStepCollect CheckAnswers() => this;
     
-    public ScanResults CollectData()
+    public StepCollectReturnables CollectData()
+    {
+        return new ScanResults(new ScanError(_error));
+    }
+
+    public ScanResults CollectData(AnyData _)
     {
         return new ScanError(_error);
     }

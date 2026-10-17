@@ -1,8 +1,9 @@
 ﻿using Scanner.Bubbles;
+using Scanner.Managing;
 
 namespace Scanner.Codes;
 
-public union StepCodesReturnable(IStepCodesBubbles, MissingDataEntry);
+public union StepCodesReturnable(IStepCodesBubbles, MissingData);
 
 public interface IStepCodes
 {
@@ -12,10 +13,10 @@ public interface IStepCodes
     
     /// Assuming a MissingDataEntry was returned from Step(),
     /// use this method to return the fixed instance of it.
-    public IStepCodesBubbles GetCodesDataEntry(DataEntry dataEntry);
+    public IStepCodesBubbles GetCodes(FilledData dataEntry);
 
     /// Assuming a MissingDataEntry was returned from Step(),
     /// use this method to skip returning valid data.
     /// If only the user code is missing, a solve may still be attempted.
-    public IStepCodesBubbles GetCodesSkipDataEntry(MissingDataEntry missingDataEntry);
+    public IStepCodesBubbles GetCodes(MissingData missingDataEntry);
 }

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.Versioning;
 using Scanner.Bubbles;
 using Scanner.Error;
+using Scanner.Managing;
 
 namespace Scanner.Codes;
 
@@ -12,6 +13,8 @@ public class StepCodes : IStepCodes
     private Guid _dataEntryVerify = Guid.Empty;
 
     private byte[] _image = [];
+    private ExamCode _initialExamCode = ExamCode.Empty;
+    private UserCode _initialUserCode = UserCode.Empty;
 
     internal StepCodes(Bitmap bitmap)
     {
@@ -24,13 +27,15 @@ public class StepCodes : IStepCodes
         {
             var (foundCodes, imageBytes) = FindCodesFromImage();
             _image = imageBytes;
-            return foundCodes.IsValid() switch
+            _initialUserCode = foundCodes.GetUserCode();
+            _initialExamCode = foundCodes.GetExamCode();
+            return foundCodes.IsExamValid() switch
             {
                 true => new StepCodesBubbles(CodePack.CreateAutoHistory(
                     foundCodes.ExamCode ?? throw new UnreachableException(),
-                    foundCodes.UserCode ?? throw new UnreachableException()),
-                    imageBytes),
-                false => MissingDataEntry.Init(foundCodes.ExamCode?.Inner ?? ExamCode.Empty, foundCodes.UserCode, _bitmap, out _dataEntryVerify),
+                    foundCodes.GetUserCode()),
+                    imageBytes, _bitmap),
+                false => MissingData.Init(foundCodes.GetExamCode(), foundCodes.GetUserCode(), _bitmap, false, out _dataEntryVerify),
             };
         }
         catch (Exception e)
@@ -39,7 +44,7 @@ public class StepCodes : IStepCodes
         }
     }
 
-    public IStepCodesBubbles GetCodesDataEntry(DataEntry dataEntry)
+    public IStepCodesBubbles GetCodes(FilledData dataEntry)
     {
         if (dataEntry.OwnerKey != _dataEntryVerify)
             throw new InvalidDataException("StepWithDataEntry: The provided MissingDataEntry does not match the entry that was given!");
@@ -47,24 +52,24 @@ public class StepCodes : IStepCodes
         return new StepCodesBubbles(CodePack.Create(
             dataEntry.ExamCode,
             dataEntry.UserCode,
-            dataEntry.InitialExamCode,
-            dataEntry.InitialUserCode),
-            _image);
+            _initialExamCode,
+            _initialUserCode),
+            _image, _bitmap);
     }
 
-    public IStepCodesBubbles GetCodesSkipDataEntry(MissingDataEntry missingDataEntry)
+    public IStepCodesBubbles GetCodes(MissingData missingDataEntry)
     {
         if (missingDataEntry.OwnerKey != _dataEntryVerify)
             throw new InvalidDataException("StepSkipDataEntry: The provided MissingDataEntry does not match the entry that was given!");
-        if (missingDataEntry.ExamCode is not { } notNullCode || ExamCodeNotNull.Validate(notNullCode) is not { } validCode)
+        if (missingDataEntry.ExamCode.TryValidate() is not { } validCode)
             return new StepCodesError(new InvalidDataException("StepSkipDataEntry: Missing exam code"));
 
         return new StepCodesBubbles(CodePack.Create(
             validCode,
-            missingDataEntry.UserCode ?? UserCode.Empty,
-            missingDataEntry.InitialExamCode,
-            missingDataEntry.InitialUserCode),
-            _image);
+            missingDataEntry.UserCode,
+            _initialExamCode,
+            _initialUserCode),
+            _image, _bitmap);
     }
 
     private Tuple<FoundCodes, byte[]> FindCodesFromImage()

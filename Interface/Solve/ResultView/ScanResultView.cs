@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Windows;
 using Scanner.Collect;
+using Scanner.Managing;
 using Scanner.Result;
 
 namespace Interface.Solve.ResultView;
@@ -49,7 +50,7 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
         get => Backing.Ok?.UserCode.Get().Code.ToUpper() ?? string.Empty;
         set => Backing.OnOk(result =>
             {
-                if (Scanner.Codes.UserCode.TryCreate(value) is { } userCode)
+                if (Scanner.Managing.UserCode.Create(value).TryValidate() is { } userCode)
                     result.UserCode.Set(userCode);
                 InvokePropertyChanged(nameof(UserCode));
             });

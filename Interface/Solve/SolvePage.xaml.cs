@@ -14,6 +14,7 @@ using Microsoft.Win32;
 using Scanner.Bubbles;
 using Scanner.Codes;
 using Scanner.Collect;
+using Scanner.Managing;
 
 namespace Interface.Solve;
 
@@ -27,7 +28,8 @@ public partial class SolvePage
     private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
     private readonly DataGridColumn[] _resultsTableInitialColumns;
 
-    private static bool _skipSessionPrompts = false;
+    private static bool _skipExamSessionPrompts = false;
+    private static bool _skipUserSessionPrompts = false;
     
     public SolvePage()
     {
@@ -259,26 +261,37 @@ public partial class SolvePage
         var bubblesStep = codeResult switch
         {
             IStepCodesBubbles bubbles => bubbles,
-            MissingDataEntry missing => HandleMissingDataEntry(codeStep, missing, mutex),
+            MissingData missing => HandleMissingExamDataEntry(codeStep, missing, mutex),
             _ => throw new UnreachableException(),
         };
         var checkStep = bubblesStep.GetSelectedAnswers();
-        var resultsStep = checkStep.CheckAnswers();
-        var result = resultsStep.CollectData();
+        var collectStep = checkStep.CheckAnswers();
+        var collectResult = collectStep.CollectData();
+        var result = collectResult switch
+        {
+            ScanResults results => results,
+            MissingData missing => HandleMissingUserDataEntry(collectStep, missing, mutex),
+            _ => throw new UnreachableException(),
+        };
         return new Tuple<int, ScanResults>(pageIndex, result);
     }
 
-    private static IStepCodesBubbles HandleMissingDataEntry(IStepCodes codeStep, MissingDataEntry entry, Mutex mutex)
+    private static IStepCodesBubbles HandleMissingExamDataEntry(IStepCodes codeStep, MissingData missing, Mutex mutex)
     {
         mutex.WaitOne();
         try
         {
-            if (_skipSessionPrompts)
-                return codeStep.GetCodesSkipDataEntry(entry);
-            entry = DispatchHelpDialog(entry);
-            if (entry.TryValidate() is { } fixedEntry)
-                return codeStep.GetCodesDataEntry(fixedEntry);
-            return codeStep.GetCodesSkipDataEntry(entry);
+            if (_skipExamSessionPrompts)
+                return codeStep.GetCodes(missing);
+            var data = DispatchHelpDialog(missing);
+            // This should be temporary while Rider updated its union support
+            #pragma warning disable CS8655
+            return (data) switch
+            #pragma warning restore CS8655
+            {
+                MissingData skip => codeStep.GetCodes(skip),
+                FilledData set => codeStep.GetCodes(set),
+            };
         }
         finally
         {
@@ -286,22 +299,41 @@ public partial class SolvePage
         }
     }
 
-    private static MissingDataEntry DispatchHelpDialog(MissingDataEntry entry)
+    private static ScanResults HandleMissingUserDataEntry(IStepCollect collectStep, MissingData missing, Mutex mutex)
     {
+        mutex.WaitOne();
+        try
+        {
+            if (_skipExamSessionPrompts)
+                return collectStep.CollectData(missing);
+            var data = DispatchHelpDialog(missing);
+            return collectStep.CollectData(data);
+        }
+        finally
+        {
+            mutex.ReleaseMutex();
+        }
+    }
+    
+    private static AnyData DispatchHelpDialog(MissingData missing)
+    {
+        AnyData? data = null;
         Application.Current.Dispatcher.Invoke(() =>
         {
             var window = new MissingCodeTool
             {
                 Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                MissingDataEntry = entry,
+                MissingData = missing,
             };
             window.Setup();
             window.ShowDialog();
-            entry = window.MissingDataEntry;
-            _skipSessionPrompts = window.SkipFuturePrompts;
+            data = window.ReturnAnyData;
+            _skipExamSessionPrompts = window.SkipFutureExamPrompts;
+            _skipUserSessionPrompts = window.SkipFutureUserPrompts;
         });
-        return entry;
+        
+        return data ?? throw new InvalidDataException();
     }
 
     private void FinishSolvingPages()
@@ -311,7 +343,8 @@ public partial class SolvePage
         ImportPdfTextbox.IsEnabled = true;
         BrowseButton.IsEnabled = true;
         CorrectPdf.IsEnabled = true;
-        _skipSessionPrompts = false;
+        _skipExamSessionPrompts = false;
+        _skipUserSessionPrompts = false;
     }
 
     /// Return LocaleSpecifics based on the CsvLocale setting.

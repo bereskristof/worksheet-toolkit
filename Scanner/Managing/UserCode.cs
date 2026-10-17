@@ -1,6 +1,6 @@
-﻿namespace Scanner.Codes;
+﻿namespace Scanner.Managing;
 
-public readonly struct UserCode : IComparable<UserCode>
+public readonly struct UserCode : ICode<UserCode>, IComparable<UserCode>
 {
     public string Code { get; } = string.Empty;
 
@@ -11,13 +11,13 @@ public readonly struct UserCode : IComparable<UserCode>
         Code = text.ToUpper();
     }
 
-    public static UserCode? TryCreate(string text)
+    public static UserCode Create(string text)
     {
         if (IsUserCode(text))
         {
             return new UserCode(text);
         }
-        return null;
+        return Empty;
     }
     
     private static bool IsUserCode(string text)

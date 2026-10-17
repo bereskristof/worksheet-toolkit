@@ -28,4 +28,8 @@
       <ProjectReference Include="..\Storage\Storage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Missing\" />
+    </ItemGroup>
+
 </Project>

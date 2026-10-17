@@ -1,14 +1,16 @@
-﻿namespace Scanner.Codes;
+﻿using Scanner.Managing;
+
+namespace Scanner.Codes;
 
 public readonly struct CodePack
 {
-    public readonly ExamCodeNotNull ExamCode;
-    public readonly UserCode UserCode;
-    
+    public readonly Valid<ExamCode> ExamCode;
     public readonly ExamCode InitialExamCode;
+    
+    public readonly UserCode UserCode;
     public readonly UserCode InitialUserCode;
 
-    private CodePack(ExamCodeNotNull examCode, UserCode userCode, ExamCode initialExamCode, UserCode initialUserCode)
+    private CodePack(Valid<ExamCode> examCode, UserCode userCode, ExamCode initialExamCode, UserCode initialUserCode)
     {
         ExamCode = examCode;
         UserCode = userCode;
@@ -16,12 +18,12 @@ public readonly struct CodePack
         InitialUserCode = initialUserCode;
     }
 
-    internal static CodePack CreateAutoHistory(ExamCodeNotNull examCode, UserCode userCode)
+    internal static CodePack CreateAutoHistory(Valid<ExamCode> examCode, UserCode userCode)
     {
-        return new CodePack(examCode, userCode, examCode.Inner, userCode);
+        return new CodePack(examCode, userCode, examCode, userCode);
     }
 
-    internal static CodePack Create(ExamCodeNotNull examCode, UserCode userCode, ExamCode initialExamCode, UserCode initialUserCode)
+    internal static CodePack Create(Valid<ExamCode> examCode, UserCode userCode, ExamCode initialExamCode, UserCode initialUserCode)
     {
         return new CodePack(examCode, userCode, initialExamCode, initialUserCode);
     }

@@ -462,4 +462,10 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_StateError" xml:space="preserve">
         <value>Hiba</value>
     </data>
+    <data name="Solve_SkipUser" xml:space="preserve">
+        <value>A további hiányzó Neptun kódok megadásának kihagyása...</value>
+    </data>
+    <data name="Solve_SkipExam" xml:space="preserve">
+        <value>A további hiányzó dolgozat kódok megadásának kihagyása...</value>
+    </data>
 </root>

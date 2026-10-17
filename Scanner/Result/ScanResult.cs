@@ -1,4 +1,4 @@
-﻿using Scanner.Codes;
+﻿using Scanner.Managing;
 using Scanner.Rollback;
 
 namespace Scanner.Result;
@@ -27,7 +27,6 @@ public class ScanResult
     {
         var rollbacks = new List<IRollback>
         {
-            ExamCode,
             UserCode
         };
         rollbacks.AddRange(Results.Select(result => result.Points).Cast<IRollback>());

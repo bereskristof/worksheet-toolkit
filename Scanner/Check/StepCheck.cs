@@ -1,4 +1,5 @@
-﻿using Scanner.Bubbles;
+﻿using System.Drawing;
+using Scanner.Bubbles;
 using Scanner.Codes;
 using Scanner.Collect;
 using Scanner.Error;
@@ -11,22 +12,24 @@ public class StepCheck : IStepCheck
     internal const double MinDeltaConfidence = 0.4; /// Minimum difference between best and next best answer to consider it not double filled
     internal const double MinFillConfidence = 0.1; /// Minimum % of pixels filled in the bubble to consider it filled (0.2 skips)
     
+    private readonly Bitmap _bitmap;
     private readonly CodePack _codes;
     private readonly SelectedAnswer[] _selectedAnswers;
 
-    internal StepCheck(CodePack codePack, SelectedAnswer[] selectedAnswers)
+    internal StepCheck(CodePack codePack, SelectedAnswer[] selectedAnswers, Bitmap bitmap)
     {
         _codes = codePack;
         _selectedAnswers = selectedAnswers;
+        _bitmap = bitmap;
     }
 
     public IStepCollect CheckAnswers()
     {
         try
         {
-            var correctAnswers = ExamResultObtainer.ObtainCorrectAnswers(_codes.ExamCode.Inner.Code);
+            var correctAnswers = ExamResultObtainer.ObtainCorrectAnswers(_codes.ExamCode.Code);
             var results = CorrectAnswers(correctAnswers);
-            return new StepCollect(_codes, _selectedAnswers, results);
+            return new StepCollect(_codes, _selectedAnswers, results, _bitmap);
         }
         catch (Exception e)
         {

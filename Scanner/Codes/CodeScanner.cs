@@ -1,5 +1,6 @@
 using System.Drawing;
 using OpenCvSharp;
+using Scanner.Managing;
 using ZXing;
 using ZXing.Common;
 using ZXing.Multi;
@@ -10,11 +11,16 @@ namespace Scanner.Codes;
 
 internal struct FoundCodes
 {
-    public ExamCodeNotNull? ExamCode;
-    public UserCode? UserCode;
+    public Valid<ExamCode>? ExamCode;
+    public Valid<UserCode>? UserCode;
+
+    public UserCode GetUserCode() => UserCode ?? Managing.UserCode.Empty;
+    public ExamCode GetExamCode() => ExamCode ?? Managing.ExamCode.Empty;
     
     /// Returns true if both fields are set to a valid value.
     public bool IsValid() => ExamCode is not null && UserCode is not null;
+    
+    public bool IsExamValid() => ExamCode is not null;
 
     /// Join 2 separate results, keeping anything possible,
     /// with a preference for the calling object.
@@ -89,16 +95,16 @@ internal class CodeScanner
     
     private static FoundCodes ParseDecodedText(string[] texts)
     {
-        ExamCodeNotNull? examCode = null;
-        UserCode? userCode = null;
+        Valid<ExamCode>? examCode = null;
+        Valid<UserCode>? userCode = null;
         foreach (var text in texts)
         {
             if (string.IsNullOrEmpty(text)) continue;
-            if (UserCode.TryCreate(text) is { } foundUserCode)
+            if (UserCode.Create(text).TryValidate() is { } foundUserCode)
             {
                 userCode = foundUserCode;
             }
-            else if (ExamCode.TryCreate(text) is { } foundExamCode)
+            else if (ExamCode.Create(text).TryValidate() is { } foundExamCode)
             {
                 examCode = foundExamCode;
             }
