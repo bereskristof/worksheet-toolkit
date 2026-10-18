@@ -4,7 +4,11 @@ public readonly struct UserCode : ICode<UserCode>, IComparable<UserCode>
 {
     public string Code { get; } = string.Empty;
 
-    public static UserCode Empty => default;
+    public static UserCode Empty => new();
+
+    // Needed for default initialization.
+    public UserCode()
+    { }
 
     private UserCode(string text)
     {

@@ -134,7 +134,12 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
             "");
         sb.Append(UserCode, "");
         sb.Append(TotalPoints.ToString() ?? "", "");
-        sb.Append(TotalPoints >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText, "");
+        var pointsString = TotalPoints switch
+        {
+            { } points => (points >= SuccessfulMinimumScore ? localeSpecifics.SuccessText : localeSpecifics.FailText),
+            null => "",
+        };
+        sb.Append(pointsString, "");
         return sb;
     }
 

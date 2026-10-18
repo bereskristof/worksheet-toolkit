@@ -24,6 +24,7 @@ public partial class SolvePage
     private const int DimY = 1700;
 
     private int _resultsTableTaskColumnCount = 0;
+    private string _progressFmt = "{0}/0";
     
     private readonly ObservableCollection<ScanResultView> _csvBuffer = [];
     private readonly DataGridColumn[] _resultsTableInitialColumns;
@@ -82,6 +83,19 @@ public partial class SolvePage
         var isPathEmpty = string.IsNullOrEmpty(textboxText);
         CorrectPdf.IsEnabled = isPathValid;
         InvalidPathWarningBox.Visibility = (isPathValid || isPathEmpty) ? Visibility.Collapsed : Visibility.Visible;
+        InitPageCount();
+    }
+
+    private void InitPageCount()
+    {
+        var pdfPath = ImportPdfTextbox.Text;
+        if (!IsPathValidPdf(pdfPath))
+            return;
+        var pageCount = GetPageCount(pdfPath);
+        var maxLabelSize = (int)Math.Ceiling(Math.Log10(pageCount));
+        _progressFmt = $"{{0,{maxLabelSize}}}/{pageCount}";
+        ProgressLabel.Content = string.Format(_progressFmt, 0);
+        ProgressBar.Value = 0;
     }
 
     /// Checks if the provided file has a valid PDF file signature.
@@ -225,6 +239,7 @@ public partial class SolvePage
         
         UpdateResultsTableColumns(result);
         ProgressBar.Value += 1;
+        ProgressLabel.Content = string.Format(_progressFmt, ProgressBar.Value);
     }
 
     private async void SolvePagesAsync(string path)
@@ -304,7 +319,7 @@ public partial class SolvePage
         mutex.WaitOne();
         try
         {
-            if (_skipExamSessionPrompts)
+            if (_skipUserSessionPrompts)
                 return collectStep.CollectData(missing);
             var data = DispatchHelpDialog(missing);
             return collectStep.CollectData(data);

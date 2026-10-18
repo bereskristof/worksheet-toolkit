@@ -2,7 +2,7 @@
 
 public readonly struct ExamCode : ICode<ExamCode>, IComparable<ExamCode>
 {
-    public static readonly ExamCode Empty = default;
+    public static readonly ExamCode Empty = new();
     
     private enum Active {
         Null,
@@ -30,6 +30,10 @@ public readonly struct ExamCode : ICode<ExamCode>, IComparable<ExamCode>
         Active.SevenChar => _sevenChar,
         _ => throw new ArgumentOutOfRangeException(nameof(_active), "ExamCode invariance was broken!"),
     };
+    
+    // Needed for default initialization.
+    public ExamCode()
+    { }
 
     private ExamCode(Guid guid)
     {
