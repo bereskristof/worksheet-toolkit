@@ -468,4 +468,8 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_SkipExam" xml:space="preserve">
         <value>A további hiányzó dolgozat kódok megadásának kihagyása...</value>
     </data>
+    <data name="Solve_Error" xml:space="preserve">
+        <value>A javítás az alábbi hibába ütközött:
+#ERR#</value>
+    </data>
 </root>

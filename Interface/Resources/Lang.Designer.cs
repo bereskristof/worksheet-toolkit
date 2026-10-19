@@ -1045,6 +1045,16 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///     Looks up a localized string similar to The following error occured:
+        ///#ERR#.
+        /// </summary>
+        public static string Solve_Error {
+            get {
+                return ResourceManager.GetString("Solve_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     Looks up a localized string similar to Exporting PDF.
         /// </summary>
         public static string Solve_ExportingPdf {

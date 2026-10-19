@@ -475,4 +475,8 @@ Would you like to restart the program now?</value>
     <data name="Solve_SkipExam" xml:space="preserve">
         <value>Skip every following missing exam code issue...</value>
     </data>
+    <data name="Solve_Error" xml:space="preserve">
+        <value>The following error occured:
+#ERR#</value>
+    </data>
 </root>

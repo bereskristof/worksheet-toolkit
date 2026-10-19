@@ -429,12 +429,28 @@ public partial class SolvePage
             ResultsTable.Columns.Add(column);
     }
 
-    private void ResetSelected_OnClick(object sender, RoutedEventArgs e)
+    private void ExtraSelected_OnClick(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button)
             return;
         if (button.DataContext is not ScanResultView view)
             return;
+        if (view.Backing.Ok is not null)
+            ResetSelected(ref view);
+        else if (view.Backing.Err is not null)
+            GetError(ref view);
+    }
+
+    private static void ResetSelected(ref ScanResultView view)
+    {
         view.Reset();
+    }
+
+    private static void GetError(ref ScanResultView view)
+    {
+        var error = view.GetError();
+        if (string.IsNullOrEmpty(error)) return;
+        var message = Interface.Resources.Lang.Solve_Error.Replace("#ERR#", error);
+        MessageBox.Show(message, Interface.Resources.Lang.Common_Error, MessageBoxButton.OK, MessageBoxImage.None);
     }
 }

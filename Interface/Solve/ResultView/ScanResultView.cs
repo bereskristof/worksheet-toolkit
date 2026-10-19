@@ -18,6 +18,10 @@ public struct LocaleSpecifics
 
 internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultView>
 {
+    // https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-ui-symbol-font#pua-e700-e900
+    private const string ExtraResetLabel = "\xE845"; // RevToggleKey
+    private const string ExtraIssueLabel = "\xE897"; // Help
+    
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private enum ScanResultHuman
@@ -76,7 +80,8 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
 
     public ScanResultViewPointAccess Points { get; init; }
 
-    public Visibility IsResetVisible => (Backing.Ok?.IsModified() ?? false) ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility IsExtraVisible => (Backing.Ok?.IsModified() ?? Backing.Err is not null) ? Visibility.Visible : Visibility.Collapsed;
+    public string ExtraTitle => (Backing.Err is null) ? ExtraResetLabel : ExtraIssueLabel;
 
     public ScanResultView(int page, ScanResults sourceResult)
     {
@@ -99,7 +104,7 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsResetVisible)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExtraVisible)));
     }
 
     private ScanResultHuman GetScanResultHuman()
@@ -157,6 +162,13 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserCode)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Points)));
         InvokePropertyChangedDerived();
+    }
+
+    public string GetError()
+    {
+        if (Backing.Err is not { } error)
+            return string.Empty;
+        return error.Error.Message;
     }
 
     /// Returns an integers value in the alphabet (0 => A, 2 => C, etc...).

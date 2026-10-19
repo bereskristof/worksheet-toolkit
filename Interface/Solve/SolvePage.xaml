@@ -118,12 +118,11 @@
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderSuccess}" Binding="{Binding Result}" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Header="{x:Static res:Lang.Solve_HeaderTotal}" Binding="{Binding TotalPoints}" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Header="" Width="*" MinWidth="0" IsReadOnly="True"/> <!-- Spacer -->
-                    <DataGridTemplateColumn Header="{x:Static res:Lang.Solve_HeaderReset}" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn Header="" Width="Auto" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- MDL2 Undo Icon (PUA pointer) -->
-                                <Button Click="ResetSelected_OnClick" Content="&#xE845;" Padding="4, 0" FontFamily="Segoe MDL2 Assets"
-                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsResetVisible}"/>
+                                <Button Click="ExtraSelected_OnClick" Content="{Binding ExtraTitle}" Padding="4, 0" FontFamily="Segoe MDL2 Assets"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsExtraVisible}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
