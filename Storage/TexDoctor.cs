@@ -37,7 +37,6 @@ public static class TexDoctor
         var path = FindValidPdfLatexPath(backupPath);
         if (path == null) return TexStatus.NotFound;
         TexDirectory = Path.GetDirectoryName(path) ?? string.Empty;
-        Console.WriteLine(TexDirectory);
         missingPackages = GetMissingPackages();
         if (missingPackages.Length == 0) return TexStatus.Operational;
         _missingPackageCache = missingPackages;
@@ -73,7 +72,7 @@ public static class TexDoctor
         const string flags = "-version";
         var process = new Process();
         process.StartInfo = new ProcessStartInfo(latexPath, flags)
-            { CreateNoWindow = true };
+            { CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
         try
         {
             process.Start();

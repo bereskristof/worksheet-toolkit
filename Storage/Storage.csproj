@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>15</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,10 +25,6 @@
       <EmbeddedResource Include="ArUco\aruco_2.png" />
       <None Remove="ArUco\aruco_3.png" />
       <EmbeddedResource Include="ArUco\aruco_3.png" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Scanner\Scanner.csproj" />
     </ItemGroup>
 
 </Project>

@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:password="clr-namespace:Interface.Password"
-        xmlns:resources="clr-namespace:Interface.Resources"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Worksheet Toolkit" Height="800" Width="1200">
     <DockPanel UseLayoutRounding="True">
         <Grid Name="Main">

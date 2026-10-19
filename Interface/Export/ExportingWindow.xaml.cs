@@ -80,7 +80,7 @@ public partial class ExportingWindow
         {
             try
             {
-                MultiExamBuilder.AddExam(latexBuilder, root, answerCount, shuffleAnswers, excludedAnswers);
+                MultiExamBuilder.AddExam(latexBuilder, root, Manager.CodeGenerator, answerCount, shuffleAnswers, excludedAnswers);
             }
             catch (InvalidOperationException ex)
             {
@@ -94,7 +94,7 @@ public partial class ExportingWindow
         }
         try
         {
-            MultiExamBuilder.AddExam(latexBuilder, root, answerCount, shuffleAnswers, excludedAnswers); // Add the last exam without a new page after it
+            MultiExamBuilder.AddExam(latexBuilder, root, Manager.CodeGenerator, answerCount, shuffleAnswers, excludedAnswers); // Add the last exam without a new page after it
         }
         catch (InvalidOperationException ex)
         {

@@ -165,7 +165,7 @@ public partial class ExportPage : INotifyPropertyChanged
         try
         {
             GetShuffleVars(out var shuffle, out var exclusions);
-            builder = MultiExamBuilder.BuildNExams(1, Bindings.Instance.SheetRoot, AnswerCount, title, author, date, shuffle, exclusions);
+            builder = MultiExamBuilder.BuildNExams(1, Bindings.Instance.SheetRoot, Manager.CodeGenerator, AnswerCount, title, author, date, shuffle, exclusions);
         }
         catch (InvalidOperationException ex)
         {

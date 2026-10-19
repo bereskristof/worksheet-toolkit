@@ -2,7 +2,9 @@ using System.Diagnostics;
 using OpenCvSharp;
 using OpenCvSharp.Aruco;
 
-namespace Scanner;
+namespace Scanner.Bubbles;
+
+public class MarkerException(string message) : Exception(message);
 
 public class MatrixScanner
 {
@@ -17,7 +19,7 @@ public class MatrixScanner
     }
 
     /// <exception cref="MarkerException">Failed to find at least 3 markers, or a marker was repeated</exception>
-    public CircleSegment[] FindBubbles(uint questionCount = 15, uint answerCount = 5)
+    public CircleSegment[] FindBubbles(uint questionCount, uint answerCount)
     {
         var dict = CvAruco.GetPredefinedDictionary(PredefinedDictionaryType.Dict4X4_50);
         var detector = new ArucoDetector(dict);

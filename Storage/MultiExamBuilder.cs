@@ -5,33 +5,17 @@ using System.Text.RegularExpressions;
 using Storage.Sheet;
 using Storage.Task;
 using static Storage.PdfExportResult.Results;
-using Skeleton = System.Tuple<long, long, long, System.Guid>;
-using Skeletons = System.Collections.Generic.List<System.Tuple<long, long, long, System.Guid>>;
+using Skeleton = System.Tuple<long, long, long, string>;
+using Skeletons = System.Collections.Generic.List<System.Tuple<long, long, long, string>>;
 
 namespace Storage;
 
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 public static class MultiExamBuilder
 {
-    private const uint UuidMaxTries = 5;
-    private static readonly string UuidErrorMessageTemplate = """
-                                                       Failed to create unique uuid.
-
-                                                       Only share this information with someone you trust to have database access!
-                                                       Additional information:
-                                                       - Uuids attempted:
-                                                         - {0}
-                                                         - {1}
-                                                         - {2}
-                                                         - {3}
-                                                         - {4}
-                                                       - Number of Uuids in the database already:
-                                                         - {5}
-                                                       """;
-    
     /// Generates N exams based on the provided root node and answer count.
     /// Disables saving to database, since this is only used for previewing.
-    public static LatexBuilder BuildNExams(uint n, SelectorNode rootNode, byte answerCount, string title, string author, string date, bool shuffleAnswers, string[] excludedAnswers)
+    public static LatexBuilder BuildNExams(uint n, SelectorNode rootNode, CodeGenerator codeGenerator, byte answerCount, string title, string author, string date, bool shuffleAnswers, string[] excludedAnswers)
     {
         if (n == 0)
             throw new ArgumentException("The number of exams to generate must be greater than zero.", nameof(n));
@@ -40,12 +24,12 @@ public static class MultiExamBuilder
         builder.AutoHeader();
         for (uint i = 0; i < n - 1; i++)
         {
-            AddExam(builder, rootNode, answerCount, shuffleAnswers, excludedAnswers, false);
+            AddExam(builder, rootNode, codeGenerator, answerCount, shuffleAnswers, excludedAnswers, false);
             builder.Macro("cleardoublepage");
             builder.Text(@"\pagestyle{plain}");
             builder.Text(@"\setcounter{page}{1}");
         }
-        AddExam(builder, rootNode, answerCount, shuffleAnswers, excludedAnswers, false); // Add the last exam without a new page after it
+        AddExam(builder, rootNode, codeGenerator, answerCount, shuffleAnswers, excludedAnswers, false); // Add the last exam without a new page after it
         builder.AutoFooter();
         return builder;
     }
@@ -55,70 +39,32 @@ public static class MultiExamBuilder
         builder.AutoHeader();
     }
 
-    public static void AddExam(LatexBuilder builder, SelectorNode rootNode, byte answerCount, bool shuffleAnswers, string[] excludedAnswers, bool storeSkeleton = true)
+    public static void AddExam(LatexBuilder builder, SelectorNode rootNode, CodeGenerator codeGenerator, byte answerCount, bool shuffleAnswers, string[] excludedAnswers, bool storeSkeleton = true)
     {
         var questions = rootNode.GetQuestions();
         Skeletons skeleton = [];
-        Guid uuid = CreateUniqueUuid();
+        var code = codeGenerator.GenerateCode();
         
-        var humanReadableCode = MiniCodeGenerator.GenerateCode();
-        
-        var qrBuilder = new QrBuilder(uuid); // Create a QR code builder for the UUID
-        var qrPath = Path.Combine(Path.GetTempPath(), Manager.PathTitle, $"{uuid.ToString()}.png");
+        var qrBuilder = new QrBuilder(code); // Create a QR code builder for the exam key
+        var qrPath = Path.Combine(Path.GetTempPath(), Manager.PathTitle, $"{code}.png");
         Directory.CreateDirectory(Path.GetDirectoryName(qrPath) ?? throw new InvalidOperationException("Invalid directory name in AddExam"));
         qrBuilder.Save(qrPath);
         var qrShortPath = Path.GetFileName(qrPath);
         
-        builder.AddTitle(humanReadableCode);
+        builder.AddTitle(code);
         builder.Begin("questions");
         var i = 0;
         foreach (var question in questions)
         {
-            AddQuestion(question, builder, skeleton, uuid, answerCount, i, shuffleAnswers, excludedAnswers);
+            AddQuestion(question, builder, skeleton, code, answerCount, i, shuffleAnswers, excludedAnswers);
             i++;
         }
         builder.End("questions");
         builder.Macro("cleardoublepage");
-        builder.AddAnswerPage(questions.Length, answerCount, humanReadableCode, qrShortPath);
+        builder.AddAnswerPage(questions.Length, answerCount, code, qrShortPath);
         builder.Macro("cleardoublepage");
         if (storeSkeleton)
             StoreSkeleton(skeleton);
-    }
-
-    /// Generate a new GUID that is checked for uniqueness.
-    /// This is done because while a UUID should never clash in theory,
-    /// on real systems, bad entropy can cause repeated values to appear exceedingly rarely.
-    private static Guid CreateUniqueUuid()
-    {
-        List<Guid> failedUuids = [];
-        for (uint attempt = 0; attempt < UuidMaxTries; attempt++)
-        {
-            Guid uncheckedUuid = Guid.NewGuid();
-            var uuidVerifyCommand = Manager.Connection.CreateCommand();
-            uuidVerifyCommand.CommandText = "SELECT COUNT(1) FROM Solutions WHERE Uuid = @Uuid;";
-            uuidVerifyCommand.Parameters.AddWithValue("@Uuid", uncheckedUuid.ToString());
-            long verifyValue = (long)(uuidVerifyCommand.ExecuteScalar() ?? throw new InvalidOperationException("Database didn't return whether the UUID is unique!"));
-            bool isUnique = verifyValue == 0;
-            if (isUnique)
-            {
-                return uncheckedUuid;
-            }
-            Log.Write($"UUID {uncheckedUuid.ToString()} failed to be unique!", Log.Severity.Warning);
-            failedUuids.Add(uncheckedUuid);
-        }
-
-        var uuidCountCommand = Manager.Connection.CreateCommand();
-        uuidCountCommand.CommandText = "SELECT COUNT(DISTINCT Uuid) FROM Solutions;";
-        long uniqueUuidsInDb = (long)(uuidCountCommand.ExecuteScalar() ?? throw new InvalidOperationException("Database didn't return the number of unique UUIDs!"));
-        throw new RepeatedlyRepeatingGuidException(
-            string.Format(
-                UuidErrorMessageTemplate,
-                failedUuids[0],
-                failedUuids[1],
-                failedUuids[2],
-                failedUuids[3],
-                failedUuids[4],
-                uniqueUuidsInDb));
     }
     
     public static void EndManualAdding(LatexBuilder builder)
@@ -126,7 +72,7 @@ public static class MultiExamBuilder
         builder.AutoFooter();
     }
 
-    private static void AddQuestion(Question question, LatexBuilder builder, Skeletons skeleton, Guid uuid, byte answerCount, int questionIndex, bool shuffleAnswers, string[] excludedAnswers)
+    private static void AddQuestion(Question question, LatexBuilder builder, Skeletons skeleton, string key, byte answerCount, int questionIndex, bool shuffleAnswers, string[] excludedAnswers)
     {
         Answer[] answers;
         try
@@ -143,7 +89,7 @@ public static class MultiExamBuilder
             .Where(v => v.ans.Correct)
             .Select(v => v.i)
             .FirstOrDefault(); // Get the index of the first correct answer, or 0 if none are correct
-        Skeleton skeletonElement = new Skeleton(questionIndex, answerIndex, question.Id, uuid); // Store IDs to allow for reconstruction
+        Skeleton skeletonElement = new Skeleton(questionIndex, answerIndex, question.Id, key); // Store IDs to allow for reconstruction
         skeleton.Add(skeletonElement);
         var path = ExportMaybeDuplicateQuestionImage(question);
         builder.Question(
@@ -169,12 +115,12 @@ public static class MultiExamBuilder
     
     private static void StoreSkeleton(Skeletons skeletons)
     {
-        foreach (var (question, answer, questionId, uuid) in skeletons)
+        foreach (var (question, answer, questionId, key) in skeletons)
         {
             var encryptedAnswer = Encryption.EncryptBlob(BitConverter.GetBytes(answer));
             var storeCommand = Manager.Connection.CreateCommand();
             storeCommand.CommandText = "INSERT INTO Solutions (Uuid, QuestionNumber, AnswerNumber, QuestionId) VALUES (@Uuid, @QuestionNumber, @AnswerNumber, @QuestionId);";
-            storeCommand.Parameters.AddWithValue("@Uuid", uuid.ToString()); // Each exam gets a new UUID
+            storeCommand.Parameters.AddWithValue("@Uuid", key); // Each exam gets a new key
             storeCommand.Parameters.AddWithValue("@QuestionNumber", question);
             storeCommand.Parameters.AddWithValue("@AnswerNumber", encryptedAnswer);
             storeCommand.Parameters.AddWithValue("@QuestionId", questionId); // Store the question ID for statistics

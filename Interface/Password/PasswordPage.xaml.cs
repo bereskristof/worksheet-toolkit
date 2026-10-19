@@ -31,7 +31,7 @@ public partial class PasswordPage
     private void ButtonLoadDb_OnClick(object sender, RoutedEventArgs e)
     {
         string password = MainPasswordBox.Password;
-        LoadingBar.Visibility = Visibility.Visible;
+        LoadingBar.Opacity = 1.0;
         _backgroundLoader.RunWorkerAsync(password);
     }
     
@@ -43,7 +43,7 @@ public partial class PasswordPage
 
     private void BackgroundLoader_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
-        LoadingBar.Visibility = Visibility.Hidden;
+        LoadingBar.Opacity = 0.0;
         if (_lastUnlockResult)
             PasswordUnlocked?.Invoke(this, EventArgs.Empty);
         else

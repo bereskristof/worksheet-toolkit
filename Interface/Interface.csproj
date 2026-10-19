@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
@@ -13,6 +12,8 @@
         <Copyright>2025, University of Miskolc</Copyright>
         <Company>University of Miskolc</Company>
         <Product>WorksheetToolkit</Product>
+        <LangVersion>15</LangVersion>
+        <TargetFramework>net11.0-windows</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

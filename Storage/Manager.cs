@@ -19,6 +19,19 @@ public static class Manager
         private set => _connection = value;
     }
     
+    private static CodeGenerator? _codeGenerator;
+
+    public static CodeGenerator CodeGenerator
+    {
+        get
+        {
+            if (_connection != null && _codeGenerator != null) return _codeGenerator;
+            Log.Write("Null reference in Manager.CodeGenerator.get", Log.Severity.Error);
+            throw new NullReferenceException("Access is invalid, database or code generator connection is null");
+        }
+        private set => _codeGenerator = value;
+    }
+    
     public static void CreateDatabase(string filename, string password)
     {
         var connectionString = $"Data Source={filename}";
@@ -39,6 +52,8 @@ public static class Manager
         Encryption.SavePassword(password);
         Encryption.TryPassword(password);
         
+        CodeGenerator = new CodeGenerator(Connection);
+        
         Log.Write("Created database");
     }
 
@@ -58,6 +73,8 @@ public static class Manager
 
         Tables.Init(Connection);
         IdManager.Init();
+        CodeGenerator = new CodeGenerator(Connection);
+        
         Log.Write("Opened database");
         return true;
     }
