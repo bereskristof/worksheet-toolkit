@@ -40,7 +40,7 @@ public class StepCodes : IStepCodes
         }
         catch (Exception e)
         {
-            return new StepCodesError(e);
+            return new StepCodesError(e, UserCode.Empty);
         }
     }
 
@@ -62,7 +62,7 @@ public class StepCodes : IStepCodes
         if (missingDataEntry.OwnerKey != _dataEntryVerify)
             throw new InvalidDataException("StepSkipDataEntry: The provided MissingDataEntry does not match the entry that was given!");
         if (missingDataEntry.ExamCode.TryValidate() is not { } validCode)
-            return new StepCodesError(new InvalidDataException("StepSkipDataEntry: Missing exam code"));
+            return new StepCodesError(new InvalidDataException("StepSkipDataEntry: Missing exam code"), missingDataEntry.UserCode);
 
         return new StepCodesBubbles(CodePack.Create(
             validCode,

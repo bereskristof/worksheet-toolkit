@@ -5,6 +5,7 @@ using System.Runtime.Versioning;
 using Docnet.Core.Readers;
 using Scanner.Codes;
 using Scanner.Error;
+using Scanner.Managing;
 
 namespace Scanner.Page;
 
@@ -21,7 +22,7 @@ public class StepPage : IStepPage
         }
         catch (Exception e)
         {
-            return new StepCodesError(e);
+            return new StepCodesError(e, UserCode.Empty);
         }
     }
     

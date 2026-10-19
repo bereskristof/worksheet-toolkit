@@ -33,7 +33,7 @@ public class StepCheck : IStepCheck
         }
         catch (Exception e)
         {
-            return new StepCodesError(e);
+            return new StepCodesError(e, _codes.UserCode);
         }
     }
 

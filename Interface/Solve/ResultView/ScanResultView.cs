@@ -51,7 +51,7 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
     
     public string UserCode
     {
-        get => Backing.Ok?.UserCode.Get().Code.ToUpper() ?? string.Empty;
+        get => Backing.Ok?.UserCode.Get().Code.ToUpper() ?? Backing.Err?.UserCode.Code.ToUpper() ?? string.Empty;
         set => Backing.OnOk(result =>
             {
                 if (Scanner.Managing.UserCode.Create(value).TryValidate() is { } userCode)

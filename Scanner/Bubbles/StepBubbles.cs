@@ -34,7 +34,7 @@ public class StepCodesBubbles : IStepCodesBubbles
         }
         catch (Exception e)
         {
-            return new StepCodesError(e);
+            return new StepCodesError(e, _codes.UserCode);
         }
     }
 

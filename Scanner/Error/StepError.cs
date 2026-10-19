@@ -13,10 +13,12 @@ namespace Scanner.Error;
 internal class StepCodesError : IStepPage, IStepCodes, IStepCodesBubbles, IStepCheck, IStepCollect
 {
     private readonly Exception _error;
+    private readonly UserCode _userCode;
 
-    internal StepCodesError(Exception error)
+    internal StepCodesError(Exception error, UserCode userCode)
     {
         _error = error;
+        _userCode = userCode;
     }
     
     public IStepCodes GetPage(IDocReader reader, int pageNumber) => this;
@@ -31,11 +33,11 @@ internal class StepCodesError : IStepPage, IStepCodes, IStepCodesBubbles, IStepC
     
     public StepCollectReturnables CollectData()
     {
-        return new ScanResults(new ScanError(_error));
+        return new ScanResults(new ScanError(_error, _userCode));
     }
 
     public ScanResults CollectData(AnyData _)
     {
-        return new ScanError(_error);
+        return new ScanError(_error, _userCode);
     }
 }
