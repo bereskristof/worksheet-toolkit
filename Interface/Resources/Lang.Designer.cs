@@ -837,6 +837,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///     Looks up a localized string similar to Disable icons.
+        /// </summary>
+        public static string Settings_Icons {
+            get {
+                return ResourceManager.GetString("Settings_Icons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     Looks up a localized string similar to Language:.
         /// </summary>
         public static string Settings_Language {
@@ -1100,15 +1109,6 @@ namespace Interface.Resources {
         }
         
         /// <summary>
-        ///     Looks up a localized string similar to Reset.
-        /// </summary>
-        public static string Solve_HeaderReset {
-            get {
-                return ResourceManager.GetString("Solve_HeaderReset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///     Looks up a localized string similar to State.
         /// </summary>
         public static string Solve_HeaderState {
@@ -1172,6 +1172,15 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///     Looks up a localized string similar to Info.
+        /// </summary>
+        public static string Solve_Info {
+            get {
+                return ResourceManager.GetString("Solve_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     Looks up a localized string similar to The provided path doesn&apos;t point to a valid file!.
         /// </summary>
         public static string Solve_InvalidFileWarning {
@@ -1186,6 +1195,15 @@ namespace Interface.Resources {
         public static string Solve_NotAPdf {
             get {
                 return ResourceManager.GetString("Solve_NotAPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Solve_Reset {
+            get {
+                return ResourceManager.GetString("Solve_Reset", resourceCulture);
             }
         }
         

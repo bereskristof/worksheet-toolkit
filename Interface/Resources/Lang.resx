@@ -448,7 +448,7 @@ Would you like to restart the program now?</value>
     <data name="Solve_HeaderTaskShort" xml:space="preserve">
         <value>#NUM#.</value>
     </data>
-    <data name="Solve_HeaderReset" xml:space="preserve">
+    <data name="Solve_Reset" xml:space="preserve">
         <value>Reset</value>
     </data>
     <data name="Solve_InvalidFileWarning" xml:space="preserve">
@@ -478,5 +478,11 @@ Would you like to restart the program now?</value>
     <data name="Solve_Error" xml:space="preserve">
         <value>The following error occured:
 #ERR#</value>
+    </data>
+    <data name="Settings_Icons" xml:space="preserve">
+        <value>Disable icons</value>
+    </data>
+    <data name="Solve_Info" xml:space="preserve">
+        <value>Info</value>
     </data>
 </root>

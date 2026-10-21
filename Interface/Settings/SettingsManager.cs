@@ -44,6 +44,7 @@ public static class SettingsManager
     private const string TexPathKey = "TexPath";
     private const string CsvLocaleKey = "CsvLocale";
     private const string CsvHeadersKey = "CsvHeaders";
+    private const string IconsDisabledKey = "IconsDisabled";
 
     /// Used to avoid needlessly updating the registry multiple times.
     private static string _texPathUpdateCache = string.Empty;
@@ -134,5 +135,21 @@ public static class SettingsManager
     {
         Key.SetValue(CsvHeadersKey, Convert.ToInt32(isEnabled));
         Log.Write($"Csv headers set in registry: {isEnabled}");
+    }
+
+    /// Get whether icons are disabled in the UI.
+    internal static bool GetIconsDisabled()
+    {
+        var def = Convert.ToInt32(true);
+        var isDisabled = Convert.ToBoolean(Key.GetValue(IconsDisabledKey) as int? ?? def);
+        Log.Write($"Icon disabling settings obtained: {isDisabled}");
+        return isDisabled;
+    }
+
+    /// Set whether icons are disabled in the UI.
+    internal static void SetIconsDisabled(bool isDisabled)
+    {
+        Key.SetValue(IconsDisabledKey, Convert.ToInt32(isDisabled));
+        Log.Write($"Csv headers set in registry: {isDisabled}");
     }
 }

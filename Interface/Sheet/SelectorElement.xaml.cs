@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using Storage.Sheet;
 
@@ -64,6 +63,8 @@ public partial class SelectorElement : ICanRequestDeletion
         TitleTextBlock.Text = Interface.Resources.Lang.Sheet_RootTitle;
         DeleteButton.Visibility = Visibility.Collapsed;
         HideButton.Visibility = Visibility.Collapsed;
+        AddQuestionButtonLabel.IsIconOnly = false;
+        AddGroupButtonLabel.IsIconOnly = false;
     }
 
     private void ToggleHide()
@@ -71,7 +72,17 @@ public partial class SelectorElement : ICanRequestDeletion
         ContentList.Visibility = ContentList.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         ManageButtons.Visibility = ManageButtons.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         BehaviourBox.IsEnabled = !BehaviourBox.IsEnabled;
-        HideButton.Content = ContentList.Visibility == Visibility.Collapsed ? Interface.Resources.Lang.Sheet_Show : Interface.Resources.Lang.Sheet_Hide;
+        switch (ContentList.Visibility)
+        {
+            case Visibility.Visible:
+                HideButtonLabel.Visibility = Visibility.Visible;
+                ShowButtonLabel.Visibility = Visibility.Collapsed;
+                break;
+            default:
+                HideButtonLabel.Visibility = Visibility.Collapsed;
+                ShowButtonLabel.Visibility = Visibility.Visible;
+                break;
+        }
     }
     
     private void AddChildTask()

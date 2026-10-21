@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:res="clr-namespace:Interface.Resources"
              xmlns:local="clr-namespace:Interface.Sheet"
+             xmlns:root="clr-namespace:Interface"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -74,8 +75,9 @@
                     <DataGridTemplateColumn Header="{x:Static res:Lang.Task_Select}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="ButtonBase_OnClick" Content="{x:Static res:Lang.Task_Select}" Padding="4, 0"
-                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Button Click="ButtonBase_OnClick" Padding="4, 0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                    <root:IconLabel Text="{x:Static res:Lang.Task_Select}" Icon="&#xE8B5;" IsIconOnly="True"/>
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

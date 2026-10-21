@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:res="clr-namespace:Interface.Resources"
+             xmlns:root="clr-namespace:Interface"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Border Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" Margin="0,3,0,0" BorderThickness="1,1,1,1" Padding="4,4,4,4" VerticalAlignment="Top" Name="MainBorder">
@@ -16,8 +17,12 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static res:Lang.Sheet_QuestionTitle}" FontStyle="Italic" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="..." TextWrapping="Wrap" Margin="6, 0,6, 0" VerticalAlignment="Center" Name="QuestionPreview" />
-            <Button Grid.Row="0" Grid.Column="2" Content="{x:Static res:Lang.Sheet_SelectQuestion}" Padding="4, 0" Click="ButtonSelect_OnClick" VerticalAlignment="Top"/>
-            <Button Grid.Row="0" Grid.Column="3" Content="{x:Static res:Lang.Sheet_Delete}" Margin="3, 0,0, 0" Padding="4, 0" Click="ButtonDelete_OnClick" VerticalAlignment="Top"/>
+            <Button Grid.Row="0" Grid.Column="2" Padding="4, 0" Click="ButtonSelect_OnClick" VerticalAlignment="Top">
+                <root:IconLabel Text="{x:Static res:Lang.Sheet_SelectQuestion}" Icon="&#xE712;" IsIconOnly="True"/>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="3" Margin="3, 0,0, 0" Padding="4, 0" Click="ButtonDelete_OnClick" VerticalAlignment="Top">
+                <root:IconLabel Text="{x:Static res:Lang.Sheet_Delete}" Icon="&#xE74D;" IsIconOnly="True"/>
+            </Button>
         </Grid>
     </Border>
 </UserControl>

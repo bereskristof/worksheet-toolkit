@@ -441,7 +441,7 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_HeaderTaskShort" xml:space="preserve">
         <value>#NUM#.</value>
     </data>
-    <data name="Solve_HeaderReset" xml:space="preserve">
+    <data name="Solve_Reset" xml:space="preserve">
         <value>Vissza</value>
     </data>
     <data name="Solve_InvalidFileWarning" xml:space="preserve">
@@ -471,5 +471,11 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_Error" xml:space="preserve">
         <value>A javítás az alábbi hibába ütközött:
 #ERR#</value>
+    </data>
+    <data name="Settings_Icons" xml:space="preserve">
+        <value>Ikonok kikapcsolása</value>
+    </data>
+    <data name="Solve_Info" xml:space="preserve">
+        <value>Infó</value>
     </data>
 </root>

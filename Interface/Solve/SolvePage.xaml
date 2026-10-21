@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:res="clr-namespace:Interface.Resources"
+             xmlns:root="clr-namespace:Interface"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -33,8 +34,12 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="{x:Static res:Lang.Solve_CorrectLabel}" Padding="0"/>
                 <TextBox Grid.Column="1" Margin="3, 0, 0, 0" Name="ImportPdfTextbox" TextChanged="ImportPdfTextbox_OnTextChanged"/>
-                <Button Grid.Column="2" Content="{x:Static res:Lang.Common_Browse}" Click="ImportPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0" Name="BrowseButton"/>
-                <Button Grid.Column="3" Content="{x:Static res:Lang.Solve_Start}" Name="CorrectPdf" Click="CorrectPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0" IsEnabled="False"/>
+                <Button Grid.Column="2" Click="ImportPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0" Name="BrowseButton">
+                    <root:IconLabel Text="{x:Static res:Lang.Common_Browse}" Icon="&#xE712;" IsIconOnly="True"/>
+                </Button>
+                <Button Grid.Column="3" Name="CorrectPdf" Click="CorrectPdf_OnClick" Margin="3, 0, 0, 0" Padding="3, 0" IsEnabled="False">
+                    <root:IconLabel Text="{x:Static res:Lang.Solve_Start}" Icon="&#xEE6F;"/>
+                </Button>
             </Grid>
             <Grid Grid.Row="1" Margin="0, 3, 0, 0">
                 <Grid.ColumnDefinitions>
@@ -44,8 +49,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!-- <Button Grid.Column="0" Content="{x:Static res:Lang.Solve_History}" Padding="3, 0" IsEnabled="False" Opacity="0.5"/> -->
-                <Button Grid.Column="1" Content="{x:Static res:Lang.Solve_Get}" Click="ExportResults_OnClick" Name="ExportResultsButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
-                <Button Grid.Column="2" Content="{x:Static res:Lang.Solve_GetAlt}" Click="ExportStats_OnClick" Name="ExportResultsAltButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False"/>
+                <Button Grid.Column="1" Click="ExportResults_OnClick" Name="ExportResultsButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False">
+                    <root:IconLabel Text="{x:Static res:Lang.Solve_Get}" Icon="&#xF5ED;"/>
+                </Button>
+                <Button Grid.Column="2" Click="ExportStats_OnClick" Name="ExportResultsAltButton" Padding="3, 0" Margin="3, 0, 0, 0" IsEnabled="False">
+                    <root:IconLabel Text="{x:Static res:Lang.Solve_GetAlt}" Icon="&#xF572;"/>
+                </Button>
                 <CheckBox Grid.Column="3" VerticalAlignment="Center" Content="{x:Static res:Lang.Solve_IncludeConfidence}" Name="ExtraInfoCheckbox" Padding="3, 0" Margin="3, 0, 0, 0"/>
             </Grid>
             <Border Grid.Row="2" Margin="0, 3, 0, 0" Background="#FFD" BorderBrush="#CC0"
@@ -121,8 +130,16 @@
                     <DataGridTemplateColumn Header="" Width="Auto" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="ExtraSelected_OnClick" Content="{Binding ExtraTitle}" Padding="4, 0" FontFamily="Segoe MDL2 Assets"
-                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsExtraVisible}"/>
+                                <Grid>
+                                    <Button Click="Reset_OnClick" Padding="4, 0" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Visibility="{Binding IsResetVisible}">
+                                        <root:IconLabel Text="{x:Static res:Lang.Solve_Reset}" Icon="&#xE845;" IsIconOnly="True"/>
+                                    </Button>
+                                    <Button Click="ErrorInfo_OnClick" Padding="4, 0" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Visibility="{Binding IsInfoVisible}">
+                                        <root:IconLabel Text="{x:Static res:Lang.Solve_Info}" Icon="&#xE897;" IsIconOnly="True"/>
+                                    </Button>
+                                </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

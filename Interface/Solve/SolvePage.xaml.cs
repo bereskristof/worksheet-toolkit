@@ -92,7 +92,7 @@ public partial class SolvePage
         if (!IsPathValidPdf(pdfPath))
             return;
         var pageCount = GetPageCount(pdfPath);
-        var maxLabelSize = (int)Math.Ceiling(Math.Log10(pageCount));
+        var maxLabelSize = (int)Math.Max(Math.Ceiling(Math.Log10(pageCount + 1)), 1);
         _progressFmt = $"{{0,{maxLabelSize}}}/{pageCount}";
         ProgressLabel.Content = string.Format(_progressFmt, 0);
         ProgressBar.Value = 0;
@@ -429,25 +429,21 @@ public partial class SolvePage
             ResultsTable.Columns.Add(column);
     }
 
-    private void ExtraSelected_OnClick(object sender, RoutedEventArgs e)
+    private void Reset_OnClick(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button)
             return;
         if (button.DataContext is not ScanResultView view)
             return;
-        if (view.Backing.Ok is not null)
-            ResetSelected(ref view);
-        else if (view.Backing.Err is not null)
-            GetError(ref view);
-    }
-
-    private static void ResetSelected(ref ScanResultView view)
-    {
         view.Reset();
     }
 
-    private static void GetError(ref ScanResultView view)
+    private void ErrorInfo_OnClick(object sender, RoutedEventArgs e)
     {
+        if (sender is not Button button)
+            return;
+        if (button.DataContext is not ScanResultView view)
+            return;
         var error = view.GetError();
         if (string.IsNullOrEmpty(error)) return;
         var message = Interface.Resources.Lang.Solve_Error.Replace("#ERR#", error);
