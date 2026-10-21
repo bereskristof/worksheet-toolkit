@@ -19,6 +19,7 @@ public partial class SettingsPage
         InitializeLanguageDropdown();
         InitializeTexPathBox();
         InitializeCsvFields();
+        InitializeIcons();
     }
 
     /// Initialize the language dropdown, setting its value to the programs current language,
@@ -47,6 +48,13 @@ public partial class SettingsPage
         CsvLocaleDropdownHun.Selected += (_, _) =>
             SettingsManager.SetCsvLocale(SettingsManager.CsvLocale.Hungarian);
         CsvHeaderCheck.IsChecked = SettingsManager.GetCsvHeaders();
+    }
+
+    private void InitializeIcons()
+    {
+        var isDisabled = SettingsManager.GetIconsDisabled();
+        HideIcons.IsChecked = isDisabled;
+        IconLabel.EnableIcons(!isDisabled);
     }
     
     private static void SetLanguageToEnglish(object sender, RoutedEventArgs e) 
@@ -110,5 +118,12 @@ public partial class SettingsPage
     {
         var isEnabled = CsvHeaderCheck.IsChecked ?? false;
         SettingsManager.SetCsvHeaders(isEnabled);
+    }
+
+    private void HideIcons_OnClick(object sender, RoutedEventArgs e)
+    {
+        var isDisabled = HideIcons.IsChecked ?? false;
+        IconLabel.EnableIcons(!isDisabled);
+        SettingsManager.SetIconsDisabled(isDisabled);
     }
 }

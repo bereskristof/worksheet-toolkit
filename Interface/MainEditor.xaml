@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:this="clr-namespace:Interface"
              xmlns:res="clr-namespace:Interface.Resources"
              xmlns:task="clr-namespace:Interface.Task"
              xmlns:sheet="clr-namespace:Interface.Sheet"
@@ -18,22 +19,40 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0" Margin="2" Padding="3">
-            <TabItem Header="{x:Static res:Lang.MenuTabs_Tasks}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Tasks}" Icon="&#xEA37;"/>
+                </TabItem.Header>
                 <task:TaskPage x:Name="TaskPage"/>
             </TabItem>
-            <TabItem Header="{x:Static res:Lang.MenuTabs_Sheets}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Sheets}" Icon="&#xE7C3;"/>
+                </TabItem.Header>
                 <sheet:SheetPage/>
             </TabItem>
-            <TabItem Header="{x:Static res:Lang.MenuTabs_Export}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Export}" Icon="&#xE749;"/>
+                </TabItem.Header>
                 <export:ExportPage/>
             </TabItem>
-            <TabItem Header="{x:Static res:Lang.MenuTabs_Correct}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Correct}" Icon="&#xE8FE;"/>
+                </TabItem.Header>
                 <solve:SolvePage/>
             </TabItem>
-            <TabItem Header="{x:Static res:Lang.MenuTabs_Settings}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Settings}" Icon="&#xE713;"/>
+                </TabItem.Header>
                 <settings:SettingsPage TexPathWasUpdated="SettingsPage_OnTexPathWasUpdated"/>
             </TabItem>
-            <TabItem Header="{x:Static res:Lang.MenuTabs_About}">
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_About}" Icon="&#xE779;"/>
+                </TabItem.Header>
                 <about:About/>
             </TabItem>
         </TabControl>

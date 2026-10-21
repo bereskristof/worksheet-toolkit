@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:res="clr-namespace:Interface.Resources"
+             xmlns:root="clr-namespace:Interface"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -29,13 +30,24 @@
                         <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionListOrdered}" Selected="OptionListOrdered_OnSelected"/>
                         <ComboBoxItem Content="{x:Static res:Lang.Sheet_OptionPickRandom}" Selected="OptionPickShuffled_OnSelected"/>
                     </ComboBox>
-                    <Button Grid.Column="1" Content="{x:Static res:Lang.Sheet_Hide}" Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonHide_OnClick" Name="HideButton"/>
+                    <Button Grid.Column="1" Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonHide_OnClick" Name="HideButton">
+                        <Grid>
+                            <root:IconLabel x:Name="HideButtonLabel" Text="{x:Static res:Lang.Sheet_Hide}" Icon="&#xE8C5;" IsIconOnly="True"/>
+                            <root:IconLabel x:Name="ShowButtonLabel" Text="{x:Static res:Lang.Sheet_Show}" Icon="&#xE8C4;" IsIconOnly="True" Visibility="Collapsed"/>
+                        </Grid>
+                    </Button>
                 </Grid>
                 <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="ContentList"/>
-                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0, 3, 0,0" Name="ManageButtons">
-                    <Button Content="{x:Static res:Lang.Sheet_AddQuestion}" Padding="4, 0" Click="ButtonAddTask_OnClick"/>
-                    <Button Content="{x:Static res:Lang.Sheet_AddContainer}" Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonAddContainer_OnClick"/>
-                    <Button Content="{x:Static res:Lang.Sheet_Delete}" Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonDelete_OnClick" Name="DeleteButton"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0, 3, 0,0" Name="ManageButtons" HorizontalAlignment="Right">
+                    <Button Padding="4, 0" Click="ButtonAddTask_OnClick">
+                        <root:IconLabel x:Name="AddQuestionButtonLabel" Text="{x:Static res:Lang.Sheet_AddQuestion}" Icon="&#xE710;" IsIconOnly="True"/>
+                    </Button>
+                    <Button Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonAddContainer_OnClick">
+                        <root:IconLabel x:Name="AddGroupButtonLabel" Text="{x:Static res:Lang.Sheet_AddContainer}" Icon="&#xE82E;" IsIconOnly="True"/>
+                    </Button>
+                    <Button Margin="3, 0, 0,0" Padding="4, 0" Click="ButtonDelete_OnClick" Name="DeleteButton">
+                        <root:IconLabel Text="{x:Static res:Lang.Sheet_Delete}" Icon="&#xE74D;" IsIconOnly="True"/>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

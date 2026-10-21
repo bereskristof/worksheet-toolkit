@@ -18,10 +18,6 @@ public struct LocaleSpecifics
 
 internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultView>
 {
-    // https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-ui-symbol-font#pua-e700-e900
-    private const string ExtraResetLabel = "\xE845"; // RevToggleKey
-    private const string ExtraIssueLabel = "\xE897"; // Help
-    
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private enum ScanResultHuman
@@ -80,9 +76,6 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
 
     public ScanResultViewPointAccess Points { get; init; }
 
-    public Visibility IsExtraVisible => (Backing.Ok?.IsModified() ?? Backing.Err is not null) ? Visibility.Visible : Visibility.Collapsed;
-    public string ExtraTitle => (Backing.Err is null) ? ExtraResetLabel : ExtraIssueLabel;
-
     public ScanResultView(int page, ScanResults sourceResult)
     {
         Backing = new Result(sourceResult);
@@ -104,7 +97,8 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateString)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinorError)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MajorError)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExtraVisible)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsInfoVisible)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsResetVisible)));
     }
 
     private ScanResultHuman GetScanResultHuman()
@@ -176,4 +170,26 @@ internal class ScanResultView : INotifyPropertyChanged, IComparable<ScanResultVi
     private static string IntToLetterAlphabetical(int i) => Encoding.UTF32.GetString(BitConverter.GetBytes('A' + i));
 
     public int CompareTo(ScanResultView? other) => Page.CompareTo(other?.Page);
+    
+    public Visibility IsResetVisible => ToVisibility(GetExtraButton() == ExtraButton.Reset);
+    public Visibility IsInfoVisible => ToVisibility(GetExtraButton() == ExtraButton.Info);
+
+    private enum ExtraButton
+    {
+        None,
+        Reset,
+        Info,
+    }
+
+    private ExtraButton GetExtraButton()
+    {
+        if (Backing.Err is not null)
+            return ExtraButton.Info;
+        if (Backing.Ok?.IsModified() ?? false)
+            return ExtraButton.Reset;
+        return ExtraButton.None;
+    }
+
+    private Visibility ToVisibility(bool isVisible)
+        => isVisible ? Visibility.Visible : Visibility.Collapsed;
 }
