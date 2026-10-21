@@ -92,7 +92,7 @@ public partial class SolvePage
         if (!IsPathValidPdf(pdfPath))
             return;
         var pageCount = GetPageCount(pdfPath);
-        var maxLabelSize = (int)Math.Ceiling(Math.Log10(pageCount));
+        var maxLabelSize = (int)Math.Max(Math.Ceiling(Math.Log10(pageCount + 1)), 1);
         _progressFmt = $"{{0,{maxLabelSize}}}/{pageCount}";
         ProgressLabel.Content = string.Format(_progressFmt, 0);
         ProgressBar.Value = 0;
