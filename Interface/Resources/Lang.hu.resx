@@ -478,4 +478,16 @@ Szeretné a programot most újraindítani?</value>
     <data name="Solve_Info" xml:space="preserve">
         <value>Infó</value>
     </data>
+    <data name="MenuTabs_Keys" xml:space="preserve">
+        <value>Megoldókulcsok</value>
+    </data>
+    <data name="Data_Reload" xml:space="preserve">
+        <value>Feladatlapok betöltése</value>
+    </data>
+    <data name="Data_Sheets" xml:space="preserve">
+        <value>Feladatlapok</value>
+    </data>
+    <data name="Data_ExamCode" xml:space="preserve">
+        <value>Dolgozatkulcs:</value>
+    </data>
 </root>

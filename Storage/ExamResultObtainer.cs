@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Runtime.InteropServices.Swift;
+using Microsoft.Data.Sqlite;
 using Storage.Sheet;
 using static System.Math;
 
@@ -21,6 +24,28 @@ public readonly struct CorrectAnswer
         AnswerNumber = answerNumber;
         QuestionId = questionId;
     }
+}
+
+public class ExamKeysIterator : IEnumerator<string>, IEnumerable<string>
+{
+    private readonly SqliteDataReader _inner;
+    
+    string IEnumerator<string>.Current => _inner.GetString(0);
+    object IEnumerator.Current => _inner.GetString(0);
+
+    internal ExamKeysIterator(SqliteDataReader reader)
+    {
+        _inner = reader;
+    }
+    
+    public bool MoveNext() => _inner.Read();
+
+    public void Reset() => throw new NotSupportedException();
+
+    public void Dispose() => _inner.Dispose();
+    
+    public IEnumerator<string> GetEnumerator() => this;
+    IEnumerator IEnumerable.GetEnumerator() => this;
 }
 
 /// Input: Array of obtained question results
@@ -65,5 +90,14 @@ public static class ExamResultObtainer
         if (Clamp(count, 1, SheetTreeInfo.MaximumNumberOfQuestions) != count)
             throw new InvalidExamQuestionCountException("ObtainExamQuestionCount: The database contains an invalid number of exam questions for the provided index.");
         return (uint)count;
+    }
+
+    /// Get an iterator to every exam key.
+    public static ExamKeysIterator ObtainExamKeys()
+    {
+        var getKeysCommand = Manager.Connection.CreateCommand();
+        getKeysCommand.CommandText = "SELECT DISTINCT(Uuid) FROM Solutions ORDER BY LENGTH(Uuid) ASC, Uuid ASC;";
+        var reader = getKeysCommand.ExecuteReader();
+        return new ExamKeysIterator(reader);
     }
 }

@@ -8,6 +8,7 @@
              xmlns:task="clr-namespace:Interface.Task"
              xmlns:sheet="clr-namespace:Interface.Sheet"
              xmlns:export="clr-namespace:Interface.Export"
+             xmlns:data="clr-namespace:Interface.Data"
              xmlns:about="clr-namespace:Interface.About"
              xmlns:settings="clr-namespace:Interface.Settings"
              xmlns:solve="clr-namespace:Interface.Solve"
@@ -36,6 +37,12 @@
                     <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Export}" Icon="&#xE749;"/>
                 </TabItem.Header>
                 <export:ExportPage/>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <this:IconLabel Text="{x:Static res:Lang.MenuTabs_Keys}" Icon="&#xE73E;"/>
+                </TabItem.Header>
+                <data:DataPage/>
             </TabItem>
             <TabItem>
                 <TabItem.Header>

@@ -485,4 +485,16 @@ Would you like to restart the program now?</value>
     <data name="Solve_Info" xml:space="preserve">
         <value>Info</value>
     </data>
+    <data name="MenuTabs_Keys" xml:space="preserve">
+        <value>Answer Keys</value>
+    </data>
+    <data name="Data_Reload" xml:space="preserve">
+        <value>Reload sheets</value>
+    </data>
+    <data name="Data_Sheets" xml:space="preserve">
+        <value>Sheets</value>
+    </data>
+    <data name="Data_ExamCode" xml:space="preserve">
+        <value>Exam Code:</value>
+    </data>
 </root>

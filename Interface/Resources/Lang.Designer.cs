@@ -168,6 +168,33 @@ namespace Interface.Resources {
         }
         
         /// <summary>
+        ///     Looks up a localized string similar to Exam Code:.
+        /// </summary>
+        public static string Data_ExamCode {
+            get {
+                return ResourceManager.GetString("Data_ExamCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     Looks up a localized string similar to Reload sheets.
+        /// </summary>
+        public static string Data_Reload {
+            get {
+                return ResourceManager.GetString("Data_Reload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     Looks up a localized string similar to Sheets.
+        /// </summary>
+        public static string Data_Sheets {
+            get {
+                return ResourceManager.GetString("Data_Sheets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///     Looks up a localized string similar to Amount:.
         /// </summary>
         public static string Export_Amount {
@@ -572,6 +599,15 @@ namespace Interface.Resources {
         public static string MenuTabs_Export {
             get {
                 return ResourceManager.GetString("MenuTabs_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///     Looks up a localized string similar to Answer Keys.
+        /// </summary>
+        public static string MenuTabs_Keys {
+            get {
+                return ResourceManager.GetString("MenuTabs_Keys", resourceCulture);
             }
         }
         
